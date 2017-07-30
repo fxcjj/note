@@ -1,0 +1,21 @@
+
+
+
+java.security.Key
+
+//私钥签名, content, privateKey
+a) Base64.decode(privateKey) //解码privateKey
+b) 使用java.security.Signature.getInstance("RSA")得到signed
+c) return Base64.encode(signed) //编码signed
+
+//使用公钥RSA验签名检查, content, sign, publicKey
+a) Base64.decode(publicKey) //解码publicKey
+b) 使用java.security.Signature.getInstance("RSA")得到signature
+c) signature与参数sign比较
+
+
+
+
+
+
+

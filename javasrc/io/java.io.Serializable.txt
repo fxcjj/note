@@ -1,0 +1,89 @@
+
+开启一个类的序列化性通过实现这个java.io.Serializable接口。
+未实现此接口的类它们不会有任何序列化或反序列化状态。
+可序列化类的所有子类型本身都是可序列化的。
+这个序列化性接口没有方法或字段，仅仅提供标识可序列化的语义。
+
+要允许不可序列化类的子类型序列化，可以假定该子类型负责保存和恢复超类型的公共（public）、
+受保护（protected）和（如果可访问）包（package）字段的状态。
+该子类型必须扩展一个为了初始状态的无参构造器，才可以假定子类型有此职责。
+如果不是这种情况，则声明一个类为可序列化是错误的。该错误将在运行时被检测到。
+
+在反序列化过程中，将使用该类的公用或受保护的无参构造器初始化不可序列化类的字段。
+可序列化的子类必须能够访问无参数构造方法。可序列化子类的字段将从该流中恢复。
+
+当遍历一个图形时，可能会遇到不支持Serializable接口的对象。
+在此情况下，将抛出NotSerializableException，并将标识为不可序列化对象的类。
+
+在序列化和反序列化过程中需要特殊处理的类必须使用下列准确签名来实现特殊方法：
+private void writeObject(java.io.ObjectOutputStream out)
+	throws IOException
+private void readObject(java.io.ObjectInputStream in)
+	throws IOException, ClassNotFoundExcetpion;
+private void readObjectNoData()
+	throws ObjectStreamException;
+	
+writeObject方法是负责写指定类对象的状态，以便相应readObject方法可以恢复它。
+通过调用out.defaultWriteObject可以调用保存Object的字段的默认机制。
+此方法不需要关心它父类或者子类的状态。
+通过使用writeObject方法或者使用支持基本数据类型的DataOutput的方法将各个字段写入到
+ObjectOutputStream，状态可以被保存。
+
+readObject方法负责从流中读取并恢复类字段。它可以调用in.defaultReadObject来调用默认机制，
+以恢复对象的非static和非transient字段默认。
+defaultReadObject方法使用流中的信息，将流中对象的字段们分配给当前对象相应的指定字段。
+这用于处理类演化后需要添加新字段的情形。该方法本身不需要关注属于其超类或子类的状态。
+使用writeObject方法或使用支持基本数据类型的DataOutput的方法将各个字段写入ObjectOutputStreadm,
+状态可以被保存。
+
+在序列化流不列出给定类作为反序列化对象的超类的情况下，
+readObjectNoData方法负责初始化特定类的对象状态。
+这在接收方使用的反序列化实例类的版本不同于发送方，并且接收者版本扩展的类不是发送者
+版本扩展的类时发生。在序列化流已经被篡改时也将发生；因此，不管源流是“敌意的”还是不完整的，
+readObjectNoData对初始化反序列化对象属性是有用的。
+
+将对象写入到流时需要 指定要使用的替代对象的可序列化类，应使用准确的签名来实现
+此特殊方法：
+ANY-ACCESS-MIDIFIER Object writeReplace() throws ObjectStreamException;
+
+writeReplace方法由序列化调用，前提是如果此方法存在，而且它可以通过被序列化对象的类中
+定义的一个方法访问。因为，该方法可以拥有私有（private）、受保护（protected）和
+包私有（package-private）访问。子类对此方法的访问遵循java访问规则。
+
+当从流中读取一个类的实例时 需要指定替代的类应使用准确签名（方法）来实现此特殊方法：
+ANY-ACCESS-MIDIFIER Object readResolve() throws ObjectStreamException;
+
+此readResolve方法遵循与writeReplace相同的调用规则和访问规则。
+
+序列化运行时使用一个称为serialVersionUID的版本号与每个可序列化类相关联，
+该序列化在反序列化过程中用于验证序列化对象的发送者和接收者是否为该对象加载了与序列化
+兼容的类。如果接收者加载的该对象的类的serialVersionUID与对应的发送者的类的版本号不同，
+那反序列化类将会导致InvalidClassException。
+一个可序列化类可以通过声明一个名为“serialVersionUID”的字段（必须static,fianl,long类型）
+显式声明其自己民的serialVersionUID:
+ANY-ACCESS-MIDIFIER static fianl long serialVersionUID = 34L;
+
+如果可序列化类未显式声明serialVersionUID,则序列化运行时将会基于类的各个方面计算出一个
+默认的serialVersionUID值，如Java(TM)对象序列化规范中所述。不过，强烈建议所有可序列化类显式
+声明serialVersionUID值，因为默认的serialVersionUID对于类细节是高敏感的，根据编译器的实现的
+不同可能千差万别，这样在反序列化过程中可能会导致意外的InvalidClassException。
+因此 ，为了保证serialVersionUID值跨不同java编译器实现的一致性，可序列化类必须显式声明
+serialVersionUID的值。
+也强烈建议serialVersionUID使用private修饰符（如果可能），原因是这种声明仅应用于直接声明
+类--serialVersionUID字段作为继承成员是没有用处。数组类不能声明一个明确的serialVersionUID,
+因为它们一直有这个默认计算值，但是数组类没有匹配serialVerioonUID值的要求。
+
+另请参见：
+java.io.ObjectOutputStream
+java.io.ObjectInputStream
+java.io.ObjectOutput
+java.io.ObjectInput
+java.io.Externalizable
+public interface Serializable {
+}
+
+
+
+
+
+

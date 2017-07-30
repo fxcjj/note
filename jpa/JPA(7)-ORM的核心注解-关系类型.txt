@@ -1,0 +1,107 @@
+一、关系列表
+   一对一（@OneToOne）
+   一对多（@OneToMany）、多对一（@ManyToOne）
+   多对多（@ManyToMany）
+   
+二、方向
+    单向
+    双向
+
+三、例子及解释
+    1) 一对一的单向、双向
+    //单向
+   @Entity
+   public class Husband {
+       private String id;
+       private String name;
+        @OneToOne
+        @JoinColumn(name="wife_id") //这里有唯一性约束
+        private Wife wife; 
+   }
+
+   @Entity
+   public class Wife {
+        private String id;
+        private String name;
+   }
+
+   //双向
+   @Entity
+   public class Husband {
+       private String id;
+       private String name;
+        @OneToOne
+        @JoinColumn(name="wife_id")
+        private Wife wife; 
+   }
+
+   @Entity
+   public class Wife {
+        private String id;
+        private String name;
+        //不要声明JoinColumn(name="husband_id")，如果声明则表示两个单向的关系，而非双向关系！！！
+        //mappedBy属性表示源角色（Husband）一方引用目标角色（Wife）一方的引用名称，如果把Husband中的wife改为w，则这里也改成w。
+        @OneToOne(mappedBy="wife")
+        private Husband husband;
+   }
+
+    2) 一对多（@OneToMany）、多对一（@ManyToOne）
+    //双向
+    @Entity
+    public class Employee { //所有方(Owning Side)
+        private String id;
+        private String name;
+        @ManyToOne
+        @JoinColumn(name="dept_id")
+        private Department department;
+    }
+    
+    @Entity
+    public class Department { //反转方(Inverse Side)
+        private String id;
+        private String name;
+        @OneToMany(mappedBy="department")
+        private Collection<Employee> employees;
+    }
+
+    //单向，声明一个一对多的单向，修改Department
+    @Entity
+    public class Department { //反转方(Inverse Side)
+        private String id;
+        private String name;
+        @OneToMany
+        @JoinTabel(
+            name="dept_tmp",
+            joinColumn=@JoinColumn(name="dept_id"),
+            inverseJoinColumn=@JoinColumn(name="emp_id")
+         )
+        private Collection<Employee> employees;
+    }
+    此时，Departement是拥有方，Department和Employee的一对多关系则表dept_tmp进行管理。
+    joinColumn表示此关系表中引用拥有方的外键列名为dept_id，
+    inverseJoinColumn表示此关系表中引用反转方的外键列名为emp_id
+
+    3) 多对多
+    //双向
+    一个员工属于多个项目，一个项目包含多个员工
+    @Entity
+    public class Employee {
+        private String id;
+        private String name;
+        @ManyToMany
+        @JoinTabel(
+            name="employee_project",
+            joinColumn=@JoinColumn(name="emp_id"),
+            inverseJoinColumn=@JoinColumn(name="proj_id")
+         )
+        private Collection<Project> projects;
+    }
+
+   @Entity
+    public class Project{
+        private String id;
+        private String name;
+        @ManyToMany(mappedBy="projects")
+        private Collection<Employee> employees;
+    }
+    注：mappedBy的使用！！！

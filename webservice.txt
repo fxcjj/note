@@ -1,0 +1,59 @@
+
+
+一、
+1 use jdk pub ws
+	interface
+	implementation
+	@WebService
+2 use jdk invoke ws
+	1)wsimport tool
+	 generate client.jar
+	2)URL
+	 QName
+3 less than jdk5
+	JAX-WS
+	 * Jax-WS RI(official)
+	 * Axis
+	 * CXF(jetty)
+4 other way
+	JAX-RS(restful)
+	 * Jersey(official)
+	 * Restlet
+	 * RESTEasy
+	 * CXF
+
+二、
+1 use RI pub WS
+	1)integration tomcat
+	 download jar-ri.jar
+	 config catalina.properties
+	2)interface
+	 implementation
+	3)add sun-jaxws.xml in the WEB-INF directory
+	 define "endpoint" tag
+	4)start tomcat
+	 enter url in the browser, and you will see a 
+	 control for WS.
+2 use the nested jetty of CXF pub WS
+	1)config maven
+	 * cxf-rt-frontend-jaxws
+	 * cxf-rt-trasport-http-jetty
+	2)interface
+	 implementation
+	3)pub WS
+		3.1)wirte JaxWsServer.java
+		 * JaxWsServiceFactoryBean
+		 * factory.setAddresss
+		 * factory.setService
+		 * factory.ServiceBean
+		3.2)use simple way to pubs
+		 * SimpleServer.java
+		 * ServerFactoryBean
+		 * the simple way just can be invoked by simple client.
+	4)run JaxWsServer.java
+	 * enter url in the browser and you will see wsdl doc.
+	
+三、
+1 use Spring + CXF pub WS
+
+		

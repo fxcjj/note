@@ -1,0 +1,26 @@
+事务划分是重要的一环。
+
+事务划分概要
+1）Resource-Local类型
+    由开发者自行控制事务的开始、结束。
+2）Container事务类型
+    a, 在容器的帮助下完成自动划分
+    b, 使用JTA接口在代码中显示定义
+
+EJB的事务划分
+1）CMT(Container-managed Transaction)
+    EJB默认的，不用配置，也可以显示声明。
+    @TransactionAttribute
+    MANDATORY, SUPPORTS, REQUIRED
+2）BMT(Bean-managed Transaction)
+    定义元数据
+    自行控制事务的开始、结束
+    
+3）BMT相关API(JTA)
+    实现BMT的接口是
+    java.transaction.UserTransaction
+    使用@Resource注解注入一个代理实现
+    相关方法
+        begin, commit, getStatus, rollback, setRollbackOnly, setTransactionTimeout
+
+4）在同一线程中，无法有两个处于active状态的事务。但可以关联多个事务（挂起、唤醒）

@@ -1,0 +1,67 @@
+﻿
+class loader是一个负责加载类的对象。ClassLoader是一个抽象类。
+给定一个类的二进制的名称，那么这个class loader会试图查找或生成构成类定义的数据。
+一个典型策略是将名称转换为一个文件名，然后从文件系统读取该名称的“类文件”。
+
+每个Class对象都包含一个对定义它的ClassLoader的引用。
+Class#getClassLoader()
+
+数组类的Class对象不是由class loader创建的，而是由Java运行时根据需要自动创建。
+数组类的类加载器由Class.getClassLoader()返回，该加载器与其元素类型的类加载器是相同的。
+
+应用程序需要实现ClassLoader的子类，以扩展Java虚拟机动态加载类的方式。
+
+类加载器通常由sercurity managers使用，用于指示安全域。
+
+ClassLoader类使用委托模型来搜索类或资源。每个ClassLoader实例都有一个相关的父加载器。
+当需要查找类或资源时，ClassLoader实例会在试图亲自查找类或资源之前，将搜索类或资源的任务委托给其父类加载器。
+虚拟机的内置class loader，称作bootstrap class loader，其本身没有父类加载器，
+但是可以将它用作ClassLoader实例的父加载器。
+
+通常情况下，Java虚拟机使用与平台有关的方式，从本地文件系统中加载类。例如，
+在UNIX系统中，虚拟机加载类是从CLASSPATH环境变量定义的目录加载。
+
+然而，一些类可能并非来自一个文件，它们可能来自其他资源，例如网络，或者是由应用程序构造的。
+defineClass(String, byte[], int, int)方法将字节数组转换成一个Class实例。
+这种新定义的类的实例可以通过Class#newInstance来创建。
+
+通过class loader创建的类的方法和构造函数可能引用其它类。
+为了确定引用的类，Java虚拟机调用最初创建该类的类加载器的loadClass方法。
+
+例如，应用程序可以创建一个网络类加载器，以便从服务器中下载类文件。
+示例代码可能看起来像这样：
+
+ClassLoader cl = NetworkClassLoader(host, port);
+Object mian = cl.loadClass("Main", true).newInstance();
+
+这个network class loader子类必须定义findClass和loadClassData方法，以实现从网络加载类。
+一旦它下载组成该类的字节后，它应该使用方法defineClass来创建类的实例。
+一个简单实现是：
+class NetworkClassLoader extends ClassLoader {
+	String host;
+	int port;
+
+	public Class findClass(String name) {
+		byte[] b = loadClassData(name);
+		return defineClass(name, b, 0, b.length);
+	}
+
+	private byte[] loadClassData(String name) {
+		// load the class data from the connection
+	}
+}
+
+
+Binary names
+按照Java Language Specification的定义，
+任何作为String类型参数传递给ClassLoader中方法的类名称都必须是一个二进制名称。
+
+有效类名称的示例包括：
+"java.lang.String"
+"javax.swing.JSpinner$DefaultEditor"
+"java.security.KeyStore$Builder$FileBuilder$1"
+"java.net.URLClassLoader$3$1"
+ 
+
+
+

@@ -1,0 +1,119 @@
+
+一、FileInputStream介绍
+FileInputStream 是文件输入流，它继承于InputStream。
+通常，我们使用FileInputStream从某个文件中获得输入字节。
+FileOutputStream 是文件输出流，它继承于OutputStream。
+通常，我们使用FileOutputStream 将数据写入 File 或 FileDescriptor 的输出流。
+
+//FileInputStream
+A FileInputStream obtains input bytes from a file in a file system. 
+What files are available depends on the host environment.
+FileInputStream is meant for reading streams of raw bytes such as image data. 
+For reading streams of characters, consider using FileReader.
+
+//查看FileInputStream源码
+
+//FileOutputStream
+A file output stream is an output stream for writing data to a 
+<code>File</code> or to a <code>FileDescriptor</code>. Whether or not
+a file is available or may be created depends upon the underlying
+platform.  Some platforms, in particular, allow a file to be opened
+for writing by only one <tt>FileOutputStream</tt> (or other
+file-writing object) at a time.  In such situations the constructors in
+this class will fail if the file involved is already open.
+
+<p><code>FileOutputStream</code> is meant for writing streams of raw bytes
+such as image data. For writing streams of characters, consider using
+<code>FileWriter</code>.
+
+//查看FileOutputStream源码
+
+
+二、例子
+public class FileStreamTest {
+    private static final String FILE_NAME = "d:/coupling.txt";
+    public static void main(String[] args) throws Exception {
+        testWrite();
+        testRead();
+    }
+    
+    private static void testRead() throws Exception {
+        File file = new File(FILE_NAME);
+        
+        //方法1
+        FileInputStream  fis = new FileInputStream(file);
+        
+        //方法2
+        FileInputStream  fis1 = new FileInputStream(FILE_NAME);
+        
+        //方法3
+        FileDescriptor fd = fis1.getFD();
+        FileInputStream  fis2 = new FileInputStream(fd);
+        
+        //Reads a byte of data from this input stream. This method blocks if no input is yet 
+        int dataByte = fis.read();
+        //translate a byte to character, such as 97->a
+        char c = (char)dataByte;  
+        System.out.println("dataByte = "+dataByte); 
+        System.out.println("c = " + c);
+        
+        //跳过4个字节
+        fis.skip(4); //cdef
+        
+        byte[] buf = new byte[10];  
+        fis.read(buf, 0, buf.length);  
+        System.out.println("buf = "+(new String(buf))); 
+        
+        BufferedInputStream bufIn = new BufferedInputStream(fis2);
+        
+        // 读取一个字节
+        char c2 = (char)bufIn.read();  
+        System.out.println("c2="+c2);
+        fis.close();
+        fis1.close();
+        fis2.close();
+    }
+
+    private static void testWrite() throws Exception {
+        File file = new File(FILE_NAME);
+        //默认为非追加模式
+        FileOutputStream fos = new FileOutputStream(file);
+        PrintStream ps = new PrintStream(fos);
+        ps.print("abcdefghijklmnopqrstuvwxyz");
+        ps.close();
+        
+        //使用追加模式
+        FileOutputStream fos1 = new FileOutputStream(file, true);
+        PrintStream ps1 = new PrintStream(fos1);
+        ps1.print("123");
+        ps1.close();
+        
+    }
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,10 @@
+﻿
+实现此接口允许一个object为foreach语句的目标
+java.lang.Iterable<T>
+
+public interface Iterable<T>
+
+
+返回一个在一组T类型元素上进行迭代的迭代器。
+@return 一个迭代器
+Iterator<T> iterator();

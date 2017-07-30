@@ -1,0 +1,116 @@
+
+shard_group
+id		name			writable	start_id	end_id
+100		ShardGroup0		false		0			4000W
+101		ShardGroup1		true		4000W		10000W
+
+shard
+id		name		group_id	hash_value
+1000	shard0		100			0
+1001	shard1		100			1
+1002	shard2		101			0
+1003	shard3		101			1,2
+1004	shard4		101			3,4,5
+
+fragment_table
+id		name		shard_id	start_id	end_id
+10000	table_0		1000		0			2000W
+10001	table_1		1000		2000W		4000W
+10002	table_0		1001		0			2000W
+10003	table_1		1001		2000W		4000W
+10004	table_0		1002		4000W		10000W
+10005	table_0		1003		4000W		7000W
+10006	table_1		1003		7000W		10000W
+10007	table_0		1004		4000W		6000W
+10008	table_1		1004		6000W		8000W
+10009	table_2		1004		8000W		10000W
+		
+
+
+
+增强
+将shard_group中的ID区间抽离出来
+shard_group
+id		name			writable
+100		ShardGroup0		true	
+101		ShardGroup1		true	
+
+shard_group_id_interval
+shard_group_id		start_id	end_id
+100					0			4000W
+100					10000W		12000W
+
+shard
+id		name		group_id	hash_value
+1000	shard0		100			0
+1001	shard1		100			1
+1002	shard2		101			0
+1003	shard3		101			1,2
+1004	shard4		101			3,4,5
+
+将fragment_table中的ID区间抽离出来
+fragment_table
+id		name		shard_id
+10000	table_0		1000	
+10001	table_1		1000	
+10002	table_0		1001	
+10003	table_1		1001	
+10004	table_0		1002	
+10005	table_0		1003	
+10006	table_1		1003	
+10007	table_0		1004	
+10008	table_1		1004	
+10009	table_2		1004	
+
+fragment_table_id_interval
+fragment_table_id	start_id	end_id
+10000				0			2000W
+10000				10000W		11000W
+10001				2000W		4000W
+10001				11000W		12000W
+10002				0			2000W
+10002				10000W		11000W
+10003				2000W		4000W
+10003				11000W		12000W	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		

@@ -1,0 +1,85 @@
+﻿
+此抽象类是表示输出字节流的所有类的超类。
+一个输出流接受输出字节并将这些字节发送到某个接收器（水槽）。
+
+需要定义OutputStream子类的应用程序必须始终提供至少一种可写入一个输出字节的方法。
+
+另请参见：
+java.io.BufferedOutputStream
+java.io.ByteArrayOutputStream
+java.io.DataOutputStream
+java.io.FilterOutputStream
+java.io.InputStream
+java.io.OutputStream#write(int)
+public abstract class OutputStream implements Closeable, Flushable {
+
+写入指定字节到输出流中。
+write方法的常规约定是：向输出流写入一个字节。
+要写入的字节是参数b的八个低位。参数b的24个高位被忽略。
+OutputStream的子类必须提供此方法的实现。
+参数：
+	b - 指定的字节
+抛出：
+	IOException - 如果发生I/O错误。尤其是，如果已关闭输出流，则可能抛出IOException。
+public abstract void write(int b) throws IOException;
+
+
+
+写指定字节数组b的length（长度）字节到输出流中。
+write(b)应该和write(b, 0, b.length)完全一致效果。
+参数：
+	b - 字节数组
+public void write(byte b[]) throws IOException {
+	write(b, 0, b.length);
+}
+
+
+
+将指定byte数组中从偏移量off开始的len个字节写入此输出流。
+write(b, off, len)的常规协定是：将数组b中的某些字节按顺序写入输出流；
+元素b[off]是此操作写入的第一个字节，
+元素b[off+len-1]是此操作写入的最后一个字节。
+
+OutputStream的write方法对每个要写出的字节调用一个参数的write方法。
+建议子类重写此方法并提供更有效的实现。
+
+如果b是null，抛出NullPointException。
+如果off是负数，或len是负数，或off+len大于数组b的长度，抛出IndexOutOfBoundsException。
+
+参数：
+	b - 要写入的字节数组
+	off - 初始偏移量
+	len - 要写入的字节数
+public void write(byte b[], int off, int len) throws IOException {
+
+
+
+刷新此输出流并强制将所有已缓冲的输出字节s写出。
+flush的常规约定是：如果此输出流的实现已经缓冲了以前写入的任何字节，
+则这些字节应该被立即写入到预期的目标。
+
+如果此流的预期目标是由底层操作系统提供的一个抽象（如一个文件），
+则刷新此流只能保证先前被写入到流的字节传递给操作系统进行写入。
+但不保证能实际写入到物理设备（such as a disk drive）；
+
+OutputStream的flush方法不执行任何操作。
+public void flush() throws IOException {}
+
+
+
+关闭此输出流并释放所有此流关联的系统资源。
+close的常规约定是它关闭输出流。
+一个已关闭的流不能执行输出操作和重新打开。
+OutputStream的close方法不执行任何操作。
+public void close() throws IOException {}
+
+
+
+
+victor
+输出流的老大，表示写入数据到设备。
+常用方法
+write 写数据到destination
+flush 刷新内存数据到destination
+close 关闭流
+

@@ -1,0 +1,276 @@
+
+这是顶层接口在collection hierarchy中。
+一个集合表示对象的一个组，被称为elements。
+一些collection允许重复，一些不允许。
+一些排序，一些不排序。
+JDK不提供任务直接此接口的实现：它提供更具体的子接口实现，如Set,List。
+此接口通常用来传递collection，并在需要最大普遍性的地方操作这些collection。
+
+Bags或者multisets（可能包含重复元素的无序collection）应该直接实现此接口。
+
+所以general-purpose的Collection实现类（通常通过它的一个子接口间接实现Collection）应该提供两个“标准”的constructors:
+* a void (no arguments) constructor, which creates an empty collection
+* and a constructor with a single argument of type Collection, which creates a new collection with the same elements as its argument.
+实际上，后者的constructor允许用户copy任何collection,产生一个期望实现类型对等的colleciton。
+没有强制此约定（as interface cannot contain constructors）但是在Java platform libraries中所有general-purpose的Collection实现都遵守。
+
+此接口中包含“毁灭性”方法，也就是，可修改其所操作的collection的那些方法，如果此collection不支持该操作，则指定这些方法抛出UnsupportedOperationException。
+如果是这样，如果调用在此collection上无效时，这些方法可能，但非必须抛出UnsupportedOperationException。
+例如，如果要添加的collection为空且不可修改，则对该collection调用addAll(Collection)方法时，可能但非必抛出异常。
+
+一些集合实现在包含的元素上有限制。
+例如，一些实现禁止null元素，和在元素类型上的限制。
+Attempting to add an ineligible element throws an unchecked exception, typically NullPointerException or ClassCastException.
+Attempting to query the presence of an ineligible element may throw an exception, or it may simply return false;
+某些实现将表现前者的行为，某些实现将表现后者的行为。
+More generally, 试图对某个不合格的元素执行操作且该操作的完成不会导致将不合格元素插入collection中，将可能抛出一个异常，也可能操作成功，
+这取决于实现本身。这样的异常在此接口的规范中标记为“可选”。
+
+每个collection决定自己的同步策略。
+当实现缺乏强有力的保证时，调用由另一线程正在更改的colleciton的方法可能会出现不确定行为；这包括直接调用，传递collection到可能执行调用的访求，
+以及使用现有迭代器检查collection.
+
+Collections Framework接口中的一些方法是依据Object#equals方法来定义的。
+例如，对于contains(Object)方法的规范声明：当且仅当此collection包含至少一个满足(o==null ? e==null : o.equals(e))的元素e时，返回true。
+此规范不应该理解为它暗指调用非空参数o的Collection.contains方法会导致为任意的e元素调用o.equals(e)方法。
+可随意对实现进行优化，只要避免调用equals即可，例如，通过首先比较两个元素的哈希码。
+(Ojbect#hashCode()规范保证哈希码不相等的两个对象不会相等）。More generally, 各种Collections Framework接口的实现可随意利用底层Object方法的指定行为，
+而不管实现程序认为它是否合适。
+
+此接口是Java Collections Framework中的一个成员。
+
+@see Set
+@see List
+@see Map
+@see SortedSet
+@see SortedMap
+@see HashSet
+@see TreeSet
+@see ArrayList
+@see LinkedList
+@see Vector
+@see Collections
+@see Arrays
+@see AbstractCollection
+
+java.util.Collection
+
+
+// Query Operations
+
+/**
+ * Returns the number of elements in this collection.  If this collection
+ * contains more than <tt>Integer.MAX_VALUE</tt> elements, returns
+ * <tt>Integer.MAX_VALUE</tt>.
+ *
+ * @return the number of elements in this collection
+ */
+int size();
+
+/**
+ * Returns <tt>true</tt> if this collection contains no elements.
+ *
+ * @return <tt>true</tt> if this collection contains no elements
+ */
+boolean isEmpty();
+
+/**
+ * Returns <tt>true</tt> if this collection contains the specified element.
+ * More formally, returns <tt>true</tt> if and only if this collection
+ * contains at least one element <tt>e</tt> such that
+ * <tt>(o==null&nbsp;?&nbsp;e==null&nbsp;:&nbsp;o.equals(e))</tt>.
+ *
+ * @param o element whose presence in this collection is to be tested
+ * @return <tt>true</tt> if this collection contains the specified
+ *         element
+ * @throws ClassCastException if the type of the specified element
+ *         is incompatible with this collection (optional)
+ * @throws NullPointerException if the specified element is null and this
+ *         collection does not permit null elements (optional)
+ */
+boolean contains(Object o);
+
+/**
+ * Returns an iterator over the elements in this collection.  There are no
+ * guarantees concerning the order in which the elements are returned
+ * (unless this collection is an instance of some class that provides a
+ * guarantee).
+ *
+ * @return an <tt>Iterator</tt> over the elements in this collection
+ */
+Iterator<E> iterator();
+
+/**
+ * Returns an array containing all of the elements in this collection.
+ * 如果collection对其迭代器返回的元素顺序做出了某些保证，那么此方法必须以相同的顺序返回这些元素。
+ * If this collection makes any guarantees as to what order its elements are returned by its iterator, this method must return the elements in the same order.
+ *
+ * 返回的array是“安全的”，因为此collection并不维护对返回数组的任何引用。
+ * The returned array will be "safe" in that no references to it are maintained by this collection.  
+ (In other words, this method must allocate a new array even if this collection is backed by an array).
+ * The caller is thus free to modify the returned array.
+ *
+ * This method acts as bridge between array-based and collection-based APIs.
+ *
+ * @return an array containing all of the elements in this collection
+ */
+Object[] toArray();
+
+
+返回一个包含collection中所有元素的array；
+返回数组的运行时类型与指定数组的运行时类型相同。
+如果指定的数组能容纳该collection，则返回包含此collection元素的数组。
+否则，将分配一个指定数组的运行时类型和此collection大小的新数组。
+
+如果指定的array能容纳collection，并有剩余空间（即数组的元素比collection中的元素多），
+那么会将数组中紧接collection尾部的元素设置为null。
+只有在调用者知道此collection中没有包含任何null元素时才能用此方法确定collection的长度。
+
+If this collection makes any guarantees as to what order its elements are returned by its iterator, 
+this method must return the elements in the same order.
+
+Like the toArray() method, this method acts as bridge between array-based and collection-backed APIs.
+Further, this method allows precise control over the runtime type of the output array, 并在某些情况下，可以用来节省分配开销。
+
+Suppose x is a collection known to contain only strings.
+The following code can be used to dump the collection into a newly allocated array of String.
+	String[] y = x.toArray(new String[0]);
+Note that toArray(new Object[0]) is identical in function to toArray().
+
+@param a the array into which the elements of this collection are to be stored, if it is big enough; 
+	otherwise, a new array of the same runtime type is allocated for this purpose.
+@return an array containing all of the elements in this collection.
+@throws ArrayStroeException if the runtime type of the specified array is not a supertype of the runtime type of every element in this collection.
+@throws NullPointerException if the specified array is null.
+<T> T[] toArray(T[] a);
+
+
+// Modification Operations
+
+Ensures that this collection contains the specified element(optional operation).
+Returns true if this collection changed as a result of the call.
+(Returns false if this collection does not permit duplicates and already contains the specified element.)
+
+支持此操作的collection可以限制哪些元素被添加到collection中。In particular, some collections will refuse to add 
+null elements, and others will impose restrictions(强加限制) on the type of elements that may be added.
+Collection classes should clearly specify in their documentation any restrictions on what elements may be added.
+
+If a collection refuses to add a particular element for any reason other than that it already contains the element,
+it must throw an exception(rather than returning false).
+这确保了在此次调用返回之后，collection总是包含指定的元素。
+
+@param e 确定此collection中是否存在的元素。
+@return true if this collection changed as a result of the call.
+@throws UnsupportedOperationException if the add operation is not supported by this collection.
+@throws ClassCastException if the class of the specified element prevents it from being added to this collection.
+@throws NullPointerException if the specified element is null and this collection does not permit null elements.
+@throws IllegalArgumentException if some property of the element prevents it from being added to this collection.
+@throws IllegalStateException 如果由于插入限制，元素不能在此时间添加(if the element cannot be added at this time due to insertion restrictions)
+boolean add(E e);
+
+
+Removes a single instance of the specified element from this collection, if it is present(optional operation).
+More formally, removes an element e such that (o==null ? e==null : o.equals(e)), if this collection contains one or more such elements.
+Returns true if this collection contained the specified element(or equivalently(或者说/相当于), if this collection changed as a result of the call).
+@param o element to be removed from this colleciton, if present.
+@return if an element was removed as a result of this call.
+@throws ClassCastException if the type of the specified element is incompatible with this collection(optional).
+@throws NullPointerException if the specified element is null and this colleciton does not permit null elements(optional).
+@throws UnsupportedOperationException if the remove operation is not supported by this collection.
+boolean remove(Object o);
+
+
+
+// Bulk Operations
+
+Return true if this colleciton contains all of the elements in the specified collection.
+@param c colleciton to be checked for containment in this colleciton
+@return true if this colleciton contains all of the elements in the specified colleciton.
+@throws ClassCastException if the types of one or more elements in the specified colleciton are 
+	incompatible with this colleciton(optional)
+@throws NullPointerException if the specified colleciton contains one or more null elements and this colleciton does not permit null 
+	elements(optional), or if the specified colleciton is null
+@see #contains(Object)
+boolean containsAll(Collection<?> c);
+
+
+Adds all of the elements in the specified colleciton to this colleciton(optional operation).
+The behavior of this operation is undefined if the specified colleciton is modified while the 
+operation is in progress.(This implies that the behavior of this call is undefined if the specified colleciton is this colleciton,
+and this colleciton is nonempty.)
+@param c colleciton containing elements to be added to this colleciton
+@return true if this colleciton changed as a result of the call.
+@throws UnsupportedOperationException if the addAll operation is not supported by this colleciton.
+@throws ClassCastException if the class of an element of the specified colleciton prevents it from being added to this colleciton.
+@throws NullPointerException if the specified colleciton contains a null element and this colleciton does not permit null elements,
+	or if the specified colleciton is null.
+@throws IllegalArgumentException if some property of an element of the specified colleciton prevents it from being added to this colleciton.
+@throws IllegalStateException if not all the elements can be added at this time due to insertion restrictions.
+@see @add(Object)
+boolean addAll(Collection<? extend E> c);
+
+
+Removes all of this colleciton's elements that are also contained in the specified colleciton(optional operation).
+After this call returns, this colleciton will contain no elements in common with the specified colleciton.
+@param c colleciton containing elements to be removed from this colleciton.
+@return true if this colleciton changed as a result of the call
+@throws UnsupportedOperationException if the removeAll method is not supported by this colleciton.
+@throws ClassCastException if the types of one or more elements in this collection are incompatible with the specified collection (optional)
+@throws NullPointerException if this collection contains one or more null elements (optional), or if the specified collection is null
+@see #remove(Object)
+@see #contains(Object)
+boolean removeAll(Collection<?> c);
+
+
+Retains only the elements in this colleciton that are contained in the specified colleciton(optional operation).
+In other words, removes from this colleciton all of its elements that are not contained in the specified colleciton.
+@param c colleciton containing elements to be retained in this colleciton
+@return true if this collection changed as a result of the call
+@throws UnsupportedOperationException if the retainAll operation is not supported by this collection
+@throws ClassCastException if the types of one or more elements in this collection are incompatible with the specified collection (optional)
+@throws NullPointerException if this collection contains one or more null elements and the specified collection does not permit null
+        elements (optional), or if the specified collection is null
+@see #remove(Object)
+@see #contains(Object)
+boolean retainAll(Collection<?> c);
+
+
+Removes all of the elements from this colleciton(optional operation).
+The colleciton will be empty after this method returns.
+@throws UnsupportedOperationException if the clear operation is not supported by this colleciton.
+void clear();
+
+
+//Comparison and hashing
+
+Compares the specified object with this colleciton for equality.
+当Collection接口没有对Object.equals的常规约定添加任何约定时，“直接”实现该Collection接口（in other words, create a class that is a 
+Collection but is not a Set or a List）的程序员选择重写Object.equals时必须小心。
+It is not necessary to do so, and the simplest course of action is to rely on Object's implementation,
+but the implementor may wish to implement a "value comparison" in place of the default "reference comparison."
+(The List and Set interfaces mandate(要求) such value comparisons.)
+
+The general contract for the Object.equals method states that equals must be symmetric(对称性)(in other words, a.equals(b) if and ony if
+b.equals(a)). The contracts for List.equals and Set.equals state that lists are only equal to other lists, and sets to other sets.
+Thus, a custom equals method for a collection class that implements neither the List nor Set interface must return false when 
+this colleciton is compared to any list or set.(By the same logic, it is possible to write a class that correctly implements both 
+the Set and List interface.) 
+@param o object to be compared for equality with this colleciton.
+@return true if the specified object is equal to this colleciton
+@see Object#equals(Object)
+@see Set#equals(Object)
+@see List#equals(Object)
+boolean equals(Object o);
+
+
+Returns the hash code value for this collection.
+While the Collection interface adds no stipulations to the general contract for the Object.hashCode method,
+programmers should take note that any class that overrides the Object.equals method must also override the Object.hashCode
+method in order to satisfy the general contract for the Object.hashCode method.
+In particular, c1.equals(c2) implies that c1.hashCode()==c2.hashCode().
+@return the hash code value for this colleciton.
+@see Object#hashCode()
+@see Object#equals(Object)
+int hashCode();
+
+

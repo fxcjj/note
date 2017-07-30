@@ -1,0 +1,10 @@
+Closeable是可以关闭的数据源或目标。调用close方法去释放对象持有的资源（如打开文件）。
+
+关闭此流并释放与此流关联的所有系统资源。如果已经关闭该流，则调用此方法无效。
+抛出：
+IOException - 如果发生 I/O 错误
+public void close() throws IOException;
+
+
+victor
+一般i/o操作应当实现此接口，表示可关闭source或者destination

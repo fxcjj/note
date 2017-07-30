@@ -1,0 +1,16 @@
+一、两个关键点
+不管在什么类型的持久化应用中，都包含下面两个关键点：
+1）事务管理
+2）对象关系映射(ORM)
+而JPA主要定义的就是和对象关系映射(ORM)相关的内容。
+
+二、核心概念及其关联关系
+
+首先，当然是介绍最核心最重要的EntityManager相关概念。
+
+在学习和使用JPA的时候，经常会碰到几类对象：
+
+EntityManager 以及 PersistenceContext
+EntityManagerFactory 以及 PersistenceUnit
+Persistence
+

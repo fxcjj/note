@@ -1,0 +1,99 @@
+﻿
+http://os.51cto.com/art/201307/404309.htm
+
+一、Debian
+运行极其稳定，非常适合用于服务器
+使用apt,aptitude来安装和更新软件
+不适合新手，适合系统管理员和高级用户
+包含众多软件包
+
+二、Gentoo
+众多软件包
+安装和使用很困难，最佳学习对象，了解linux os的内部运作原理
+使用portage来安装和更新软件
+适合对linux驾轻就熟的用户
+
+三、Ubuntu
+Debian的衍生版本
+适合新手
+
+四、Damn Vulnerable Linux
+训练管理员的实验室
+
+五、红帽企业级Linux
+第一款面向商业市场的linux发行版。
+支持众多处理器架构
+红帽认证（RHCSA/RHCE）
+非常安全，可首选
+使用yum程序包管理器
+
+是系统管理员的第一选择，有众多程序包，非常到位的支持。
+
+不免费，有教学用途的测试版
+
+六、CentOS
+企业级Linux发行版，使用红帽重构而来的。
+
+Yum 全称为 Yellow dog Updater, Modified
+
+RPM 全名是『 RedHat Package Manager 』简称则为 RPM。
+
+yum来管理软件包
+非常稳定的程序包
+谁要是想在桌面端测试一下服务器的运作原理，都应该试试这款操作系统。
+
+七、Fedora
+小巧的
+最先进的技术
+是红帽公司的一个测试平台
+非常好的发行版，有庞大的用户论坛
+
+八、Kali Linux
+Debian的衍生版本
+旨在用于渗透测试，带有许多渗透测试工具
+前身是Backtrack
+用于Debian的所有binary软件包都可以安装到Kali Linux上
+使用apt来管理软包
+
+文明黑客
+
+九、Arch Linux
+滚动发行方式的操作系统
+只要安装一次
+使用pacman管理软件包
+开发者角度
+
+配置和安装超easy
+
+十、OpenSuse
+免费的
+不供商业使用，仍然供个人使用
+对手是红帽企业级Linux
+使用yast管理软件包，yast安装向导可配置mail,ldap服务器,ftp,web server
+随带snapper快照管理工具
+suse在管理员当中的名气更大，因为它有yast以及让system admin
+能够自动管理任务
+
+
+
+
+简称
+yum
+Yellow dog Updater Modified
+
+rpm
+redhat Package Manager
+
+rhel
+redhat enterprise linux
+
+usr
+Unix System Resource
+
+
+LSB LINUX标准规范
+Linux Standard Base
+
+fsck
+file system check
+

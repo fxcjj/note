@@ -1,0 +1,33 @@
+From
+http://blog.csdn.net/a494303877/article/category/6518694
+
+jpa是数据持久化到数据库的抽象描述。
+
+事务（Transaction, TX）
+   对于一次数据操作，涉及的变更要么全都成功，要么全部失败。不存在除此之外的任何情况。
+
+事务特性
+   Atomicity(原子性)
+   Consistency(一致性)
+   Isolation(隔离性)
+   Durability(持久性)
+
+JavaEE中的事务类型
+   1）Resource-Local事务
+   2）Container事务
+     a, 使用JTA（基于BMT）
+     b, 借助Container完成事务（基于CMT）
+
+事务划分
+   1）事务划分指事务从哪里开始，在哪里结束。
+   2）两种事务类型
+        a）Resouce-Local，最基本的事务类型，由开发人员直接通过编码地方式完成事务划分。
+            1、begin(), rollback(), commit()等语句
+        b）Container事务
+            1、使用JTA接口在应用中编码完成显示划分（基于Bean的事务，Bean-managed Transaction, BMT）
+            2、在容器的帮助下完成自动划分（基于容器的事务，Container-managed Transaction, CMT）
+            对应到Spring Framework语境中，是这样描述的：
+            对于第一种情况，被称为编程式的事务管理（Programmatic Transaction Management）
+            对于第二种情况，被称为声明式的事务管理（Declarative Transaction Management）
+
+

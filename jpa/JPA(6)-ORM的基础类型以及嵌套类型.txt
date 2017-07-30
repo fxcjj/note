@@ -1,0 +1,77 @@
+ORM的基础类型以及嵌套类型
+
+基础类型映射（9种）
+	1)简单类型：byte，int，short，long，boolean，char，float以及double
+	2)简单类型对应的包装类型：Byte，Integer，Short，Long，Boolean，Character，Float以及Double
+	3)字节以及字符数组：byte[]，Byte[]，char[]以及Character[]
+	4)能够表示大数值的类型：java.math.BigInteger以及java.math.BigDecimal
+	5)字符串类型：String
+	6)Java时间类型：java.util.Date以及java.util.Calendar
+	7)JDBC时间类型：java.sql.Date，java.sql.Time以及java.sql.Timestamp
+	8)枚举类型
+	9)可序列化的对象(Serializable Object)
+	注：@Basic
+
+注解
+	1)@Lob 处理大数据量的对象，结合@Basic(fetch=FetchType.LAZY)懒加载，如：article字段。
+	2)@Enumerated(EnumType.STRING/ORDINAL) 表示枚举类型，STRING取name()，ORDINAL取声明顺序。
+	3)时间类型(Temporal Type)
+		a)Java: java.util.Date, java.util.Calendar
+		b)JDBC: java.sql.Date, java.sql.Time, java.sql.Timestamp //无需加任何注解，即可完成转换
+		对于a)中的java.util.Date要加@Temporal(TemporalType.TIMESTAMP)
+		对于a)中的java.util.Calendar要加@Temporal(TemporalType.DATE)
+
+瞬态属性(Transient State Attribute)
+	1)transient 并非为JPA而设计，不参与序列化
+	2)@Transient 不会被持久化，可以序列化
+	
+嵌套类型(Embedded Type)
+	1)如Address这个类可以作为嵌套类型嵌套到Company/Employee中
+	2)声明嵌套类型Address
+		@Embeddable
+		public class Address {
+			private String street;
+			private String city;
+			// ...
+		}
+	3)使用嵌套类型Address
+		@Entity
+		public class Employee {
+			@Id 
+			private int id;
+			private String name;
+			private long salary;
+			@Embedded 
+			private Address address;
+			// ...
+		}
+
+		@Entity
+		public class Company {
+			@Id 
+			private int id;
+			private String name;
+			@Embedded 
+			private Address address;
+			// ...
+		}
+		
+修改嵌套类型被映射到表后的属性名称
+	1)使用@AttributeOverrides,@AttributeOverride
+	2)示例
+		@Entity
+		public class Company {
+			@Id 
+			private int id;
+			private String name;
+			@Embedded
+			@AttributeOverrides({
+				@AttributeOverride(name="street", column=@Column(name="area")),
+				@AttributeOverride(name="city", column=@Column(name="province"))
+			})
+			private Address address;
+			// ...
+		}
+
+
+

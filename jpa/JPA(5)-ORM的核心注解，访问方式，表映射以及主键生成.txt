@@ -1,0 +1,23 @@
+ORM的核心注解，访问方式，表映射以及主键生成
+
+ORM
+	O表示pojo
+	R表示数据库
+	
+核心注解
+	@Entity 表示该实体可以通过JPA与数据库中的记录交互。
+	@Id 表示此字段为主键，可以加在字段上或getter方法上。
+	@Column 指定字段与列名关系。
+	@Table 指定表名
+
+访问方式
+	通过field
+	通过property(getter)
+
+混合模式
+	通过@Access(AccessType.XXX)来描述
+	在类声明上使用@Access(AccessType.FIELD)来表明此类是基于字段的访问方式。
+	在Getter方法使用@Access(AccessType.PROPERTY)来表明此字段是基于Getter的访问方式。
+
+主键映射与生成策略
+	@GeneratedValue 在id字段上加此注解，表示主键生成策略（AUTO,TABLE,SEQUENCE,IDENTITY）。

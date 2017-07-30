@@ -1,0 +1,48 @@
+java.lang.CharSequence
+
+CharSequence是char值们的可读序列。
+对于许多不同种类的char序列，此接口了提供统一的只读访问。
+一个char值表示Basic Multilingual Plane(BMP)或代理项中的一个字符。
+详细请参考Unicode Character Representation(Unicode字符表示形式)。
+
+此接口没有修改java.lang.Object#equals和java.lang.Object#hashCode方法的常规约定。
+因此，通常未定义比较实现CharSequence接口的两个对象的结果。
+每个对象都可以通过一个不同的类实现，而且不能保证每个类能够测试其实例与其他类的实例的相等性。
+因此，使用任意CharSequence实例作为一个集合中的元素或者map中的key是不合适的。
+
+
+返回此字符序列的长度。
+该长度是序列中以16-bit为单位的char的数量。
+int length();
+
+
+返回指定index的char值。
+index范围是从0到length()-1。
+对于数组索引，这个序列的第一个char值是索引0，下一个是索引1，依此类推。
+通过索引指定的char值是一个代理项，则返回这个代理项的值。
+param index //要返回char值的索引
+return 指定的char值
+char charAt(int index);
+
+
+返回一个新的CharSequence，新的CharSequence是此CharSequence的一个子序列。
+子序列从指定索引的char值开始，在索引为end-1的char值结束。
+返回的序列的长度（char数）是end-start,因此如果start==end，则表示返回一个空的序列。
+param start //开始索引（包括）
+param end //结束索引（不包括）
+return //指定的子序列
+throws IndexOutOfBoundsException
+	//如果start或者end为负数时
+	//如果end大于length()时，可以等于，因为不包括end
+	//如果start大于end时
+CharSequence subSequence(int start, int end);
+
+
+返回一个包含此序列中字符的字符串，
+该字符串与此序列的顺序相同。
+字符串的长度就是此序列的长度。
+return //一个完全由此序列的字符组成的字符串
+String toString();
+
+
+

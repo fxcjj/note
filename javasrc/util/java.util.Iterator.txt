@@ -1,0 +1,34 @@
+
+在collection上的一个迭代器。
+在java集合框架中Iterator代替了Enumeration。
+主要和enumeration有二个不同：
+* Iterator允许调用者在迭代过程中以良好定义语法从底层集合中remove元素。
+* 方法命名得到改进
+
+This interface is a member of the Java Collections Framework.
+
+@see Collection
+@see ListIterator
+@see Enumeration
+public interface java.util.Iterator<E>
+
+
+如果有元素可迭代，返回true。
+换句话说，如果下一个返回一个元素而非抛出异常则返回true。
+@return 如果这个迭代器有更多元素
+boolean hasNext();
+
+
+返回在迭代中的下一个元素。
+@return 迭代中的下一个元素
+@exception NoSuchElementException 迭代中没有更多元素
+E next();
+
+
+从迭代器指向的collection中移除迭代器返回的最后一个元素（可选操作）。
+每次调用next只能调用一次此方法。
+
+如果迭代器指向的collection在迭代期间通过任何方式而非调用此方法，则此迭代器的行为是不确定的。
+@exception UnsupportedOperationException 如果此iterator不支持remove操作
+@exception IllegalStateException 如果尚未调用next方法，或者在最后一次调用next方法之后已经调用了remove方法。
+void remove();

@@ -1,0 +1,75 @@
+java io入门（十二）缓冲输入流BufferedInputStream源码分析及介绍使用
+
+一、BufferedInputStream介绍
+BufferedInputStream是缓冲输入流。它继承于FilterInputStream。
+BufferedInputStream的作用是为另一个输入流添加一些功能，例如，提供“缓冲功能”以及支持“mark()标记”和“reset()重置方法”。
+BufferedInputStream本质上是通过一个内部缓冲区数组实现的。例如，在新建某输入流对应的BufferedInputStream后，
+当我们通过read()读取输入流的数据时，BufferedInputStream会将该输入流的数据分批的填入到缓冲区中。
+每当缓冲区中的数据被读完之后，输入流会再次填充数据缓冲区；如此反复，直到我们读完输入流数据位置。
+	
+二、BufferedInputStream源码
+	1、查看java.io.BufferedInputStream
+	
+	//
+	
+	
+	2、主要思想：为其它输入流提供缓冲功能，创建BuffredInputStream时，通过它的constructor指定某个输入流参数。
+		BufferedInputStream是分批读取InputStream到自己的缓冲中，当操作完缓冲中的数据后，再读取一部分数据到缓冲中，如此反复。
+	
+	3、为什么要缓冲？
+	效率问题，缓冲的数据是存在内存，原始数据可能存在硬盘等存储介质上，从内存读取数据比从disk读取数据的速度至少要快10倍以上。
+	
+	4、为什么不一次性读取到缓冲中？
+		a)读取数据可能要很长时间
+		b)内存价格很贵，容量不像硬盘那么大
+	
+	5、fill方法
+		有五种情况
+	
+三、BufferedInputStream使用示例。
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+http://kbservcenter.test.alipay.net/support/index.htm#/PushId?_k=ekpx7p
+
+
+
+
+
+
+
+

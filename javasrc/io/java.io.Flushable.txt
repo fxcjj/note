@@ -1,0 +1,13 @@
+
+Flushable是一个可刷新数据的目标地。
+调用flush方法将所有已缓冲在输出写入底层流。
+public interface Flushable
+
+通过将所有已缓冲输出写入底层流来刷新此流。
+抛出：
+	IOException 如果发生I/O错误
+void flush() throws IOException
+
+
+victor
+一般writer都会实现此接口，表示将内存缓存数据写入到底层流（设备）。

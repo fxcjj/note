@@ -1,0 +1,17 @@
+
+java.lang.Cloneable
+
+实现Cloneable接口的类，以指示调用Object#clone()方法可以合法地对该类实例进行按字段复制。
+调用一个没有实现Cloneable接口的类的实例的clone方法，会导致抛出CloneNotSupportedException。
+按照惯例，实例此接口的类应该使用公共方法重写Object.clone(它是受保护的)。
+注意，此接口不包含clone方法。
+因此，仅仅通过实现此接口克隆对象是不可能的。
+即使通过反射调用，也无法保证是成功的。
+
+抛出：
+java.lang.CloneNotSupportedException
+参见：
+java.lang.Object#clone()
+public interface Cloneable
+
+
