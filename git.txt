@@ -1,0 +1,409 @@
+
+#创建与合并分支
+每次提交都是提交到一个时间线上，当前时间线为HEAD。
+HEAD指向当前的branch，当切换branch时，HEAD会跟着指向新branch。
+
+//创建dev分支，然后切换到dev分支
+git checkout -b dev
+
+//查看分支
+git branch
+* dev
+  master
+
+前面有*的表示当前分支
+
+//在dev分支新建c.txt并提交
+touch c.txt
+git add c.txt
+git commit -m "add c.txt"
+
+//切换到master分支，查看c.txt
+git checkout master
+ls //此时c.txt文件并不存在master分支上
+
+//将dev合并到master上
+git merge dev //将dev分支合并到当前分支上
+Updating d17efd8..fec145a
+Fast-forward
+ a.txt |    1 +
+ 1 file changed, 1 insertion(+)
+//注意上面的Fast-forward信息，表示“快进模式”，
+即直接把master指向dev的当前提交，所以合并速度非常快。
+
+//删除dev分支
+git branch -d dev
+
+Conclusion
+查看分支：git branch
+创建分支：git branch <name>
+切换分支：git checkout <name>
+创建+切换分支：git checkout -b <name>
+合并某分支到当前分支：git merge <name>
+删除分支： git branch -d <name>
+
+
+
+#解决冲突
+人生不如意之事十之八九。
+
+//创建fe分支并切换到fe
+git checkout -b fe
+
+//修改a.txt文件
+vi a.txt
+git add a.txt
+git commit -m "add sth"
+
+//切换到master分支并修改a.txt
+git checkout master //Your branch is ahead of 'origin/master' by 1 commit.
+vi a.txt
+git add a.txt
+git commit -m "add sth"
+
+//合并fe分支到当前分支
+git merge fe
+Auto-merging a.txt
+CONFLICT (content): Merge conflict in a.txt
+Automatic merge failed; fix conflicts and then commit the result.
+
+//现在文件发生冲突了，必须手工解决才行。
+//查看工作区
+git status
+
+//查看冲突文件
+cat a.txt
+<<<<<<< HEAD
+abc & ddddddddd
+=======
+abc and dddd
+what can i do for you?
+>>>>>>> fe1
+
+//修改完毕后
+git add a.txt
+git commit -m "fix conflict"
+
+//用带参数的git log命令可以看到分支的合并情况
+git log --graph --pretty=oneline --abbrev-commit
+* 0b6bb88 add dd
+*   d41a761 fix conflict
+|\
+| * 613bfae and ddd
+* | 8e2b2f8 & ddd
+* | d798348 & simple
+|/
+* 309cd83 add c.txt
+* bc171b0 add b.txt
+* 505d08c create a.txt
+
+//删除分支fe
+git branch -d fe
+
+Conclusion
+将某个分支合并到当前分支时，可能会有冲突，此时要处理冲突后，才能提交。
+使用git log --graph可以看到分支合并图。
+
+
+#分支管理策略
+//使用no-ff方式合并（之前是Fast-forward模式）
+//新建分支fly
+git checkout -b fly
+
+//修改b.txt
+vi b.txt
+git add b.txt
+git commit -m "xxx"
+
+//切换到master分支，执行合并
+git merge --no-ff -m "merge with no-ff" fly
+
+#分支策略
+master分支应该是非常稳定的，也就是仅用来发布新版本，平时不能在上面干活。
+要在dev分支上，也就是说，dev分支是不稳定的，到某个时候，比如1.0版本发布时，
+再把dev分支合并到master分支上，在master分支发布1.0版本。
+
+Conclusion
+合并分支时，加上--no-ff参数表示使用普通模式合并，合并后的历史有分支，
+能看出来曾经做过合并，而fast-forward合并看不出来曾经做过合并。
+
+
+#Bug分支
+有如下场景
+你在dev分支上正在开发，突然你收到了一个代号110的紧急bug，此时你需要保存当前dev分支现场。
+先处理完bug，再回到dev分支上开发。
+
+how to do?
+//使用git stash命令将当前工作（fly分支）现场“储藏”起来，等以后恢复现场后继续工作。
+git stash
+Saved working directory and index state WIP on fly: fbd673d add line
+HEAD is now at fbd673d add line
+//此时工作区是干净的
+
+//回到master分支
+git checkout master
+git checkout -b issue-110
+
+//修得bug后，切换到master分支，并完成合并，最后删除issue-110分支。
+git checkout master
+git merge --no-ff -m "fix bug" issue-110
+
+NOW，是时候回到fly分支干活了。
+//切换到fly分支
+git checkout fly
+
+//工作现场存到哪儿了？用git stash list命令查看
+git stash list
+stash@{0}: WIP on fly: fbd673d add line
+
+//工作现场还在，需要恢复下，两种方式
+方式1
+使用git stash apply，但是恢复后，stash内容并不删除，需要用git stash drop来删除。
+
+方式2
+使用git stash pop，恢复的同时把stash内容也删了。
+
+git stash pop
+On branch fly
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+        modified:   b.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+Dropped refs/stash@{0} (d4b2fc2442cf58496a12087759beec461f8fce0f)
+
+此时git stash list什么也没有了
+
+
+可以多次stash，恢复的时候，先用git stash list查看，然后再恢复指定的stash，使用下面命令。
+git stash apply stash@{0}
+
+Conclusion
+修复bug时，可以通过创建新的分支处理bug，而不影响当前dev分支。
+当手头工作没有完成时，可以先使用git stash命令保存起来，修复完bug后，
+再使用git stash pop恢复工作现场。
+
+
+
+#Feature分支
+当添加一个新功能时，不希望在当前分支上折腾，可以新建一个feature分支，在此分支上开发，
+合并，最后删除。
+
+//新建一个feature分支
+git checkout -b feature-vulcan
+
+//4分钟后，开发完毕，切换到dev分支，准备合并
+git checkout dev
+此时，经费不足，计划中止，销毁分支
+git branch -d feature-vulcan
+error: The branch 'feature-vulcan' is not fully merged.
+If you are sure you want to delete it, run 'git branch -D feature-vulcan'.
+
+提示销毁失败，feature-vulcan分支还没有被合并，如果删除，将丢失修改，如果要强行删除，
+需要使用命令git branch -D feature-vulcan.
+
+//强行删除
+git branch -D feature-vulcan
+
+Conclusion
+开发一个新feature时，最好新建一个分支。
+如果要丢弃一个没有被合并过的分支，使用强行删除命令git branch -D feature-vulcan。
+
+
+#多人协作
+当从远程库克隆时，git会自动把本地的master分支和远程的master分支对应起来，
+并且，远程库的默认名称是origin
+
+//查看远程库信息
+git remote
+
+//或者使用-v参数显示更详细的信息
+git remote -v
+origin  git@github.com:fxcjj/fuckgit.git (fetch)
+origin  git@github.com:fxcjj/fuckgit.git (push)
+
+上面显示了可以抓取和推送的origin地址。如果没有推送权限，就看不到push地址。
+
+推送分支
+就是把分支上的所有本地提交推送到远程库。推送时，要指定本地分支，这样，
+git就会把分支推送到远程库对应的远程分支上。
+git push origin master
+
+如果要推送其他分支，比如dev，就改成
+git push origin dev
+
+master分支是主分支，因此时刻与远程同步
+dev分支是开发分支，团队所有成员都需要在上面工作，所以也需要与远程同步。
+
+抓取分支
+多人协作时，大家都会往master、dev推送各自的修改。
+
+A君
+//克隆远程库
+git clone git@github.com:fxcjj/fuckgit.git
+
+//创建本地dev分支
+$ git checkout -b dev origin/dev
+fatal: Cannot update paths and switch to branch 'dev' at the same time.
+Did you intend to checkout 'origin/dev' which can not be resolved as commit?
+
+上面报错是因为远程库上没有dev分支
+
+$ git fetch
+From github.com:fxcjj/fuckgit
+ * [new branch]      dev        -> origin/dev
+
+$ git checkout -b dev origin/dev
+Branch dev set up to track remote branch dev from origin.
+Switched to a new branch 'dev'
+
+现在修改b.txt，然后提交，push到远程origin/dev分支
+git push dev origin/dev
+
+B君
+//抓取远程
+git fetch
+remote: Counting objects: 3, done.
+remote: Compressing objects: 100% (2/2), done.
+Unpacking objects: 100% (3/3), done.
+remote: Total 3 (delta 0), reused 3 (delta 0), pack-reused 0
+From github.com:fxcjj/fuckgit
+ * [new branch]      dev        -> origin/dev
+
+//切换到dev分支
+git checkout dev
+
+此时也修改相同文件，并提交，push
+git add b.txt
+git commit -m "update b.txt"
+$ git push origin dev
+To git@github.com:fxcjj/fuckgit.git
+ ! [rejected]        dev -> dev (fetch first)
+error: failed to push some refs to 'git@github.com:fxcjj/fuckgit.git'
+hint: Updates were rejected because the remote contains work that you do
+hint: not have locally. This is usually caused by another repository pushing
+hint: to the same ref. You may want to first integrate the remote changes
+hint: (e.g., 'git pull ...') before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+
+//出现错误，要git pull一下下
+$ git pull
+remote: Counting objects: 3, done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 3 (delta 0), reused 3 (delta 0), pack-reused 0
+Unpacking objects: 100% (3/3), done.
+From github.com:fxcjj/fuckgit
+   c97a7ff..4373914  dev        -> origin/dev
+Auto-merging b.txt
+CONFLICT (content): Merge conflict in b.txt
+Automatic merge failed; fix conflicts and then commit the result.
+
+处理冲突后，再提交push即可。
+
+//如果git pull失败了
+git pull
+remote: Counting objects: 5, done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 3 (delta 0), reused 3 (delta 0)
+Unpacking objects: 100% (3/3), done.
+From github.com:michaelliao/learngit
+   fc38031..291bea8  dev        -> origin/dev
+There is no tracking information for the current branch.
+Please specify which branch you want to merge with.
+See git-pull(1) for details
+
+    git pull <remote> <branch>
+
+If you wish to set tracking information for this branch you can do so with:
+
+    git branch --set-upstream dev origin/<branch>
+
+原因是没有指定本地dev分支与远程库origin/dev分支的链接，根据提示，设置dev和origin/dev的链接。
+git branch --set-upstream dev origin/dev
+Branch dev set up to track remote branch dev from origin
+
+再pull即可
+
+Conclusion
+1 推送本地分支到远程库 git push origin <branch-name>
+2 如果推送失败，说明本地分支过期，git pull
+3 如果有冲突，处理冲突
+4 没有冲突或者冲突解决后，再用git push origin <branch-name>推送。
+5 如果git pull提示no tracking information，则说明本地分支和远程分支的链接没有创建。，
+	使用命令git branch --set-upstream branch-name origin/branch-name	
+6 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
