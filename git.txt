@@ -333,7 +333,8 @@ Conclusion
 4 没有冲突或者冲突解决后，再用git push origin <branch-name>推送。
 5 如果git pull提示no tracking information，则说明本地分支和远程分支的链接没有创建。，
 	使用命令git branch --set-upstream branch-name origin/branch-name	
-6 
+6 查看远程库信息，使用git remote -v
+
 
 
 
