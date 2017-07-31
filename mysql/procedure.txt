@@ -1,0 +1,354 @@
+
+
+
+if else测试
+mysql> delimiter //
+mysql> create procedure proc_ifelse(in age int)
+    -> begin
+    -> declare v varchar(30);
+    -> if age < 18 then
+    -> set v = 'young';
+    -> else
+    -> set v = 'old';
+    -> end if;
+    -> insert into c_type values(age, 88, v, curdate());
+    -> end;
+    -> //
+mysql> delimiter ;
+
+查看数据库的存储过程
+方式一
+select name from mysql.proc where db = 'cardiovascular';
+方式二
+show procedure status where db = 'cardiovascular';
+方式三
+show procedure status where db = 'cardiovascular';
+
+查看存储过程详细
+show create procedure p1;
+
+复制表结构及数据
+create table emp as select * from c_type;
+
+复制表结构
+方式一
+create table emp_stru as select * from c_type where 1 = 2;
+方式二
+create table emp_stru1 like c_type;
+
+复制表数据，emp_stru表必须存在
+insert into emp_stru select * from c_type;
+
+复制部分列到指定表c_dept
+insert into c_dept(id, name) select c.id, c.country from c_cp c where c.id > 4;
+
+我的复制
+insert into c_dept(id, name) select c.id, c.country from c_country c where c.id > (select max(id) from c_dept);
+ 
+统计表的条数
+mysql> delimiter //
+mysql> create procedure proc1()
+    -> begin
+    -> declare s int(30) default 0;
+    -> select count(*) into s from c_type;
+    -> select s;
+    -> end;
+    -> //
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> delimiter ;
+
+mysql> call proc1();
++------+
+| s    |
++------+
+|   10 |
++------+
+
+删除存储过程
+DROP TABLE IF EXISTS `test_sche`;
+
+定时任务
+
+查看任务
+select * from mysql.event;
+
+开启任务
+alter event test_sche_event enable;
+
+禁用任务
+alter event test_sche_event disable;
+
+//当前时间
+mysql> select now();
++---------------------+
+| now()               |
++---------------------+
+| 2017-07-27 16:33:38 |
++---------------------+
+1 row in set (0.00 sec)
+
+//日期转换为天数
+mysql> select to_days('2017-07-27');
++-----------------------+
+| to_days('2017-07-27') |
++-----------------------+
+|                736902 |
++-----------------------+
+1 row in set (0.00 sec)
+
+//天数转换为日期
+mysql> select from_days(736902);
++-------------------+
+| from_days(736902) |
++-------------------+
+| 2017-07-27        |
++-------------------+
+1 row in set (0.00 sec)
+
+//连接字符
+mysql> select concat('a', 'b', 'c');
++-----------------------+
+| concat('a', 'b', 'c') |
++-----------------------+
+| abc                   |
++-----------------------+
+1 row in set (0.00 sec)
+
+//组连接符
+mysql> select group_concat(name) from c_employee;
++----------------------------------+
+| group_concat(name)               |
++----------------------------------+
+| victor,grace,cross,izzy,vino,jun |
++----------------------------------+
+1 row in set (0.00 sec)
+
+mysql> select group_concat(name) from c_employee group by dept_id;
++--------------------+
+| group_concat(name) |
++--------------------+
+| victor,grace       |
+| vino               |
+| cross,jun          |
+| izzy               |
++--------------------+
+4 rows in set (0.00 sec)
+
+mysql> select group_concat(name order by name desc) from c_employee group by dept_id;
++---------------------------------------+
+| group_concat(name order by name desc) |
++---------------------------------------+
+| victor,grace                          |
+| vino                                  |
+| jun,cross                             |
+| izzy                                  |
++---------------------------------------+
+4 rows in set (0.00 sec)
+
+mysql> select group_concat(name separator ';') from c_employee group by dept_id;
++----------------------------------+
+| group_concat(name separator ';') |
++----------------------------------+
+| victor;grace                     |
+| vino                             |
+| cross;jun                        |
+| izzy                             |
++----------------------------------+
+4 rows in set (0.00 sec)
+
+mysql> select group_concat(id, name) from c_employee;
++----------------------------------------+
+| group_concat(id, name)                 |
++----------------------------------------+
+| 1victor,2grace,3cross,4izzy,5vino,6jun |
++----------------------------------------+
+1 row in set (0.00 sec)
+
+mysql> select group_concat(dept_id) from c_employee group by dept_id;
++-----------------------+
+| group_concat(dept_id) |
++-----------------------+
+| 1,1                   |
+| 2                     |
+| 3,3                   |
+| 4                     |
++-----------------------+
+4 rows in set (0.00 sec)
+
+mysql> select group_concat(name order by name separator '_') from c_employee group by dept_id;
++------------------------------------------------+
+| group_concat(name order by name separator '_') |
++------------------------------------------------+
+| grace_victor                                   |
+| vino                                           |
+| cross_jun                                      |
+| izzy                                           |
++------------------------------------------------+
+4 rows in set (0.00 sec)
+
+mysql> select concat(group_concat(name order by name separator '_')) from c_employee group by dept_id;
++--------------------------------------------------------+
+| concat(group_concat(name order by name separator '_')) |
++--------------------------------------------------------+
+| grace_victor                                           |
+| vino                                                   |
+| cross_jun                                              |
+| izzy                                                   |
++--------------------------------------------------------+
+4 rows in set (0.00 sec)
+
+mysql> select concat(group_concat(name order by name separator '_'), ',', 'abc') from c_employee group by dept_id;
++--------------------------------------------------------------------+
+| concat(group_concat(name order by name separator '_'), ',', 'abc') |
++--------------------------------------------------------------------+
+| grace_victor,abc                                                   |
+| vino,abc                                                           |
+| cross_jun,abc                                                      |
+| izzy,abc                                                           |
++--------------------------------------------------------------------+
+4 rows in set (0.00 sec)
+
+mysql> select cast(current_timestamp() as signed);
++-------------------------------------+
+| cast(current_timestamp() as signed) |
++-------------------------------------+
+|                      20170727195640 |
++-------------------------------------+
+1 row in set (0.00 sec)
+
+mysql> select cast(current_timestamp() as char);
++-----------------------------------+
+| cast(current_timestamp() as char) |
++-----------------------------------+
+| 2017-07-27 19:57:13               |
++-----------------------------------+
+1 row in set (0.00 sec)
+
+mysql> select current_timestamp();
++---------------------+
+| current_timestamp() |
++---------------------+
+| 2017-07-27 19:57:32 |
++---------------------+
+1 row in set (0.00 sec)
+
+mysql> select cast(current_timestamp() as date);
++-----------------------------------+
+| cast(current_timestamp() as date) |
++-----------------------------------+
+| 2017-07-27                        |
++-----------------------------------+
+1 row in set (0.00 sec)
+
+mysql> select cast(current_timestamp() as time);
++-----------------------------------+
+| cast(current_timestamp() as time) |
++-----------------------------------+
+| 19:57:59                          |
++-----------------------------------+
+1 row in set (0.00 sec)
+
+mysql> select convert('23', signed);
++-----------------------+
+| convert('23', signed) |
++-----------------------+
+|                    23 |
++-----------------------+
+1 row in set (0.00 sec)
+
+mysql> select cast('2312.34' as signed);
++---------------------------+
+| cast('2312.34' as signed) |
++---------------------------+
+|                      2312 |
++---------------------------+
+1 row in set, 1 warning (0.00 sec)
+
+mysql> select cast('2312.5d' as signed);
++---------------------------+
+| cast('2312.5d' as signed) |
++---------------------------+
+|                      2312 |
++---------------------------+
+1 row in set, 1 warning (0.00 sec)
+
+mysql> select cast('2312.53' as signed);
++---------------------------+
+| cast('2312.53' as signed) |
++---------------------------+
+|                      2312 |
++---------------------------+
+1 row in set, 1 warning (0.00 sec)
+
+mysql> select concat_ws('_', 'a', 'b');
++--------------------------+
+| concat_ws('_', 'a', 'b') |
++--------------------------+
+| a_b                      |
++--------------------------+
+1 row in set (0.00 sec)
+
+mysql> select concat_ws('_', 'a', 'b', null);
++--------------------------------+
+| concat_ws('_', 'a', 'b', null) |
++--------------------------------+
+| a_b                            |
++--------------------------------+
+1 row in set (0.00 sec)
+
+mysql> select concat_ws('_', 'a', 'b', null, '', 'c');
++-----------------------------------------+
+| concat_ws('_', 'a', 'b', null, '', 'c') |
++-----------------------------------------+
+| a_b__c                                  |
++-----------------------------------------+
+1 row in set (0.00 sec)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1 存储过程
+2 SQL
+
+
+
+
+delimiter //
+create procedure proc1()
+begin
+declare s int(30) default 0;
+select count(*) into s from c_type;
+select s;
+end;
+//
+delimiter ;
+
+
+
+delimiter //
+create procedure proc_ifelse(in age int)
+begin
+declare v varchar(30);
+if age < 18 then
+set v = 'young';
+else
+set v = 'old';
+end if;
+insert into c_type values(age, 88, v, curdate());
+end;
+//
