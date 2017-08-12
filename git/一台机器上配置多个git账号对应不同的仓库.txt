@@ -59,12 +59,52 @@ IdentityFile C:/Users/Victor/.ssh/id_rsa_pica
 $ ssh -T git@github.com
 Hi fxcjj! You've successfully authenticated, but GitHub does not provide shell access.
 
+6 设置用户名和邮箱
+6.1 设置全局用户名和邮箱
+全局配置在~/.gitconfig文件中，可直接修改此文件或者输入命令
+git config --global user.name //用户名
+git config --global user.email //邮箱地址
+
+//取消全局配置
+git config --global --unset user.name
+git config --global --unset user.email
+
+//查看git配置
+git config --list
+core.symlinks=false
+core.autocrlf=true
+core.fscache=true
+color.diff=auto
+color.status=auto
+color.branch=auto
+color.interactive=true
+help.format=html
+http.sslcainfo=D:/Program Files/Git/mingw64/ssl/certs/ca-bundle.crt
+diff.astextplain.textconv=astextplain
+rebase.autosquash=true
+credential.helper=manager
+user.signingkey=
+user.name=lihua.luo
+user.email=lihua.luo@picahealth.com
+
+当取消全局配置后，user.name,user.email消失。
+
+6.2 设置单个仓库用户名和邮箱
+单个仓库用户和邮箱在自己仓库下的.gti/config文件中配置，或者在repo下输入如下命令
+git config user.name '江上船儿'
+git config user.email 'jsce@x.com'
+
+6.3 使用时
+使用时，设置下自己仓库的user.name和user.email即可。
+
+
 Conclusion
 1 当需要配置多个账号时，需要多次生成密钥对，生成密钥对时，要指定邮箱。
 2 将密钥添加到ssh-agent中
 3 修改~/.ssh/config文件
 4 在github/gitlab的SSH key一栏中添加生成的pubkey
-5 
+5 配置全局/单个用户名和邮箱
+6 当提交时需要设置库的name和email
 
 
 
