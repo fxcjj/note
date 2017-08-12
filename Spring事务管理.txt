@@ -44,7 +44,7 @@ AbstractPlatformTransactionManager
 2.3 事务状态
 TransactionStatus
 	public interface TransactionStatus{
-		boolean isNewTransaction(); // 是否是新的事物
+		boolean isNewTransaction(); // 是否是新的事务
 		boolean hasSavepoint(); // 是否有恢复点
 		void setRollbackOnly();  // 设置为只回滚
 		boolean isRollbackOnly(); // 是否为只回滚
