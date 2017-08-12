@@ -90,7 +90,7 @@ user.email=lihua.luo@picahealth.com
 当取消全局配置后，user.name,user.email消失。
 
 6.2 设置单个仓库用户名和邮箱
-单个仓库用户和邮箱在自己仓库下的.gti/config文件中配置，或者在repo下输入如下命令
+单个仓库配置在自己仓库下的.gti/config文件中，可直接修改此文件，或者在repo下输入如下命令
 git config user.name '江上船儿'
 git config user.email 'jsce@x.com'
 
@@ -103,12 +103,7 @@ Conclusion
 2 将密钥添加到ssh-agent中
 3 修改~/.ssh/config文件
 4 在github/gitlab的SSH key一栏中添加生成的pubkey
-5 配置全局/单个用户名和邮箱
+5 配置全局用户名和邮箱，及单个仓库的用户名和邮箱
 6 当提交时需要设置库的name和email
-
-
-
-
-
 
 
