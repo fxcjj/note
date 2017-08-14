@@ -1,4 +1,4 @@
-
+﻿
 shard_group
 id		name			writable	start_id	end_id
 100		ShardGroup0		false		0			4000W
@@ -92,25 +92,3 @@ fragment_table_id	start_id	end_id
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		

@@ -1,0 +1,109 @@
+一台机器上配置多个git账号对应不同的仓库
+
+场景
+在工作中，公司都会有gitlab服务器，配置好git账号即可往gitlab上提交代码等。
+在闲暇时，你想往github上提交自己的爱好，那么就需要在一台机器上配置两个git账号，
+一个用于工作，一个用于娱乐。
+
+1 生成SSH KEY
+//进入到~/.ssh目录
+$ cd ~/.ssh
+
+//生成key，要指定对应的邮箱
+$ ssh-keygen -t rsa -C "youremail@xx.com"
+
+//设置密钥对名称
+Enter file in which to save the key (/C:/Users/Victor/.ssh/id_rsa): id_rsa_pica
+
+执行完毕后，进入~/.ssh目录可以看到生成的密钥对
+id_rsa_pica //私钥
+id_rsa_pica.pub //公钥
+
+
+2 添加新密钥到SSH agent
+因为默认只读取id_rsa，为了让ssh识别新的私钥，需要加入到ssh agent中
+$ ssh-add ~/.ssh/id_rsa_pica
+
+如果出现Could not open a connection to your authentication agent。解决如下：
+3种解决方法
+a) 先输入ssh-agent bash， 再输入ssh-add ~/.ssh/id_rsa_pica
+b) 先输入eval${ssh-agent}，再输入ssh-add ~/.ssh/id_rsa_pica
+c) 使用Git GUI生成密钥，密钥会自动被加进ssh-agent中
+
+
+3 修改config文件
+若~/.ssh/目录下不存在config文件，则新建一个，内容如下：
+# github用户配置
+# Host指定服务器别名
+Host github.com
+# HostName指定服务器ip地址或机器名
+HostName github.com
+# User连接服务器的用户名
+User 643117227@qq.com
+# IdentityFile 密钥文件的具体路径
+IdentityFile C:/Users/Victor/.ssh/id_rsa
+
+# 公司gitlab配置
+Host 60.205.115.132
+HostName 60.205.115.132
+User lihua.luo@picahealth.com
+IdentityFile C:/Users/Victor/.ssh/id_rsa_pica
+
+
+4 添加新密钥到Github
+把~/.ssh/id_rsa_pica的内容添加到github的ssh key中
+
+
+5 测试
+使用ssh -T git@Host进行测试，其中Host指上面服务器配置的别名
+$ ssh -T git@github.com
+Hi fxcjj! You've successfully authenticated, but GitHub does not provide shell access.
+
+6 设置用户名和邮箱
+6.1 设置全局用户名和邮箱
+全局配置在~/.gitconfig文件中，可直接修改此文件或者输入命令
+git config --global user.name //用户名
+git config --global user.email //邮箱地址
+
+//取消全局配置
+git config --global --unset user.name
+git config --global --unset user.email
+
+//查看git配置
+git config --list
+core.symlinks=false
+core.autocrlf=true
+core.fscache=true
+color.diff=auto
+color.status=auto
+color.branch=auto
+color.interactive=true
+help.format=html
+http.sslcainfo=D:/Program Files/Git/mingw64/ssl/certs/ca-bundle.crt
+diff.astextplain.textconv=astextplain
+rebase.autosquash=true
+credential.helper=manager
+user.signingkey=
+user.name=lihua.luo
+user.email=lihua.luo@picahealth.com
+
+当取消全局配置后，user.name,user.email消失。
+
+6.2 设置单个仓库用户名和邮箱
+单个仓库配置在自己仓库下的.gti/config文件中，可直接修改此文件，或者在repo下输入如下命令
+git config user.name '江上船儿'
+git config user.email 'jsce@x.com'
+
+6.3 使用时
+使用时，设置下自己仓库的user.name和user.email即可。
+
+
+Conclusion
+1 当需要配置多个账号时，需要多次生成密钥对，生成密钥对时，要指定邮箱。
+2 将密钥添加到ssh-agent中
+3 修改~/.ssh/config文件
+4 在github/gitlab的SSH key一栏中添加生成的pubkey
+5 配置全局用户名和邮箱，及单个仓库的用户名和邮箱
+6 当提交时需要设置库的name和email
+
+
