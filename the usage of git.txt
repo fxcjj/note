@@ -395,7 +395,7 @@ A君
 //克隆远程库
 git clone git@github.com:fxcjj/fuckgit.git
 
-//创建本地dev分支
+//创建远程origin的dev分支到本地dev分支
 $ git checkout -b dev origin/dev
 fatal: Cannot update paths and switch to branch 'dev' at the same time.
 Did you intend to checkout 'origin/dev' which can not be resolved as commit?
@@ -406,12 +406,13 @@ $ git fetch
 From github.com:fxcjj/fuckgit
  * [new branch]      dev        -> origin/dev
 
+//创建远程origin的dev分支到本地dev分支
 $ git checkout -b dev origin/dev
 Branch dev set up to track remote branch dev from origin.
 Switched to a new branch 'dev'
 
 现在修改b.txt，然后提交，push到远程origin/dev分支
-git push dev origin/dev
+git push origin dev
 
 B君
 //抓取远程
@@ -487,7 +488,224 @@ Conclusion
 6 查看远程库信息，使用git remote -v
 
 
-17 标签管理
+17 创建标签
+//切换到dev分支
+git checkout dev
+
+//查看tag
+git tag
+
+//在dev分支上新建tag
+git tag v1.0
+
+默认标签是打在最新提交的commit上的。
+如果忘记打tag，比如，今儿周五，你需要打周一的tag，咋办？
+方法是找到历史commit id，然后打上即可。
+//查看历史commmit
+git log --pretty=oneline --abbrev-commit
+bc171b0 you guess
+505d08c create ff
+8kd023b update fuc
+
+比如，你要在create ff这打个tag，看下面。
+git tag v0.9 505d08c
+
+//查看tag
+v0.9
+v1.0
+
+注意：标签不是按时间顺序列出，而是按字母排序的。可以用git show <tagname>查看标签信息。
+
+//查看标签信息
+git show v0.9
+commit 505d08c52bef691bdff878382aa91605994860c1
+Author: lihua.luo <lihua.luo@picahealth.com>
+Date:   Mon Jul 17 23:44:44 2017 +0800
+
+    create a.txt
+
+diff --git a/a.txt b/a.txt
+new file mode 100644
+index 0000000..f2ba8f8
+--- /dev/null
++++ b/a.txt
+@@ -0,0 +1 @@
++abc
+\ No newline at end of file
+
+//添加带有说明的tag，使用-a指定标签名，-m指定说明信息
+git tag -a v1.0 -m "version 0.1 released" 505d08c
+
+
+//使用-s用私钥签名一个标签
+git tag -s v0.2 -m "test sign" 505d08c
+
+默认使用PGP签名，因此首先安装gpg(GnuPG)，如果没找到gpg，或者没有gpg密钥对，报错：
+gpg: directory `/c/Users/123/.gnupg' created
+gpg: new configuration file `/c/Users/123/.gnupg/gpg.conf' created
+gpg: WARNING: options in `/c/Users/123/.gnupg/gpg.conf' are not yet active during this run
+gpg: keyring `/c/Users/123/.gnupg/secring.gpg' created
+gpg: keyring `/c/Users/123/.gnupg/pubring.gpg' created
+gpg: skipped "lihua.luo <lihua.luo@picahealth.com>": secret key not available
+gpg: signing failed: secret key not available
+error: gpg failed to sign the data
+error: unable to sign the tag
+
+如果报错，请参考GnuPG帮助文档配置Key.
+
+用PGP签名的标签是不可伪造的，因为可以验证PGP签名。验证签名的方法比较复杂，这里就不介绍了。
+
+Conclusion
+1 查看所有tag命令: git tag
+2 新建tag: git tag <tagname>
+3 新建指定commit tag: git tag <tagname> <commit id>
+4 指定说明信息: git tag -a <tagname> -m "intruduce" [commit id]
+5 tag详细信息: git show <tagname>
+6 签名tag: git tag -s v4.9 -m "test sign" 3e46dhc
+
+18 操作标签
+//删除标签
+git tag -d v0.9
+Deleted tag 'v0.9' (was 505d08c)
+
+创建的标签是存储在本地的，不会自动提交到远程库，如果要提交，使用下面命令
+//推送标签到远程库
+$ git push origin v1.0
+Total 0 (delta 0), reused 0 (delta 0)
+To git@github.com:fxcjj/fuckgit.git
+ * [new tag]         v1.0 -> v1.0
+
+或者
+
+//推送所有tag到远程库
+git push origin --tags
+
+查看github，真有！
+
+如果想删除远程tag，执行如下：
+//先删除本地tag
+$ git tag -d v0.9
+Deleted tag 'v0.9' (was bc171b0)
+
+//再删除远程tag
+$ git push origin :refs/tags/v0.9
+To git@github.com:fxcjj/fuckgit.git
+ - [deleted]         v0.9
+
+查看github，真删除了！
+
+Conclusion
+1 删除标签: git tag -d <tagname>
+2 推送单个标签到远程: git push origin v1.0
+3 推送所有标签到远程: git push origin --tags
+4 删除远程标签:
+	git tag -d v1.2
+	git push origin :refs/tags/v1.2
+
+
+19 使用github
+
+//github
+http://github.com/
+
+可以将别人的项目fork到自己的仓库下，然后clone到本地，可以进行push等。
+当需要把自己的项目合并到别人的项目上，可pull request，别人一定会同意滴！
+
+Conclusion
+1 在github上，可以任意fork开源仓库
+2 自己拥有fork后的仓库的读写权限
+3 可以pull request给官方仓库来贡献代码
+
+20 使用码云
+码云和github类似，是一个代码管理网址。
+相比github，码云提供免费的git仓库，提供私有库哟~
+
+//码云地址
+https://gitee.com/
+
+使用和github一样，需要将公钥加入SSH公钥上。
+
+//将本地库和码云的远程库关系
+git remote add origin git@xxxxxx/learngit.git
+
+之后就可push, pull
+
+如果在使用命令git remote add时报错
+git remote add origin git@xxxx/learngit.git
+fatal: remote origin already exists
+
+说明本地库已经关联了一个名叫origin的远程库，此时，可使用git remote -v查看远程库信息
+git remote -v
+origin    git@xxx/learngit.git (fetch)
+origin    git@xxx/learngit.git (push)
+
+可以看到，本地库已经关联了origin的远程库，并且，该远程库指向github。
+
+//先删除已有的github远程库
+git remote rm origin
+
+//再关联码云的远程库（注意填写正确的用户名）
+git remote add origin git@xxx/learngit.git
+
+再次查看远程库信息
+git remote -v
+origin    git@xxx/learngit.git (fetch)
+origin    git@xxx/learngit.git (push)
+
+现在你可以git push了
+
+问一个本地库能不能关联githug，又关联码云呢？？？
+当当然，git是分布式的，可以同步到另外一个远程库，当然也可以同步到另外两个远程库。
+使用多个远程库时，注意，git给远程库起的默认名称是origin，如果有多个远程库，我们需要
+用不同的名称来标识不同的远程库。
+
+如：以learngit本地库为例，先删除已关联的名为origin的远程库
+git remote rm origin
+
+然后，先关联github的远程库
+git remote add github git@xxx/learngit.git
+
+注意，远程库的名称叫github，不叫origin了。
+
+接着，再关联码云的远程库
+git remote add gitee git @xxx/learngit.git
+
+注意，叫gitee
+
+now, we use git remote -v 查看远程库信息，可以看到两个远程库
+git remote -v
+gitee  git@xxx/learngit.git (fetch)
+gitee  git@xxx/learngit.git (push)
+github  git@xxx/learngit.git (fetch)
+github  git@xxx/learngit.git (push)
+
+如果要推送到github，使用命令
+git push github master
+
+如果使用码云，使用命令
+git push gitee master
+
+这样，我们的本地库就可以同时与多个远程库互相同步
+GitHub		Gitee
+	^		  ^
+	|		  |
+	-----------
+		 |
+	  本地仓库
+
+码云同样提供了pull request功能，可以让其他小伙伴参与到你的项目中来。
+
+Conclusion
+1 gitee是什么？
+2 在gitee上添加公钥
+3 在gitee上创建项目
+4 将本地库与github、gitee关联
+
+21 
+
+
+
+
 
 
 
