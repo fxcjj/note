@@ -1,0 +1,73 @@
+
+表结构及表数据复制语句
+
+一、insert into语句
+-- 单条数据插入
+insert into table_name(id, name) value(1, 'king');
+
+--多条数据插入
+insert into table_name(id, name)
+values(1, 'king'), (2, 'grace'), (3, 'martin');
+
+二、insert into select语句
+语句形式
+insert into table2(field1, field2, ...) select value1, value2, ... from table1;
+table2表必须存在，数据来源于table1表，也可以插入常量。
+
+-- 创建表结构
+CREATE TABLE `c_emp` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(20) COLLATE utf8_bin DEFAULT NULL,
+  `age` int(11) DEFAULT NULL
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- 参考三
+
+三、select into from语句
+语句形式
+select value1, value2 into table2 from table1;
+table2表不用存在，插入时会自动创建table2表，并将指定的字段数据复制到table2表中。
+
+-- 创建表结构
+CREATE TABLE `table1` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(20) COLLATE utf8_bin DEFAULT NULL,
+  `age` int(11) DEFAULT NULL
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- 插入测试数据
+insert into table1 values(1, 'king', 11);
+insert into table1 values(2, 'martin', 12);
+insert into table1 values(3, 'scott', 13);
+
+-- 复制表结构及表数据
+select id, name, age into table2 from table1;
+
+-- 查看表数据
+select * from table2;
+
+四、复制
+1 复制表结构及表数据
+create table table_name_new as select * from table_name_old;
+
+tip: table_name_new表是不存在的。
+
+2 复制表结构
+a) create table table_name_new as select * from table_name_old where 1 = 2;
+或者
+b) create table table_name_new like table_name_old;
+
+3 复制表数据
+如果两个表结构一致
+insert into table_name_new select * from table_name_old;
+
+如果两个表结构不一致
+insert into table_name_new(field1, field2, ...) select value1, value2, ... from table_name_old;
+
+tip: table_name_new表是要存在的
+
+
+
+

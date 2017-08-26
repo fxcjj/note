@@ -1,0 +1,4 @@
+
+
+count(column_name)是对列中不为空的行进行计数
+
