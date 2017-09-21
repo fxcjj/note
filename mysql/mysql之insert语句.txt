@@ -5,7 +5,7 @@
 -- 单条数据插入
 insert into table_name(id, name) value(1, 'king');
 
---多条数据插入
+-- 多条数据插入
 insert into table_name(id, name)
 values(1, 'king'), (2, 'grace'), (3, 'martin');
 
@@ -52,7 +52,7 @@ select * from table2;
 1 复制表结构及表数据
 create table table_name_new as select * from table_name_old;
 
-tip: table_name_new表是不存在的。
+tip: table_name_new表可以是不存在的，创建时会新建
 
 2 复制表结构
 a) create table table_name_new as select * from table_name_old where 1 = 2;
