@@ -97,3 +97,10 @@ Linux Standard Base
 fsck
 file system check
 
+vmware安装linux
+http://blog.csdn.net/nonboolean/article/details/51088798
+
+
+
+
+

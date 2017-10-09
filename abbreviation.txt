@@ -1,4 +1,7 @@
 
+JSR Java规范提案
+Java Specification Requests
+
 SSH
 Secure Shell
 
@@ -215,5 +218,30 @@ Domain Driven Design
 SPOF 单点故障
 Single Points Of Failure
 
+yum
+Yellow dog Updater Modified
+
+rpm
+redhat Package Manager
+
+rhel
+redhat enterprise linux
+
+usr
+Unix System Resource
 
 
+LSB LINUX标准规范
+Linux Standard Base
+
+fsck
+file system check
+
+DVD 数字化视频光盘
+Digital Videl Disk
+
+CSRF 跨站点请求伪造
+Cross-site request forgery
+
+
+数字化视频光盘（Digital Video Disk）
