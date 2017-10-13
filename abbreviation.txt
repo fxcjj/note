@@ -243,5 +243,8 @@ Digital Videl Disk
 CSRF 跨站点请求伪造
 Cross-site request forgery
 
+ASF Apache软件基金会
+Apache Software Foundation
 
-数字化视频光盘（Digital Video Disk）
+CRLF 回车换行
+carriage return linefeed

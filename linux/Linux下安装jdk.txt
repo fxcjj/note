@@ -1,0 +1,58 @@
+
+
+Linux下安装jdk
+
+一、卸载jdk
+
+1、卸载系统自带的jdk
+#rpm -aq | grep gcj
+
+可能看到如下类似信息
+libgcj-4.1.2-44.el5
+java-1.4.2-gcj-compat-1.4.2.0-40jpp.115 
+
+使用rpm -e --nodeps 命令删除上面查找的内容： 
+#rpm -e –nodeps java-1.4.2-gcj-compat-1.4.2.0-40jpp.115 
+
+2、卸载rpm安装的jdk版本
+查看安装的jdk
+#rpm -qa | grep jdk
+
+可能看到如下类似信息
+java-1.7.0-openjdk-1.7.0.45-2.4.3.3.el6.x86_64
+java-1.6.0-openjdk-1.6.0.0-1.66.1.13.0.el6.x86_64
+
+#使用root权限
+[king@localhost Desktop]$ su
+Password: 
+[root@localhost Desktop]# rpm -e --nodeps java-1.7.0-openjdk-1.7.0.45-2.4.3.3.el6.x86_64
+[root@localhost Desktop]# rpm -e --nodeps java-1.6.0-openjdk-1.6.0.0-1.66.1.13.0.el6.x86_64
+[root@localhost Desktop]# rpm -qa | grep jdk
+[root@localhost Desktop]# java -version
+bash: java: command not found
+
+
+二、安装jdk
+
+1、下载.gz格式的文件
+jdk-8u144-linux-x64.tar.gz
+
+2、将jdk-8u144-linux-x64.tar.gz解压到/usr/local目录下（所有用户都可使用），名称为jdk1.8.0_144
+
+3、修改全局配置文件/etc/profile，在末尾添加如下：
+#添加jdk环境变量
+[root@localhost Desktop]# vi /etc/profile
+export JAVA_HOME=/usr/local/jdk1.8.0_144
+export PATH=$JAVA_HOME/bin:$PATH
+export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+
+#保存文件
+:wq
+
+#使配置生效
+[root@localhost Desktop]# source /etc/profile
+
+4、查看是否安装成功
+[root@localhost Desktop]# java -version
+java version "1.8.0_144"
+
