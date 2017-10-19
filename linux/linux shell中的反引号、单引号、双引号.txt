@@ -1,0 +1,31 @@
+linux shell 中的反引号、单引号、双引号
+
+
+反引号（`）位于Tab键之上、1键之左。
+在linux中起着命令替换的作用。
+命令替换是指shell能够将一个命令的标准输出插在一个命令行中任何位置。
+
+如下
+shell会执行反引号中的date命令，把结果插入到echo命令显示的内容中。
+[king@localhost Desktop]$ echo today is `date`
+today is Thu Oct 19 12:41:33 CST 2017
+
+单引号、双引号用于用户把带有空格的字符串赋值给变量的分界符。
+[king@localhost Desktop]$ str="today is monday"
+[king@localhost Desktop]$ echo $str
+today is monday
+
+如果没有单引号或双引号，shell会把空格后的字符串解释为命令。
+
+[king@localhost Desktop]$ str=today is monday
+bash: is: command not found
+
+单引号和双引号的区别。
+单引号告诉shell忽略所有特殊字符，而双引号忽略大多数，但不包括$、\、~。
+[king@localhost Desktop]$ v=100
+[king@localhost Desktop]$ echo 'the value is $v' //忽略全部特殊字符，直接输出
+the value is $v
+
+[king@localhost Desktop]$ echo "the value is $v" //忽略大多数，但不包括$、\、~
+the value is 100
+
