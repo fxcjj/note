@@ -248,3 +248,7 @@ Apache Software Foundation
 
 CRLF 回车换行
 carriage return linefeed
+
+DOS 磁盘操作系统
+Disk Operation System
+

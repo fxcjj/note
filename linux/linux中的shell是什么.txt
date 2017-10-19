@@ -1,0 +1,35 @@
+
+
+一、shell的含义
+shell的英文含义是“壳”
+
+它是相对于内核来说的，因为它是建立在内核的基础上，面向用户的一种表现形式。
+比如我们看到一个球，见到的是它的壳，而非核。
+
+linux中的shell，是指一个面向用户的命令接口，表现形式就是一个可以由用户录入的界面，这个界面也可以反馈运行信息。
+
+
+二、shell在linux中的存在形式
+由于Linux不同于Windows，Linux是内核与界面分离的，它可以脱离图形界面单独运行，也可以在内核的基础上运行图形化的桌面。
+
+这样，在linux系统中，就出现了两种shell表现形式，一种是在无图形界面下的终端运行环境下的shell，
+另一种是在桌面上运行的类似Windows的MS-DOS(Disk Operation System)运行窗口，
+前者我们一般习惯性地简称为终端，后者一般直接称为shell。
+
+三、shell如何执行用户的指令
+shell有两种执行指令的方式。
+第一种方法是用户事先编写好一个sh脚本谁的，内含shell脚本，然后使用shell程序执行该脚本，
+这种方式，我们习惯称为shell编程。
+第二种形式，则是用户直接在shell界面上执行shell命令，由于shell界面的关系，大家都习惯一行行的书写，
+很少写成成套的程序来一起执行，所以也称命令行。
+
+Conclusion
+shell可以说只是为用户与机器之间搭建成的一个桥梁，让我们能够通过shell来对计算机进行操作和交互，
+从而达到让计算机为我们服务的目的。
+
+Reference
+the definition of shell: http://baike.baidu.com/view/849.htm
+study shell programing: http://wiki.ubuntu.org.cn/Shell%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80
+
+
+
