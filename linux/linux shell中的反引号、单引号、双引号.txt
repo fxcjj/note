@@ -10,6 +10,15 @@ shell会执行反引号中的date命令，把结果插入到echo命令显示的�
 [king@localhost Desktop]$ echo today is `date`
 today is Thu Oct 19 12:41:33 CST 2017
 
+和$()是一样的。
+在执行一条命令时，会先将其中的``，或者是$()中的语句当作命令执行一遍，
+再将结果加入到原命令中重新执行。
+如下
+echo `ls`会先执行ls得到xx.sh等，再替换原命令为echo xx.sh。
+最后执行结果为xx.sh，那么，平时我们遇到的把一堆命令的执行结果输出到一个变量中，
+需要用这个命令替换符括起来。
+
+
 单引号、双引号用于用户把带有空格的字符串赋值给变量的分界符。
 [king@localhost Desktop]$ str="today is monday"
 [king@localhost Desktop]$ echo $str
