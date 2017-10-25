@@ -1,0 +1,116 @@
+Linux grep基本用法与正则表达式
+
+
+1、grep命令
+功能：输入文件的每一行中查找字符串。
+基本用法：
+grep [-acinv] [--color=auto] [-A n] [-B n] '搜寻字符串' 文件名
+参数说明：
+-?
+同时显示匹配行上下的行，如：grep -2 pattern filename同时显示匹配行的上下2行。
+
+-b, –byte-offset
+在匹配行前面打印该行所在的块号码。
+
+-c, count
+显示匹配次数
+
+-h, –no-filename
+当搜索多个文件时，不显示匹配文件名前缀。
+
+-n, –line-number
+在匹配的行前面打印行号。
+
+-i, –ignore-case
+忽略大小写差别。
+
+-v, –revert-match
+反检索，只显示不匹配的行。
+
+-V, –version
+显示软件版本信息。
+
+-a：将二进制文档以文本方式处理
+
+-A, After
+显示匹配字符串后n行的数据
+
+-B, before
+显示匹配字符串前n行的数据
+
+--color：以特定颜色高亮显示匹配关键字
+
+–color选项是个非常好的选项，可以让你清楚的明白匹配了那些字符。最好在自己的.bashrc或者.bash_profile文件中加入：
+
+alias grep=grep --color=auto
+
+每次grep搜索之后，自动高亮匹配效果了。
+‘搜寻字符串’是正则表达式，注意为了避免shell的元字符对正则表达式的影响，请用单引号（’’）括起来，千万不要用双引号括起来（””）或者不括起来。
+
+
+2、grep 与正则表达式
+正则表达式分为基本正则表达式和扩展正则表达式。下面分别简单总结一下。
+元数据		意义和范例
+^word		搜寻以word开头的行。 例如：搜寻以#开头的脚本注释行 grep –n ‘^#’ regular.txt
+word$		搜寻以word结束的行
+.			匹配任意一个字符。 例如：grep –n ‘e.e’ regular.txt 匹配e和e之间有任意一个字符，可以匹配eee，eae，eve，但是不匹配ee。
+\			转义字符。 例如：搜寻’，’是一个特殊字符，在正则表达式中有特殊含义。必须要先转义。grep –n ‘\,” regular.txt
+*			前面的字符重复0到多次。 例如匹配gle，gogle，google，gooogle等等 grep –n ‘go*gle’ regular.txt
+[list]		匹配一系列字符中的一个。 例如：匹配gl，gf。grep –n ‘g[lf]’ regular.txt
+[n1-n2]		匹配一个字符范围中的一个字符。 例如：匹配数字字符 grep –n ‘[0-9]’ regular.txt
+[^list]		匹配字符集以外的字符 例如：grep –n ‘[^o]‘ regular.txt 匹配非o字符
+\<word		单词是的开头。 例如：匹配以g开头的单词 grep –n ‘\<g’ regular.txt
+word\>		匹配单词结尾 例如：匹配以tion结尾的单词 grep –n ‘tion\>’ regular.txt
+word\{n1\}	前面的字符重复n1 例如：匹配google。 grep –n ‘go\{2\}gle’ regular.txt
+word\{n1,\}	前面的字符至少重复n1 例如：匹配google，gooogle。 grep –n ‘go\{2,\}gle’ regular.txt
+word\{n1,n2\}	前面的字符重复n1，n2次 例如：匹配google，gooogle。 grep –n ‘go\{2,3\}gle’ regular.txt
+
+
+扩展正则表达式
+?     #匹配0个或1个在其之前的那个普通字符。
+      例如，匹配gd，god   grep –nE ‘go?d’ regular.txt
++    #匹配1个或多个在其之前的那个普通字符，重复前面字符1到多次。 
+     例如：匹配god，good，goood等等字符串。
+     grep –nE go+d’ regular.txt
+()   #表示一个字符集合或用在expr中，匹配整个括号内的字符串，
+     原来都是匹配单个字符。 例如：搜寻good或者glad
+     grep –nE ‘g(oo|la)’ regular.txt
+|    #表示“或”，匹配一组可选的字符，或（or）的方式匹配多个字串。
+     例如：grep –nE ‘god|good’ regular.txt 匹配god或者good。
+	 
+常用的集合表示方法有：
+纯数字：[[:digit:]]或[0-9]
+小写字母：[[:lower:]]或[a-z]
+大写字母：[[:upper:]]或[A-Z]
+大小写字母：[[:alpha:]]或[a-zA-Z]
+数字加字母：[[:alnum:]]或[0-9a-zA-Z]
+空白字符：[[:space:]]
+标点符号：[[:punct:]]
+
+3、关于匹配的实例
+grep amazing a.log #输出字符amazing所在的行
+grep -c 'fine' a.log #统计所有出现fine字符的行数
+grep -i 'fuck' a.log #不区分大小写查找fuck所有的行
+grep -n 'gain' a.log #显示匹配字符gain的行及行号，相当于 nl a.log | grep gain
+grep -v fine a.log #显示输出没有字符fine所有的行
+grep $'\t' a.log #匹配tab键
+grep 'syrian'$'\t' a.log #匹配syrian开头，后面是tab键的行
+grep '按ctrl+v,再按tab' a.log #匹配tab键
+grep 'syrian按ctrl+v,再按tab' a.log #匹配syrian开头，后面是tab键的
+grep do[gt] a.log #输出以do开头，第三个字符是g或t的所有的行
+grep ^[^fine] a.log #显示输出行首不是字符fine的行
+grep -i 'f..k' a.log #忽略大小写，输出第一个字符是f，第二、三是任意字符，第四个字符是k所在的行
+grep [a-z][m]d a.log #输出第一个字符是a-z，第二个字符是m，第三个字符是d的所有的行
+grep [31]..89 a.log #显示第一个字符是3或1，第二、三个字符为任意，以89结尾的所有行
+grep "g\{2,\}" a.log #模式出现几率查找：显示输出字符g至少重复出现两次的所有行
+grep "a\{2,3\}" a.log #模式出现几率查找：输出字符a重复出现的次数在一定范围内，重复出现2次或3次所有行
+grep -n "^$" a.log #显示输出空行的行号
+ls -l | grep "^d" #查询当前目录下的目录
+grep -3 coupon a.log #显示匹配行的上下3行
+grep -h fine *.log #当前目录下有a.log, b.log，输出匹配行，但不打印文件名
+
+
+grep -nA 3 fine a.log | tail -n 8
+从末尾查找，最多显示8行，显示匹配行后面3行
+
+
