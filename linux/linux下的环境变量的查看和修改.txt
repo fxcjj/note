@@ -1,0 +1,154 @@
+
+
+环境变量一般是指在操作系统运行时为其设置的一些运行参数。
+比如临时文件夹位置、系统文件夹位置等等。
+
+一、Linux的变量种类
+	按变量的生存周期来划分，Linux变量可分为两类：
+	1、永久的：需要修改配置文件，变量永久生效。
+	2、临时的：使用export命令声明即可，变量在关闭shell时失效。
+	
+	
+二、设置变量的三种方法
+1、修改全局配置文件/etc/profile
+	在此文件中添加的变量，将会对Linux下所有用户生效，并且是永久的。
+	如：
+	# vi /etc/profile
+	# 在最后一行添加WTF变量
+	export WTF="what the fuck"
+	Note: 修改后要想立刻生效，要运行source /etc/profile。不然只有在重新登录此用户才会生效。
+		
+2、修改用户目录下的.bash_profile文件
+	在此文件中添加的变量，仅会对当前用户生效，并且是永久的。
+	如：
+	# vi /home/king/.bash_profile
+	# 在最后一行添加SPOF变量
+	export SPOF="Single Points Of Failure"
+	Note：修改后要想立刻生效，要运行source /home/king/.bash_profile。不然只有在重新登录此用户才会生效。
+	
+3、直接运行export命令定义量
+	只对当前shell(BASH)有效（临时的）。
+	在shell的命令行下直接使用[export 变量名=变量值]定义变量，
+	该变量只在当前的shell(bash)或其子shell(bash)下是有效的，shell关闭了，变量也就失效了。
+	再打开新shell时就没有这个变量，需要使用的话还需要重新定义。
+
+
+三、PATH声明
+	其格式为：PATH=$PATH:<PATH 1>:<PATH 2>:----:<PATH N>
+	$PATH表示引用之前的配置，后面PATH 1/2是添加的，中间用冒号隔开。
+	环境变量修改后，在用户下次登录时生效。
+	如果想立刻生效，执行source /home/king/.bash_profile
+	完成后，可通过echo $PATH查看当前的搜索路径。这样定制后，就可以避免频繁的启动位于shell搜索的路径之外的程序了。
+	Note：最好不要把当前路径"./"放到PATH里，这样可能会受到意想不到的攻击。
+
+
+四、常用的环境变量
+　　PATH      决定了shell将到哪些目录中寻找命令或程序
+　　HOME      当前用户主目录
+　　HISTSIZE　历史记录数
+　　LOGNAME   当前用户的登录名
+　　HOSTNAME　指主机的名称
+　　SHELL 　　当前用户Shell类型
+　　LANGUGE 　语言相关的环境变量，多语言可以修改此环境变量
+　　MAIL　　　当前用户的邮件存放目录
+　　PS1　　　基本提示符，对于root用户是#，对于普通用户是$
+
+
+五、常用的环境变量相关命令
+1、显示环境变量HOME
+[king@localhost home]$ echo $HOME
+/home/king
+
+2、设置一个新的环境变量USR
+[king@localhost home]$ export USR="Unix System Resource"
+[king@localhost home]$ echo $USR
+Unix System Resource
+
+3、使用env命令显示所有环境变量
+[king@localhost home]$ env
+ORBIT_SOCKETDIR=/tmp/orbit-king
+TOMCAT_HOME=/usr/local/file:///usr/local/apache-tomcat-8.5.23
+HOSTNAME=localhost.localdomain
+IMSETTINGS_INTEGRATE_DESKTOP=yes
+USR=Unix System Resource
+TERM=xterm
+SHELL=/bin/bash
+XDG_SESSION_COOKIE=dc0e2cf76058938f7c048bb800000012-1509073659.136026-875725567
+HISTSIZE=1000
+GTK_RC_FILES=/etc/gtk/gtkrc:/home/king/.gtkrc-1.2-gnome2
+WINDOWID=75498053
+QTDIR=/usr/lib64/qt-3.3
+QTINC=/usr/lib64/qt-3.3/include
+IMSETTINGS_MODULE=none
+USER=king
+...
+
+Note: 在/home/king/.bash_profile中添加的ADDR=shanghai(已source过)未显示。
+
+4、使用set命令显示所有本地定义的shell变量
+[king@localhost home]$ set
+BASH=/bin/bash
+BASHOPTS=checkwinsize:cmdhist:expand_aliases:extquote:force_fignore:hostcomplete:interactive_comments:progcomp:promptvars:sourcepath
+BASH_ALIASES=()
+BASH_ARGC=()
+BASH_ARGV=()
+BASH_CMDS=()
+BASH_LINENO=()
+BASH_SOURCE=()
+BASH_VERSINFO=([0]="4" [1]="1" [2]="2" [3]="1" [4]="release" [5]="x86_64-redhat-linux-gnu")
+BASH_VERSION='4.1.2(1)-release'
+CLASSPATH=.:/usr/local/jdk1.8.0_144/lib/dt.jar:/usr/local/jdk1.8.0_144/lib/tools.jar
+COLORS=/etc/DIR_COLORS
+COLORTERM=gnome-terminal
+...
+
+Note: 在/home/king/.bash_profile中添加的ADDR=shanghai(已source过)未显示。
+
+
+5、使用unset命令来清除环境变量
+set可以设置某个环境变量的值。清除环境变量的值用unset命令。如果未指定值，则该变量值将被设为NULL。
+
+示例如下：
+
+//使用export设置环境变量
+[king@localhost Desktop]$ export TTL="Time To Live"
+[king@localhost Desktop]$ env | grep TTL
+Time To Live
+[king@localhost Desktop]$ set | grep TTL
+Time To Live
+
+[king@localhost Desktop]$ unset $TTL //没有任何用处
+[king@localhost Desktop]$ env | grep TTL
+Time To Live
+[king@localhost Desktop]$ set | grep TTL
+Time To Live
+
+[king@localhost Desktop]$ unset TTL //TTL变量删除了
+[king@localhost Desktop]$ env | grep TTL
+[king@localhost Desktop]$ set | grep TTL
+
+
+//直接定义为shell变量
+[king@localhost Desktop]$ SSL="Secure Sockets Center" //shell变量设置
+[king@localhost Desktop]$ set | grep SSL
+SSL='Secure Sockets Center'
+[king@localhost Desktop]$ env | grep SSL //说明只设置shell变量
+king@localhost Desktop]$ unset $SSL //wrong syntax
+[king@localhost Desktop]$ env | grep SSL
+[king@localhost Desktop]$ set | grep SSL
+SSL='Secure Sockets Center'
+
+
+6、使用readonly命令设置只读变量
+使用了readonly命令的话，变量不可修改或清除。如下：
+[king@localhost home]$ export OO='Object Orientation' //增加一个环境变量OO
+Object Orientation
+[king@localhost home]$ readonly OO
+[king@localhost home]$ unset OO //此变量无法删除
+bash: unset: OO: cannot unset: readonly variable
+[king@localhost home]$ OO='Object Orientation a' //此变量不可修改
+bash: OO: readonly variable
+
+
+
+

@@ -1,0 +1,44 @@
+windows dos命令行查看环境变量
+
+1、查看全部环境变量
+C:\Users\king>set
+ALLUSERSPROFILE=C:\ProgramData
+APPDATA=C:\Users\123\AppData\Roaming
+CommonProgramFiles=C:\Program Files\Common Files
+CommonProgramFiles(x86)=C:\Program Files (x86)\Common Files
+CommonProgramW6432=C:\Program Files\Common Files
+COMPUTERNAME=DESKTOP-OPJ386A
+ComSpec=C:\Windows\system32\cmd.exe
+HOMEDRIVE=C:
+HOMEPATH=\Users\123
+JAVA_HOME=C:\Program Files\Java\jdk1.8.0_31
+LOCALAPPDATA=C:\Users\123\AppData\Local
+LOGONSERVER=\\DESKTOP-OPJ386A
+M2_HOME=D:\programfiles\apache-maven-3.0.5
+NUMBER_OF_PROCESSORS=4
+OneDrive=C:\Users\123\OneDrive
+OS=Windows_NT
+...
+
+
+2、查看特定环境变量
+C:\Users\king>set path
+Path=C:\ProgramData\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;D:\Program Files\Git\cmd;%MAVEN_HOME%\bin;D:\Program Files\TortoiseGit\bin;%CATALINA_HOME%\bin;D:\Program Files\nodejs\;C:\Users\123\AppData\Local\Microsoft\WindowsApps;C:\Users\123\AppData\Roaming\npm
+PATHEXT=.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC
+
+C:\Users\king>set java_home
+JAVA_HOME=C:\Program Files\Java\jdk1.8.0_31
+
+
+3、dos下查看某个命令的帮助
+C:\Users\king>set /?
+显示、设置或删除 cmd.exe 环境变量。
+
+SET [variable=[string]]
+
+  variable  指定环境变量名。
+  string    指定要指派给变量的一系列字符串。
+
+要显示当前环境变量，键入不带参数的 SET。
+...
+

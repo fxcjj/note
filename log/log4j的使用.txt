@@ -14,23 +14,23 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.Priority;
 import org.apache.log4j.PropertyConfigurator;
 public abstract class LogTest {
-/**
-* 得到Logger对象
-* 通常以类的Class对象或全名作为参数
-*/
-static Logger logger = Logger.getLogger(LogTest.class.getName());
-public static void main(String[] args) {
-/**
-* 初始化Log，如要把日志信息输出到哪儿
-* 一般不用，多数情况下就通过log4j.properties或xml文件配置
-*/
-BasicConfigurator.configure(); 
-logger.debug("debug"); 
-logger.info("info"); 
-logger.warn("warn"); 
-logger.error("error"); 
-logger.fatal("fatal"); 
-}
+	/**
+	* 得到Logger对象
+	* 通常以类的Class对象或全名作为参数
+	*/
+	static Logger logger = Logger.getLogger(LogTest.class.getName());
+	public static void main(String[] args) {
+		/**
+		* 初始化Log，如要把日志信息输出到哪儿
+		* 一般不用，多数情况下就通过log4j.properties或xml文件配置
+		*/
+		BasicConfigurator.configure(); 
+		logger.debug("debug"); 
+		logger.info("info"); 
+		logger.warn("warn"); 
+		logger.error("error"); 
+		logger.fatal("fatal"); 
+	}
 }
 
 

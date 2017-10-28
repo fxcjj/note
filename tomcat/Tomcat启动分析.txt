@@ -1,0 +1,114 @@
+
+
+CATALINA_HOME is the install directory of tomcat.
+what will happened if not defined the environment variable?
+
+
+一、在其它目录执行startup.bat
+C:\Users\king>d:\programfiles\apache-tomcat-8.5.15\bin\startup.bat
+The CATALINA_HOME environment variable is not defined correctly
+This environment variable is needed to run this program
+
+当在其它目录执行startup.bat时，提示CATALINA_HOME未正确定义，运行此程序是必须存在此变量的。
+
+
+二、在bin目录下执行startup.bat
+D:\programfiles\apache-tomcat-8.5.15\bin>startup.bat
+Using CATALINA_BASE:   "D:\programfiles\apache-tomcat-8.5.15"
+Using CATALINA_HOME:   "D:\programfiles\apache-tomcat-8.5.15"
+Using CATALINA_TMPDIR: "D:\programfiles\apache-tomcat-8.5.15\temp"
+Using JRE_HOME:        "C:\Program Files\Java\jdk1.8.0_31"
+Using CLASSPATH:       "D:\programfiles\apache-tomcat-8.5.15\bin\bootstrap.jar;D:\programfiles\apache-tomcat-8.5.15\bin\tomcat-juli.jar"
+
+正常启动！
+
+
+三、分析
+出现上面两种情况的原因是startup.bat文件。
+用文本编辑工具打开用于启动Tomcat的批处理文件startup.bat，仔细阅读。
+在此文件中，首先判断CATALINA_HOME环境变量是否为空，如果为空，则将当前目录（%cd%）设为CATALINA_HOME的值。
+接着判断当前目录下是否存在bin\catalina.bat，如果文件不存在，将当前目录的父目录设为CATALINA_HOME的值，查找catalina.bat文件，不存在报错！
+如果CATALINA_HOME存在，则查找bin\catalina.bat文件，找不到报错！
+找到了，则执行catalina.bat start命令。
+
+Tomcat4以前，用的是TOMCAT_HOME来表示Tomcat的安装目录，在Tomcat4以后，采用了新的Servlet容器Catalina，所以环境变量的名字改为了CATALINA_HOME。
+
+Windows系统下环境变量的名字不区分大小写，in other words. java_home and JAVA_HOME is the same.
+
+
+了解了startup.bat文件以后，我们再来看看真正负责启动Tomcat服务器的catalina.bat文件。
+
+通过分析catalina.bat文件，我们发现它还调用了一个文件setclasspath.bat。
+在setclasspath.bat文件中，它检查JAVA_HOME环境变量是否存在，并通过JAVA_HOME环境变量，找到java.exe，用于启动Tomcat。
+在这个文件中，还设置了其他的一些变量，代表调用Java的标准命令，有兴趣的读者可以自行分析一下这个文件。
+在执行完setclasspath.bat之后，catalina.bat剩下的部分就开始了Tomcat服务器的启动进程。
+
+
+四、startup.bat文件
+
+@echo off
+rem Licensed to the Apache Software Foundation (ASF) under one or more
+rem contributor license agreements.  See the NOTICE file distributed with
+rem this work for additional information regarding copyright ownership.
+rem The ASF licenses this file to You under the Apache License, Version 2.0
+rem (the "License"); you may not use this file except in compliance with
+rem the License.  You may obtain a copy of the License at
+rem
+rem     http://www.apache.org/licenses/LICENSE-2.0
+rem
+rem Unless required by applicable law or agreed to in writing, software
+rem distributed under the License is distributed on an "AS IS" BASIS,
+rem WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+rem See the License for the specific language governing permissions and
+rem limitations under the License.
+
+rem ---------------------------------------------------------------------------
+rem Start script for the CATALINA Server
+rem ---------------------------------------------------------------------------
+
+setlocal
+
+rem Guess CATALINA_HOME if not defined
+set "CURRENT_DIR=%cd%"
+if not "%CATALINA_HOME%" == "" goto gotHome //CATALINA_HOME不为null，跳到gotHome处
+set "CATALINA_HOME=%CURRENT_DIR%" //为null时，将CATALINA_HOME设置当前目录
+if exist "%CATALINA_HOME%\bin\catalina.bat" goto okHome //查找catalina.bat文件
+cd .. //不存在catalina.bat文件时，进入父目录
+set "CATALINA_HOME=%cd%" //将当前目录的父目录设为CATALINA_HOME的值。
+cd "%CURRENT_DIR%"
+:gotHome
+if exist "%CATALINA_HOME%\bin\catalina.bat" goto okHome //查找catalina.bat文件
+echo The CATALINA_HOME environment variable is not defined correctly
+echo This environment variable is needed to run this program
+goto end
+:okHome
+
+set "EXECUTABLE=%CATALINA_HOME%\bin\catalina.bat"
+
+rem Check that target executable exists
+if exist "%EXECUTABLE%" goto okExec
+echo Cannot find "%EXECUTABLE%"
+echo This file is needed to run this program
+goto end
+:okExec
+
+rem Get remaining unshifted command line arguments and save them in the
+set CMD_LINE_ARGS=
+:setArgs
+if ""%1""=="""" goto doneSetArgs
+set CMD_LINE_ARGS=%CMD_LINE_ARGS% %1
+shift
+goto setArgs
+:doneSetArgs
+
+call "%EXECUTABLE%" start %CMD_LINE_ARGS% //执行catalina.bat start
+
+:end
+
+
+
+
+
+
+
+

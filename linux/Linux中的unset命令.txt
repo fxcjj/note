@@ -1,0 +1,22 @@
+Linux中的unset命令
+
+unset为shell内建指令，可删除变量或函数。
+
+语法：
+unset [-fv][变量或函数名称]
+
+参数：
+-f  仅删除函数。
+-v  仅删除变量。
+
+[king@localhost Desktop]$ lx="ls -lh" //设置shell变量
+[king@localhost Desktop]$ $lx
+total 4.0K
+-rwxr-xr-x. 1 king king 237 Oct 13 15:24 eclipse.desktop
+
+[king@localhost Desktop]$ set | grep lx //查看
+lx='ls -lh'
+[king@localhost Desktop]$ unset lx //删除
+[king@localhost Desktop]$ set | grep lx
+
+
