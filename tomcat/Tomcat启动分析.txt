@@ -105,10 +105,94 @@ call "%EXECUTABLE%" start %CMD_LINE_ARGS% //执行catalina.bat start
 
 :end
 
+五、catalina.bat命令
+//catalina.bat的帮助
+D:\programfiles\apache-tomcat-8.5.15\bin>catalina.bat
+Using CATALINA_BASE:   "D:\programfiles\apache-tomcat-8.5.15"
+Using CATALINA_HOME:   "D:\programfiles\apache-tomcat-8.5.15"
+Using CATALINA_TMPDIR: "D:\programfiles\apache-tomcat-8.5.15\temp"
+Using JRE_HOME:        "C:\Program Files\Java\jdk1.8.0_31"
+Using CLASSPATH:       "D:\programfiles\apache-tomcat-8.5.15\bin\bootstrap.jar;D:\programfiles\apache-tomcat-8.5.15\bin\tomcat-juli.jar"
+Usage:  catalina ( commands ... )
+commands:
+  debug             Start Catalina in a debugger
+  debug -security   Debug Catalina with a security manager
+  jpda start        Start Catalina under JPDA debugger
+  run               Start Catalina in the current window
+  run -security     Start in the current window with security manager
+  start             Start Catalina in a separate window
+  start -security   Start in a separate window with security manager
+  stop              Stop Catalina
+  configtest        Run a basic syntax check on server.xml
+  version           What version of tomcat are you running?
+
+  
+其中常用的参数是start、run和stop。
+参数start表示在一个单独的窗口中启动Tomcat服务器。
+参数run表示在当前窗口中启动Tomcat服务器。
+参数stop表示关闭Tomcat服务器。
+我们执行startup.bat，实际上执行的就是“catalina.bat start”命令；
+执行shutdown.bat，实际上执行的是“catalina.bat stop”命令。
+“catalina.bat run”命令有时候是非常有用的，特别是当我们需要查看Tomcat的出错信息时。
+
+在开发JSP程序时，经常会碰到自己机器上的8080端口号被别的应用程序占用，或者在配置server.xml时出现错误，
+当通过startup.bat（相当于执行“catalina.bat start”）启动Tomcat服务器时，如果启动过程中出现严重错误，
+由于是在单独的窗口中启动Tomcat服务器，所以一旦启动失败，命令提示符窗口就自动关闭了，
+程序运行中输出的出错信息也随之消失，而且没有任何的日志信息，这就使得我们没有办法找出错误原因。
+当出现错误时，我们可以换成“catalina.bat run”命令再次启动，一旦启动失败，仅仅是Tomcat服务器异常终止，
+但是在当前的命令提示符窗口下仍然保留了启动时的出错信息，这样我们就可以查找启动失败的原因了。
+
+//启动tomcat
+D:\programfiles\apache-tomcat-8.5.15\bin>catalina.bat start
+Using CATALINA_BASE:   "D:\programfiles\apache-tomcat-8.5.15"
+Using CATALINA_HOME:   "D:\programfiles\apache-tomcat-8.5.15"
+Using CATALINA_TMPDIR: "D:\programfiles\apache-tomcat-8.5.15\temp"
+Using JRE_HOME:        "C:\Program Files\Java\jdk1.8.0_31"
+Using CLASSPATH:       "D:\programfiles\apache-tomcat-8.5.15\bin\bootstrap.jar;D:\programfiles\apache-tomcat-8.5.15\bin\tomcat-juli.jar"
 
 
+当启动tomcat之后，再次执行catalina.bat start时，会在另一个窗口中打印信息，启动失败，窗口关闭，无法跟踪日志信息。
+此时可以执行catalina.bat run命令，将日志信息打印在当前窗口。
 
-
+//tomcat启动之后，执行catalina.bat run可以看到日志信息，方便追踪。
+D:\programfiles\apache-tomcat-8.5.15\bin>catalina.bat run
+Using CATALINA_BASE:   "D:\programfiles\apache-tomcat-8.5.15"
+Using CATALINA_HOME:   "D:\programfiles\apache-tomcat-8.5.15"
+Using CATALINA_TMPDIR: "D:\programfiles\apache-tomcat-8.5.15\temp"
+Using JRE_HOME:        "C:\Program Files\Java\jdk1.8.0_31"
+Using CLASSPATH:       "D:\programfiles\apache-tomcat-8.5.15\bin\bootstrap.jar;D:\programfiles\apache-tomcat-8.5.15\bin\tomcat-juli.jar"
+28-Oct-2017 17:15:15.948 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log Server version:        Apache Tomcat/8.5.15
+28-Oct-2017 17:15:15.951 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log Server built:          May 5 2017 11:03:04 UTC
+28-Oct-2017 17:15:15.952 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log Server number:         8.5.15.0
+28-Oct-2017 17:15:15.953 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log OS Name:               Windows 8.1
+28-Oct-2017 17:15:15.953 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log OS Version:            6.3
+28-Oct-2017 17:15:15.954 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log Architecture:          amd64
+28-Oct-2017 17:15:15.954 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log Java Home:             C:\Program Files\Java\jdk1.8.0_31\jre
+28-Oct-2017 17:15:15.955 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Version:           1.8.0_31-b13
+28-Oct-2017 17:15:15.956 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Vendor:            Oracle Corporation
+28-Oct-2017 17:15:15.956 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_BASE:         D:\programfiles\apache-tomcat-8.5.15
+28-Oct-2017 17:15:15.957 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_HOME:         D:\programfiles\apache-tomcat-8.5.15
+28-Oct-2017 17:15:15.958 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.config.file=D:\programfiles\apache-tomcat-8.5.15\conf\logging.properties
+28-Oct-2017 17:15:15.959 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+28-Oct-2017 17:15:15.959 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djdk.tls.ephemeralDHKeySize=2048
+28-Oct-2017 17:15:15.960 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.protocol.handler.pkgs=org.apache.catalina.webresources
+28-Oct-2017 17:15:15.960 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.base=D:\programfiles\apache-tomcat-8.5.15
+28-Oct-2017 17:15:15.964 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.home=D:\programfiles\apache-tomcat-8.5.15
+28-Oct-2017 17:15:15.965 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.io.tmpdir=D:\programfiles\apache-tomcat-8.5.15\temp
+28-Oct-2017 17:15:15.965 信息 [main] org.apache.catalina.core.AprLifecycleListener.lifecycleEvent Loaded APR based Apache Tomcat Native library [1.2.12] using APR version [1.5.2].
+28-Oct-2017 17:15:15.967 信息 [main] org.apache.catalina.core.AprLifecycleListener.lifecycleEvent APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
+28-Oct-2017 17:15:15.967 信息 [main] org.apache.catalina.core.AprLifecycleListener.lifecycleEvent APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
+28-Oct-2017 17:15:16.634 信息 [main] org.apache.catalina.core.AprLifecycleListener.initializeSSL OpenSSL successfully initialized [OpenSSL 1.0.2k  26 Jan 2017]
+28-Oct-2017 17:15:16.775 信息 [main] org.apache.coyote.AbstractProtocol.init Initializing ProtocolHandler ["http-nio-8080"]
+28-Oct-2017 17:15:16.791 严重 [main] org.apache.coyote.AbstractProtocol.init Failed to initialize end point associated with ProtocolHandler ["http-nio-8080"]
+ java.net.BindException: Address already in use: bind
+        at sun.nio.ch.Net.bind0(Native Method)
+        at sun.nio.ch.Net.bind(Net.java:436)
+        at sun.nio.ch.Net.bind(Net.java:428)
+        at sun.nio.ch.ServerSocketChannelImpl.bind(ServerSocketChannelImpl.java:214)
+        at sun.nio.ch.ServerSocketAdaptor.bind(ServerSocketAdaptor.java:74)
+        at org.apache.tomcat.util.net.NioEndpoint.bind(NioEndpoint.java:210)
+、
 
 
 
