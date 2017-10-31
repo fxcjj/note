@@ -1,0 +1,106 @@
+
+一、FileDescriptor介绍
+FileDescriptor是“文件描述符”。
+FileDescriptor可以被用来表示开放文件、开放套接字等。
+以FileDescriptor表示文件来说：当FileDescriptor表示某文件时，我们可以通俗的将FileDescriptor看成是该文件。
+但是，我们不能直接通过FileDescriptor对该文件进行操作；若需要通过FileDescriptor对该文件进行操作，
+需要调用FileOutputStream(FileDescriptor)以生成对应的FileOutputStream，再对文件进行操作。
+
+查看FileDescriptor源码
+
+有三个FileDescriptor类型变量
+in //标准输入（键盘）的描述符
+out //标准输出（屏幕）的描述符
+err //标准错误输出（屏幕）的描述符
+
+它们三个的原理和用法类似，以out进行研究。
+
+out是标准输出（屏幕）。
+out本质是FileDescriptor对象，而FileDescriptor没有输出接口，咋办？
+通过封装啊，如：
+FileOutputStream fos = new FileOutputStream(FileDescriptor.out);
+fos.write('A');
+fos.close();
+
+执行上面的程序，会在屏幕上输出字母'A'。
+java已封装好了“能方便在屏幕上输出信息的接口”，通过System.out，能方便的输出信息到屏幕上。
+因此，以上代码等价如下代码：
+System.out.print('A');
+
+
+二、例子
+public class FileDescriptorTest {
+    private static final String TEXT = "hello~";
+    private static final String FILE_NAME = "d:/fd.txt";
+    public static void main(String[] args) throws Exception {
+        testWrite();
+        testRead();
+        testStandFD();
+    }
+
+    /**
+     * 通过两种方式读取
+     * 1)文件名
+     * 2)FileDescriptor对象
+     */
+    private static void testRead() throws Exception {
+        FileInputStream fis = new FileInputStream(FILE_NAME); 
+        FileDescriptor fdIn = fis.getFD(); 
+        FileInputStream fis1 = new FileInputStream(fdIn);
+        System.out.println("fis.read():"+(char)fis.read());  
+        System.out.println("fis1.read():"+(char)fis1.read());  
+        if (fdIn!=null)  
+            System.out.printf("fdIn: (%s) is %s\n", fdIn, fdIn.valid());  
+        fis.close();
+        fis1.close();
+    }
+
+    /**
+     * 使用二种方式创建FileOutputStream
+     * 1)文件名
+     * 2)FileDescriptor对象
+     * @throws Exception 
+     */
+    private static void testWrite() throws Exception {
+        FileOutputStream fos = new FileOutputStream(FILE_NAME);
+        FileDescriptor fd = fos.getFD();
+        
+        //本质是fos
+        FileOutputStream fos1 = new FileOutputStream(fd);
+        
+        fos.write('A'); //写入A
+        fos1.write('a'); //写入a
+        
+        if(fd != null)
+            System.out.printf("fd: (%s), is %s\n", fd, fd.valid());
+        
+        fos.close();
+        fos1.close();
+        
+    }
+
+    /**
+     * 等价于System.out.println(TEXT);
+     */
+    private static void testStandFD() {
+        PrintStream ps = new PrintStream(new FileOutputStream(FileDescriptor.out));
+        ps.println(TEXT);
+        ps.close();
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

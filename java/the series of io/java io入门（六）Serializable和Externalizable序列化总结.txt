@@ -1,0 +1,229 @@
+一、 序列化是的作用和用途
+序列化，就是为了保存对象的状态；而与之对应的反序列化，则可以把保存的对象状态再读出来。
+简言之：序列化/反序列化，是Java提供一种专门用于的保存/恢复对象状态的机制。
+一般在以下几种情况下，我们可能会用到序列化：
+a）当你想把的内存中的对象状态保存到一个文件中或者数据库中时候； 
+b）当你想用套接字在网络上传送对象的时候； 
+c）当你想通过RMI传输对象的时候。
+
+二、static和transient类型变量
+00)查看 java io入门（五）ObjectInputStream和ObjectOutputStream介绍及使用
+01)序列化对static和transient变量，是不会自动进行状态保存的。
+        transient的作用就是，用transient声明的变量，不会被自动序列化。
+02)对于Socket, Thread类，不支持序列化。若实现序列化的接口中，有Thread成员；在对该类进行序列化操作时，编译会出错！
+	这主要是基于资源分配方面的原因。如果Socket，Thread类可以被序列化，但是被反序列化之后也无法对他们进行重新的资源分配；
+	再者，也是没有必要这样实现。
+下面，我们还是通过示例来查看“序列化对static和transient的处理”。
+public class SerializableTest {
+    private static final String TMP_FILE = "tiger.ser";
+    public static void main(String[] args) throws Exception {
+        
+        testWrite();
+        testRead();
+        
+        /*
+         Tiger [name=kitty, weight=10, height=0]
+          
+          weight=10 是因为初始化时，所有的Tiger只有一份这个，所以打印为10
+          height=0 是因为int类型的默认值为0
+         */
+    }
+
+    private static void testRead() throws Exception {
+        ObjectInputStream in = new ObjectInputStream(new FileInputStream(TMP_FILE));
+        //Tiger
+        Tiger t = (Tiger)in.readObject();
+        System.out.println(t);
+        in.close();
+    }
+
+    private static void testWrite() throws Exception {
+        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(TMP_FILE));
+        //Tiger
+        Tiger t = new Tiger("kitty", 10, 15);
+        out.writeObject(t);
+        out.close();
+    }
+
+}
+
+class Tiger implements Serializable {
+    /**  */
+    private static final long serialVersionUID = -4820656848276311924L;
+    
+    private String name;
+    private static int weight;
+    private transient int height;
+    
+    public Tiger(String name, int weight, int height) {
+        super();
+        this.name = name;
+        this.weight = weight;
+        this.height = height;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public int getWeight() {
+        return weight;
+    }
+    public void setWeight(int weight) {
+        this.weight = weight;
+    }
+    public int getHeight() {
+        return height;
+    }
+    public void setHeight(int height) {
+        this.height = height;
+    }
+    @Override
+    public String toString() {
+        return "Tiger [name=" + name + ", weight="+weight +", height=" + height + "]";
+    }
+}
+
+若要保存static和transient的变量，咋办呢？
+在类中手动实现writeObject(ObjectOutputStream out)和readObject(ObjectInputStream in)方法。
+
+三、对于Socket,Thread类，不支持序列化
+当在上例中加入以下代码：
+private /*transient*/ Thread thread = new Thread() {  
+	@Override 
+	public void run() {  
+		System.out.println("Serializable thread");  
+	}  
+};
+运行报错：
+Exception in thread "main" java.io.NotSerializableException: cn.rumor.io.Tiger$1
+	at java.io.ObjectOutputStream.writeObject0(ObjectOutputStream.java:1164)
+	at java.io.ObjectOutputStream.defaultWriteFields(ObjectOutputStream.java:1518)
+	at java.io.ObjectOutputStream.writeSerialData(ObjectOutputStream.java:1483)
+	at java.io.ObjectOutputStream.writeOrdinaryObject(ObjectOutputStream.java:1400)
+	at java.io.ObjectOutputStream.writeObject0(ObjectOutputStream.java:1158)
+	at java.io.ObjectOutputStream.writeObject(ObjectOutputStream.java:330)
+	at cn.rumor.io.SerializableTest.testWrite(SerializableTest.java:36)
+	at cn.rumor.io.SerializableTest.main(SerializableTest.java:13)
+
+若想运行通过，为变量加transient关键字。
+
+四、Externalizable和完全定制序列化过程
+如果一个类要完全负责自己的序列化，则实现Externalizable接口，而不是Serializable接口。
+Externalizable接口定义包括两个方法writeExternal()与readExternal()。需要注意的是：声明类实现Externalizable接口会有重大的安全风险。writeExternal()与readExternal()方法声明为public，恶意类可以用这些方法读取和写入对象数据。如果对象包含敏感信息，则要格外小心。
+下面，我们修改之前的SerialTest1.java测试程序；将其中的Box由“实现Serializable接口” 改为 “实现Externalizable接口”。
+
+代码：
+/**
+ * 六
+ * Externalizable
+ * 
+ * @author Victor
+ */
+public class ExternalizableTest {
+    private static final String TMP_FILE = "girl.ser";
+    public static void main(String[] args) throws Exception {
+        
+        testWrite();
+        testRead();
+        
+    }
+
+    private static void testRead() throws Exception {
+        ObjectInputStream in = new ObjectInputStream(new FileInputStream(TMP_FILE));
+        //Girl
+        Girl t = (Girl)in.readObject();
+        System.out.println(t);
+        in.close();
+    }
+
+    private static void testWrite() throws Exception {
+        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(TMP_FILE));
+        //Tiger
+        Girl t = new Girl("kitty", 10, 15);
+        out.writeObject(t);
+        System.out.println(t);
+        out.close();
+    }
+
+}
+
+class Girl implements Externalizable {
+    
+    public void writeExternal(ObjectOutput out) throws IOException {
+    }
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+    }
+    
+    private String name;
+    private int weight;
+    private int height;
+    
+    public Girl(){
+    }
+    
+    public Girl(String name, int weight, int height) {
+        super();
+        this.name = name;
+        this.weight = weight;
+        this.height = height;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public int getWeight() {
+        return weight;
+    }
+    public void setWeight(int weight) {
+        this.weight = weight;
+    }
+    public int getHeight() {
+        return height;
+    }
+    public void setHeight(int height) {
+        this.height = height;
+    }
+    @Override
+    public String toString() {
+        return "Girl [name=" + name + ", weight="+weight +", height=" + height + "]";
+    }
+    
+}
+
+运行结果：
+Girl [name=kitty, weight=10, height=15]
+Girl [name=null, weight=0, height=0]
+
+说明：
+01)实现Externalizable接口的类，不会像实现Serializable接口那样，会自动将数据保存。
+02)实现Externalizable接口的类，必须实现writeExternal()和readExternal()接口！
+否则，程序无法正常编译！
+03)实现Externalizable接口的类，必须定义不带参数的构造函数！
+否则，程序无法正常编译！
+04)writeExternal()和readExternal()的方法都是public的，不是非常安全！
+
+修改上面的ExternalizableTest.java测试程序；实现Girl类中的writeExternal()和readExternal()接口！
+
+修改Girl，如下：
+public void writeExternal(ObjectOutput out) throws IOException {
+	out.writeObject(name);  
+	out.writeInt(weight);  
+	out.writeInt(height);
+}
+
+public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+	name = (String) in.readObject();  
+	weight = in.readInt();
+	height = in.readInt(); 
+}
+
+运行结果：
+Girl [name=kitty, weight=10, height=15]
+Girl [name=kitty, weight=10, height=15]
+
+
+

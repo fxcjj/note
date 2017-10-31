@@ -1,0 +1,7 @@
+java io入门（十四）数据输入流DataInputStream源码分析及介绍使用
+一、DataInputStream介绍
+
+二、DataInputStream源码
+	查看java.io.DataInputStream
+	
+三、DataInputStream使用示例。

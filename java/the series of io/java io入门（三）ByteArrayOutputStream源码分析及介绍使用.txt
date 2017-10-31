@@ -1,0 +1,56 @@
+
+一、ByteArrayOutputSteam
+ByteArrayOutputSteam与ByteArrayInputStream相对应，是字节数组输出流，继承于OutputStream。
+ByteArrayOutputStream的数据被写入一个byte数组。缓冲区会随着数据的不断写入而自动增长。
+可使用toByteArray()和toString()获取数据。
+
+二、源码及解释
+查看OutputSteam源码
+查看ByteArrayOutputStream源码
+
+ByteArrayOutputStream实际上是将字节数据写入到“字节数组”中去。
+01) 通过ByteArrayOutputStream()创建的“字节数组输出流”对应的字节数组大小是32。
+02) 通过ByteArrayOutputStream(int size) 创建“字节数组输出流”，它对应的字节数组大小是size。
+03) write(int oneByte)的作用将int类型的oneByte换成byte类型，然后写入到输出流中。
+04) write(byte[] buffer, int offset, int len) 是将字节数组buffer写入到输出流中，offset是从buffer中读取数据的起始偏移位置，len是读取的长度。
+05) writeTo(OutputStream out) 将该“字节数组输出流”的数据全部写入到“输出流out”中。
+
+
+三、例子
+public class ByteArrayOutputStreamTest {
+	// 对应英文字母“abcddefghijklmnopqrsttuvwxyz”  
+	private static final byte[] ArrayLetters = { 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68,
+			0x69, 0x6A, 0x6B, 0x6C, 0x6D, 0x6E, 0x6F, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76,
+			0x77, 0x78, 0x79, 0x7A          };
+
+	public static void main(String[] args) throws IOException {
+		//创建字节数组输出流
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+		//写入三个字母，即0x41对应A，0x42对应B，0x43对应C
+		baos.write(0x41);
+		baos.write(0x42);
+		baos.write(0x43);
+
+		//toString方法是new String(buf, 0, count);
+		System.out.println("baos: " + baos);
+
+		//将ArrayLetters从3开始后5个字节写入到baos中
+		//即0x64, 0x65, 0x66, 0x67, 0x68，defgh
+		baos.write(ArrayLetters, 3, 5);
+		System.out.println("baos: " + baos); //ABCdefgh
+
+		//长度
+		System.out.println("baos length: " + baos.size()); //8
+
+		byte[] byteArray = baos.toByteArray();
+
+		System.out.println(new String(byteArray)); //ABCdefgh
+
+		//将baos写入到另一个ByteArrayOutputStream中
+		ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
+		baos.writeTo((OutputStream) baos1);
+		System.out.println("baos1: " + baos1); //ABCdefgh
+
+	}
+}
