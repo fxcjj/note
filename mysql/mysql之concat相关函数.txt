@@ -1,0 +1,102 @@
+//连接字符
+mysql> select concat('a', 'b', 'c');
++-----------------------+
+| concat('a', 'b', 'c') |
++-----------------------+
+| abc                   |
++-----------------------+
+1 row in set (0.00 sec)
+
+//组连接符
+mysql> select group_concat(name) from c_employee;
++----------------------------------+
+| group_concat(name)               |
++----------------------------------+
+| victor,grace,cross,izzy,vino,jun |
++----------------------------------+
+1 row in set (0.00 sec)
+
+mysql> select group_concat(name) from c_employee group by dept_id;
++--------------------+
+| group_concat(name) |
++--------------------+
+| victor,grace       |
+| vino               |
+| cross,jun          |
+| izzy               |
++--------------------+
+4 rows in set (0.00 sec)
+
+mysql> select group_concat(name order by name desc) from c_employee group by dept_id;
++---------------------------------------+
+| group_concat(name order by name desc) |
++---------------------------------------+
+| victor,grace                          |
+| vino                                  |
+| jun,cross                             |
+| izzy                                  |
++---------------------------------------+
+4 rows in set (0.00 sec)
+
+mysql> select group_concat(name separator ';') from c_employee group by dept_id;
++----------------------------------+
+| group_concat(name separator ';') |
++----------------------------------+
+| victor;grace                     |
+| vino                             |
+| cross;jun                        |
+| izzy                             |
++----------------------------------+
+4 rows in set (0.00 sec)
+
+mysql> select group_concat(id, name) from c_employee;
++----------------------------------------+
+| group_concat(id, name)                 |
++----------------------------------------+
+| 1victor,2grace,3cross,4izzy,5vino,6jun |
++----------------------------------------+
+1 row in set (0.00 sec)
+
+mysql> select group_concat(dept_id) from c_employee group by dept_id;
++-----------------------+
+| group_concat(dept_id) |
++-----------------------+
+| 1,1                   |
+| 2                     |
+| 3,3                   |
+| 4                     |
++-----------------------+
+4 rows in set (0.00 sec)
+
+mysql> select group_concat(name order by name separator '_') from c_employee group by dept_id;
++------------------------------------------------+
+| group_concat(name order by name separator '_') |
++------------------------------------------------+
+| grace_victor                                   |
+| vino                                           |
+| cross_jun                                      |
+| izzy                                           |
++------------------------------------------------+
+4 rows in set (0.00 sec)
+
+mysql> select concat(group_concat(name order by name separator '_')) from c_employee group by dept_id;
++--------------------------------------------------------+
+| concat(group_concat(name order by name separator '_')) |
++--------------------------------------------------------+
+| grace_victor                                           |
+| vino                                                   |
+| cross_jun                                              |
+| izzy                                                   |
++--------------------------------------------------------+
+4 rows in set (0.00 sec)
+
+mysql> select concat(group_concat(name order by name separator '_'), ',', 'abc') from c_employee group by dept_id;
++--------------------------------------------------------------------+
+| concat(group_concat(name order by name separator '_'), ',', 'abc') |
++--------------------------------------------------------------------+
+| grace_victor,abc                                                   |
+| vino,abc                                                           |
+| cross_jun,abc                                                      |
+| izzy,abc                                                           |
++--------------------------------------------------------------------+
+4 rows in set (0.00 sec)

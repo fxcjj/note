@@ -1,0 +1,198 @@
+
+
+一、What's Maven?
+三、启用Maven的代理访问
+四、Maven本地资源库
+五、Mavent中央存储库
+六、How to download artifacts from remote repository?
+七、The dependency mechanism of maven.
+八、定制库到Maven本地资源库
+
+一、What's Maven?
+Maven, a Yiddish word meaning accumulator of knowledge, was originally started as an attempt to simplify the build processes in the Jakarta Turbine project. There were several projects each with their own Ant build files that were all slightly different and JARs were checked into CVS. We wanted a standard way to build the projects, a clear definition of what the project consisted of, an easy way to publish project information and a way to share JARs across several projects.
+
+The result is a tool that can now be used for building and managing any Java-based project. We hope that we have created something that will make the day-to-day work of Java developers easier and generally help with the comprehension of any Java-based project.
+
+http://maven.apache.org/what-is-maven.html
+
+二、在window/linux下安装maven
+	refer to /note/linux/linux下安装maven.txt
+
+三、启用Maven的代理访问
+	要使用代码服务器来连接internet，必须在maven配置代理设置。
+	<proxies>
+		<proxy>
+			...
+		</proxy>
+	</proxiex>
+	
+四、Maven本地资源库
+Maven 的本地资源库是用来存储项目的依赖库，默认的文件夹是 “.m2” 目录，可能需要将其更改为另一个文件夹。
+用来存储所有项目的依赖关系（插件jar和其他文件）到本地文件夹。
+all relative file will download to save local repository 
+when you create Maven project.
+
+by default, the local repository is .m2 direcotry.
+	* Unix/Mac OS X -- ~/.m2
+	* Windows -- c:\Doucment and Settings\(your-username)\.m2
+
+1、更新Maven的本地库
+generally, we can change the default direcotry, and rename more significant name.
+such as, maven-repo.
+找到{M2_HOME}\conf\setting.xml, udpate localRepository to other name.
+
+setting.xml
+<!-- localRepository
+   | The path to the local repository maven will use to store artifacts.
+   |
+   | Default: ${user.home}/.m2/repository
+  <localRepository>/path/to/local/repo</localRepository>
+  -->
+<localRepository>/home/king/repo</localRepository>
+
+2、保存文件
+执行之后， the new local repository is /home/king/repo.
+
+execute command:
+C:\worksp> mvn archetype:generate -DgroupId=com.victor -DartifactId=NumberGenerator -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
+
+
+五、Mavent中央存储库
+Maven中央存储库是 Maven 用来下载所有项目的依赖库的默认位置。
+
+当你建立一个 Maven 的项目，Maven 会检查你的 pom.xml 文件，以确定哪些依赖下载。
+首先，Maven 将从本地资源库获得 Maven 的本地资源库依赖资源，如果没有找到，
+然后把它会从默认的 Maven 中央存储库 – http://repo1.maven.org/maven2/ 查找下载。
+
+Maven中心储存库网站已经改版本，目录浏览可能不再使用。这将直接被重定向到 http://search.maven.org/。这就好多了，现在有一个搜索功能：
+
+
+六、How to download artifacts from remote repository?
+根据 Apache Maven 的说明:
+Downloading in Maven is triggered by a project declaring a dependency that is not present in the local repository (or for a SNAPSHOT, when the remote repository contains one that is newer). By default, Maven will download from the central repository.
+
+在Maven中，当你声明的库不存在于本地存储库中，也没有不存在于Maven中心储存库，该过程将停止并将错误消息输出到 Maven 控制台。
+
+1. 示例
+org.jvnet.localizer 只适用于 Java.net资源库
+pom.xml
+<dependency>
+	<groupId>org.jvnet.localizer</groupId>
+	<artifactId>localizer</artifactId>
+	<version>1.8</version>
+</dependency>
+
+当你建立这个 Maven 项目，它将依赖找不到失败并输出错误消息。
+
+2. 声明Java.net储存库
+告诉 Maven 来获得 Java.net 的依赖，你需要声明远程仓库在 pom.xml 文件这样：
+
+pom.xml
+<repositories>
+	<repository>
+	<id>java.net</id>
+	<url>https://maven.java.net/content/repositories/public/</url>
+	</repository>
+</repositories>
+	
+Maven的依赖库查询顺序为
+1）在 Maven 本地资源库中搜索，如果没有找到，进入第 2 步，否则退出。
+2）在 Maven 中央存储库搜索，如果没有找到，进入第 3 步，否则退出。
+3）在java.net Maven的远程存储库搜索，如果没有找到，提示错误信息，否则退出。
+
+
+七、The dependency mechanism of maven.
+
+在 Maven 依赖机制的帮助下自动下载所有必需的依赖库，并保持版本升级。
+
+以log4j作为项目的日志。这里你要做什么？
+
+1. traditional way
+* access http://logging.apache.org/log4j/
+* download log4j jar
+* copy logrj.jar to your project classpath
+* 手动将其包含到项目的依赖
+* 所有的管理需要一切由自己做
+
+如果有log4j版本升级，则需要重复上述步骤一次。
+
+2. the maven way
+* you need to know the maven coordinate of log4j(gav), such as: 
+	<groupId>log4j</groupId>
+	<artifactId>log4j</artifactId>
+	<version>1.2.14</version>
+* auto download log4j with 1.2.14 version, if the 'version' label ignored, auto upgrade the last version in the current repository.
+* declare maven coordinate in the pom.xml
+	<dependencies>
+		<dependency>
+		<groupId>log4j</groupId>
+		<artifactId>log4j</artifactId>
+		<version>1.2.14</version>
+		</dependency>
+	</dependencies>
+* when maven compile or build, log4j.jar will auto download, and save to the local repository.
+
+解释说明
+看看有什么不同？那么到底在Maven发生了什么？当建立一个Maven的项目，pom.xml文件将被解析，如果看到 log4j 的 Maven 坐标，然后 Maven 按此顺序搜索 log4j 库：
+
+在 Maven 的本地仓库搜索 log4j 
+在 Maven 中央存储库搜索 log4j
+在 Maven 远程仓库搜索 log4j(如果在 pom.xml 中定义)
+Maven 依赖库管理是一个非常好的工具，为您节省了大量的工作。
+
+如何找到 Maven 坐标？
+访问 Maven 中心储存库，搜索下载您想要的jar。
+
+
+八、定制库到Maven本地资源库
+这里有2个案例，需要手动发出Maven命令包括一个 jar 到 Maven 的本地资源库。
+	* 要使用的 jar 不存在于 Maven 的中心储存库中。
+	* 您创建了一个自定义的 jar ，而另一个 Maven 项目需要使用。
+PS，还是有很多 jar 不支持 Maven 的。
+
+案例学习
+例如，kaptcha，它是一个流行的第三方Java库，它被用来生成 “验证码” 的图片，以阻止垃圾邮件，但它不在 Maven 的中央仓库中。
+在本教程中，我们将告诉你如何安装 “kaptcha” jar 到Maven 的本地资源库。
+
+1. mvn 安装
+下载 “kaptcha”，将其解压缩并将 kaptcha-version.jar 复制到其他地方，比如：C盘。发出下面的命令：
+
+mvn install:install-file -Dfile=c:\kaptcha-{version}.jar -DgroupId=com.google.code -DartifactId=kaptcha -Dversion={version} -Dpackaging=jar
+
+示例：
+D:\>mvn install:install-file -Dfile=c:\kaptcha-2.3.jar -DgroupId=com.google.code 
+-DartifactId=kaptcha -Dversion=2.3 -Dpackaging=jar
+[INFO] Scanning for projects...
+[INFO] Searching repository for plugin with prefix: 'install'.
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Maven Default Project
+[INFO]    task-segment: [install:install-file] (aggregator-style)
+[INFO] ------------------------------------------------------------------------
+[INFO] [install:install-file]
+[INFO] Installing c:\kaptcha-2.3.jar to 
+D:\maven_repo\com\google\code\kaptcha\2.3\kaptcha-2.3.jar
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESSFUL
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: < 1 second
+[INFO] Finished at: Tue May 12 13:41:42 SGT 2014
+[INFO] Final Memory: 3M/6M
+[INFO] ------------------------------------------------------------------------
+
+现在，“kaptcha” jar被复制到 Maven 本地存储库。
+
+2. pom.xml
+安装完毕后，就在 pom.xml 中声明 kaptcha 的坐标。
+<dependency>
+      <groupId>com.google.code</groupId>
+      <artifactId>kaptcha</artifactId>
+      <version>2.3</version>
+ </dependency>
+ 
+3. 完成
+构建它，现在 “kaptcha” jar 能够从你的 Maven 本地存储库检索了。
+
+
+
+Reference
+http://www.yiibai.com/maven/

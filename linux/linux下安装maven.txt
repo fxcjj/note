@@ -1,0 +1,31 @@
+
+一、下载
+http://maven.apache.org/download.cgi
+
+二、解压
+[root@localhost Desktop]# tar -zvxf /home/king/software/apache-maven-3.5.0-bin.tar.gz
+
+此时在当前目录出现apache-maven-3.5.0
+
+移动到程序目录/usr/local/program下
+
+三、配置
+[root@localhost Desktop]# vi /etc/profile
+export PATH=$PATH:$JAVA_HOME/bin:$MAVEN_HOME/bin
+export MAVEN_HOME=/usr/local/apache-maven-3.5.2
+export M2_HOME=/usr/local/apache-maven-3.5.2
+
+立即生效
+[root@localhost Desktop]# source /etc/profile
+
+四、验证
+[root@localhost Desktop]# mvn -v
+Apache Maven 3.5.2 (138edd61fd100ec658bfa2d307c43b76940a5d7d; 2017-10-18T15:58:13+08:00)
+Maven home: /usr/local/apache-maven-3.5.2
+Java version: 1.8.0_144, vendor: Oracle Corporation
+Java home: /usr/local/jdk1.8.0_144/jre
+Default locale: en_US, platform encoding: UTF-8
+OS name: "linux", version: "2.6.32-431.el6.x86_64", arch: "amd64", family: "unix"
+
+
+

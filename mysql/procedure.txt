@@ -1,5 +1,23 @@
 
+What's stored procedure?
+Features
+Simple example
+The control statement
+Disadvantages of stored procedure
 
+
+What's stored procedure?
+简单的说，就是一组SQL语句集，功能强大，可以实现一些比较复杂的逻辑功能，类似于JAVA语言中的方法；
+ps:存储过程跟触发器有点类似，都是一组SQL集，但是存储过程是主动调用的，且功能比触发器更加强大，触发器是某件事触发后自动调用；
+
+
+Features
+有输入输出参数，可以声明变量，有if/else,case,while等控制语句，通过编写存储过程，可以实现复杂的逻辑功能；
+函数的普遍特性：模块化，封装，代码复用；
+速度快，只有首次执行需经过编译和优化步骤，后续被调用可以直接执行，省去以上步骤；
+
+
+Simple example
 
 if else测试
 mysql> delimiter //
@@ -16,7 +34,7 @@ mysql> create procedure proc_ifelse(in age int)
     -> //
 mysql> delimiter ;
 
-查看数据库的存储过程
+查看数据库中的存储过程
 方式一
 select name from mysql.proc where db = 'cardiovascular';
 方式二
@@ -106,108 +124,7 @@ mysql> select from_days(736902);
 +-------------------+
 1 row in set (0.00 sec)
 
-//连接字符
-mysql> select concat('a', 'b', 'c');
-+-----------------------+
-| concat('a', 'b', 'c') |
-+-----------------------+
-| abc                   |
-+-----------------------+
-1 row in set (0.00 sec)
 
-//组连接符
-mysql> select group_concat(name) from c_employee;
-+----------------------------------+
-| group_concat(name)               |
-+----------------------------------+
-| victor,grace,cross,izzy,vino,jun |
-+----------------------------------+
-1 row in set (0.00 sec)
-
-mysql> select group_concat(name) from c_employee group by dept_id;
-+--------------------+
-| group_concat(name) |
-+--------------------+
-| victor,grace       |
-| vino               |
-| cross,jun          |
-| izzy               |
-+--------------------+
-4 rows in set (0.00 sec)
-
-mysql> select group_concat(name order by name desc) from c_employee group by dept_id;
-+---------------------------------------+
-| group_concat(name order by name desc) |
-+---------------------------------------+
-| victor,grace                          |
-| vino                                  |
-| jun,cross                             |
-| izzy                                  |
-+---------------------------------------+
-4 rows in set (0.00 sec)
-
-mysql> select group_concat(name separator ';') from c_employee group by dept_id;
-+----------------------------------+
-| group_concat(name separator ';') |
-+----------------------------------+
-| victor;grace                     |
-| vino                             |
-| cross;jun                        |
-| izzy                             |
-+----------------------------------+
-4 rows in set (0.00 sec)
-
-mysql> select group_concat(id, name) from c_employee;
-+----------------------------------------+
-| group_concat(id, name)                 |
-+----------------------------------------+
-| 1victor,2grace,3cross,4izzy,5vino,6jun |
-+----------------------------------------+
-1 row in set (0.00 sec)
-
-mysql> select group_concat(dept_id) from c_employee group by dept_id;
-+-----------------------+
-| group_concat(dept_id) |
-+-----------------------+
-| 1,1                   |
-| 2                     |
-| 3,3                   |
-| 4                     |
-+-----------------------+
-4 rows in set (0.00 sec)
-
-mysql> select group_concat(name order by name separator '_') from c_employee group by dept_id;
-+------------------------------------------------+
-| group_concat(name order by name separator '_') |
-+------------------------------------------------+
-| grace_victor                                   |
-| vino                                           |
-| cross_jun                                      |
-| izzy                                           |
-+------------------------------------------------+
-4 rows in set (0.00 sec)
-
-mysql> select concat(group_concat(name order by name separator '_')) from c_employee group by dept_id;
-+--------------------------------------------------------+
-| concat(group_concat(name order by name separator '_')) |
-+--------------------------------------------------------+
-| grace_victor                                           |
-| vino                                                   |
-| cross_jun                                              |
-| izzy                                                   |
-+--------------------------------------------------------+
-4 rows in set (0.00 sec)
-
-mysql> select concat(group_concat(name order by name separator '_'), ',', 'abc') from c_employee group by dept_id;
-+--------------------------------------------------------------------+
-| concat(group_concat(name order by name separator '_'), ',', 'abc') |
-+--------------------------------------------------------------------+
-| grace_victor,abc                                                   |
-| vino,abc                                                           |
-| cross_jun,abc                                                      |
-| izzy,abc                                                           |
-+--------------------------------------------------------------------+
-4 rows in set (0.00 sec)
 
 mysql> select cast(current_timestamp() as signed);
 +-------------------------------------+
