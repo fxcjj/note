@@ -464,18 +464,117 @@ project -> Properties -> Deployment Assembly
 useless
 
 
+三、转换基于Maven的Web应用程序支持Eclipse IDE
+Convert Web Application based on maven to support Eclipse IDC.
 
 WTP
 Web Tools Platform
 
+在上一节教程中，使用Maven创建了一个Web应用程序。这里有一个指南，告诉你如何转换Web应用程序到Eclipse IDE支持的形式。
+注意，通过WTP工具Eclipse IDE支持Web应用程序，所以需要让基于Maven的项目支持它。
+
+1. mvn eclipse:eclipse -Dwtpversion=2.0
+
+要转换一个基于Maven的Java项目支持IDE，使用此命令：
+mvn eclipse:eclipse
+
+对于Web应用程序，需要额外的参数，使其支持 Eclipse WTP，应该使用这个命令：
+mvn eclipse:eclipse -Dwtpversion=2.0
+
+//通过archetype创建项目
+[root@localhost stupid]# mvn archetype:generate -DgroupId=com.rumor -DartifactId=stupid
+	1) 提示选择archetype，回车选择默认（要先springmvc, spring, mybatis/hibernate）
+	2) 提示groupId, artifactId
+	3) 确认信息
+
+//转换为web项目
+[root@localhost stupid]# mvn eclipse:eclipse -Dwtpversion=2.0
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Building stupid 1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] >>> maven-eclipse-plugin:2.10:eclipse (default-cli) > generate-resources @ stupid >>>
+[INFO] 
+[INFO] <<< maven-eclipse-plugin:2.10:eclipse (default-cli) < generate-resources @ stupid <<<
+[INFO] 
+[INFO] 
+[INFO] --- maven-eclipse-plugin:2.10:eclipse (default-cli) @ stupid ---
+[INFO] Adding support for WTP version 2.0.
+[INFO] Using Eclipse Workspace: null
+[INFO] Adding default classpath container: org.eclipse.jdt.launching.JRE_CONTAINER
+[INFO] Not writing settings - defaults suffice
+[INFO] Wrote Eclipse project for "stupid" to /home/king/work/stupid.
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 3.055 s
+[INFO] Finished at: 2017-11-10T20:35:08+08:00
+[INFO] Final Memory: 10M/24M
+[INFO] ------------------------------------------------------------------------
+[root@localhost stupid]# 
+
+2. 此时会生成三个文件
+.classpath文件
+.project文件
+.settings文件夹
+	* org.eclipse.wst.common.component
+	* org.eclipse.wst.common.project.facet.core.xml
+
+File: org.eclipse.wst.common.component
+<?xml version="1.0" encoding="UTF-8"?>
+<project-modules id="moduleCoreId" project-version="2.0">
+  <wb-module deploy-name="stupid">
+    <property name="context-root" value="stupid"/>
+
+File: org.eclipse.wst.common.project.facet.core.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<faceted-project>
+  <fixed facet="jst.java"/>
+  <fixed facet="jst.web"/>
+  <installed facet="jst.web" version="2.4"/>
+  <installed facet="jst.java" version="1.8"/>
+</faceted-project>
+
+
+3. 导入其到Eclipse
+File -> Import… -> General -> Existing Projects into Workspace
 
 
 
 
+四、使用Maven模板创建项目
+在Maven3.3版本中，有超过1000+个模板，Maven团队已过滤掉一些无用的模板。
+generally, we just need two template as below:
+	* maven-archetype-webapp --Java Web Project(WAR)
+	* maven-archetype-quickstart --Java Project(JAR)
 
+1. Maven 1000+模板
+如果输入命令mvn archetype:generate, 1000+个模板会显示在屏幕上，你无法选择什么。
+为了解决这个问题，输出模板列表，像这样保存为文件文件：
 
+[root@localhost work]# mvn archetype:generate > templates.txt //waiting few seconds,then exits
+Press CTRL + C
 
+[root@localhost work]# grep mybatis template.txt //825是spring, springmvc, mybatis
 
+2. mvn archetype:generate
+将会列表模板，指导你去用xxx模板创建项目。
+	* 选择序号
+	* groupId等信息
+	
+Note: 要导入项目到Eclipse中，键入命令mvn eclipse:eclipse，并导入它作为一个正常的项目
+
+3. Learn more
+If you konw to use which archetypeArtifactId, skip the interactiveMode.
+such as:
+3.1 maven-archetype-quickstart(Java Project)
+[root@localhost work]# mvn archetype:generate -DgroupId=com.rumor.core -DartifactId=<ProjectName> -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
+
+3.2 maven-archetype-webapp(Java Web Project)
+$ mvn archetype:generate -DgroupId=com.rumor.web -DartifactId=<ProjectName> -DarchetypeArtifactId=maven-archetype-webapp -DinteractiveMode=false
 
 
 
