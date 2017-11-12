@@ -1,0 +1,121 @@
+
+
+From
+百度云盘/technology/Maven知识讲解
+
+install maven
+
+config environment variable
+	M2_HOME
+	MAVEN_HOME
+	
+maven standard layout
+	src/main/java //source code
+	src/test/java //test class
+	src/main/resources //conf file
+
+lifecycle
+	mvn clean //delete target directory
+	mvn compile //compile class to target/classes
+	mvn test //generate three test report(surefire..)
+	mvn package //generate project_name.jar
+	mvn install //install jar to the local repository. after installed, you can refer in other project.
+
+declare dependency
+	<dependency>
+		<groupId>com.vic</groupId>
+		<artifactId>user-core</artifactId>
+		<version>1.0.0-Release</version>
+	</dependency>
+
+//project object model
+pom.xml
+
+//central repository, you can find in lib\maven-model-builder.jar\org\...\pom-4.0.0.mxl.
+mvnrepository.com
+
+
+//local repository, the default local repository, 
+you can change the default repository by update conf/settings.xml(localRepository).
+such as: d:\repo
+C:\Users\Victor\.m2
+
+
+mvn archetype
+	refer to note/maven/02-xxx.txt
+	
+
+maven内置隐式变量
+	${project.groupId}
+	${project.version}
+	...
+	
+
+依赖范围(scope)
+
+	默认是compile
+	
+	test
+	在测试范围有效，对于src/main/java是无效的，只对src/test/java有效。
+	在编译、打包时不会将依赖加到lib中。
+	
+	compile
+	在编译、打包时将依赖加到lib中。
+	
+	provided
+	在编译、测试加进去，打包不加进去，如servlet-api.jar,
+	已经存在tomcat等web容器中，打包会有冲突的。
+	
+	runtime
+	编译、测试无效，打包时用到，如：mysql-connector.jar
+	
+依赖传递
+	scope为test是不会传递的。
+	
+	要在自己的项目中引入junit(test范围)
+
+第一种情况：
+直接依赖  
+	A -> v1.0
+	B -> v2.0
+
+间接依赖
+	C -> A, B
+	在C中的pom.xml中先写谁就用谁，此处用A。
+	
+当依赖层级相同时，谁在前面先依赖谁。
+
+第二种情况：
+A -> M -> jv1.0
+
+B -> jv1.3
+
+C -> A, B
+
+则C使用的是B中的jv1.3，即按照最短路径依赖。
+
+
+当想使用具体的version时而且存在传递依赖时，可以使用exclusions标签排除不需要的依赖。
+
+
+
+create a simple project(skip archetype selection)
+packing pom
+
+
+
+
+snaphsot 不稳定版本
+alpha 内测
+beta 公测
+release(RC) 发布版本
+GA (General Available) 可靠/产品版本
+				
+cms0.0.1-SNAPSHOT-->cms0.0.1-Release-->cms1.0.1-SNAPSHOT(架构有大的调整)
+				--->cms0.1.1-SNAPSHOT										-->cms1.0.1-Release(合并)
+				--->cms0.1.1-Release
+
+
+
+
+
