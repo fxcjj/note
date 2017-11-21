@@ -164,13 +164,14 @@ $ git diff HEAD -- readme.txt
 		nothing to commit, working directory clean
 
 9 远程仓库
-	1)在github上新建远程库，记得要把pubkey加到github上
-	2)关联一个远程库，在自己的clairvoyant库下面使用命令git remote add origin git@github.com:fxcjj/clairvoyant.git
-	3)关联后，使用命令git push -u origin master 第一次推送master分支的所有内容.
+	1)在repo目录下使用git init初始化repo
+	2)在github上新建远程库，记得要把pubkey加到github上
+	3)关联一个远程库，在自己的clairvoyant库下面使用命令git remote add origin git@github.com:fxcjj/clairvoyant.git
+	4)关联后，使用命令git push -u origin master 第一次推送master分支的所有内容.
 		把本地库的内容推送到远程，用git push命令，实际上是把当前分支master推送到远程。
 		由于远程库是空的，我们第一次推送master分支时，加上了-u参数，Git不但会把本地的master分支内容推送的远程新的master分支，
 		还会把本地的master分支和远程的master分支关联起来，在以后的推送或者拉取时就可以简化命令。
-	4)此后，使用命令git push origin master推送即可。
+	5)此后，使用命令git push origin master推送即可。
 
 10 从远程库克隆
 	1)要克隆一个仓库，首先必须知道仓库的地址，然后使用git clone命令克隆。
