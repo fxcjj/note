@@ -116,6 +116,48 @@ cms0.0.1-SNAPSHOT-->cms0.0.1-Release-->cms1.0.1-SNAPSHOT(架构有大的调整)
 				--->cms0.1.1-Release
 
 
+v7
+查找依赖顺序local repository -> nexus -> central repository
+
+publish way
+	tomcat
+	built-in jetty
+	
+nexus-lasted-bundle
+	/nexus-2.3.1-01/bin
+	/sonatype-work/nexus //私服库，所有的东西都存在这儿
+	
+install nexus
+	a, add "bin" environment variable 
+	b, type nexus in the command line
+		start, stop, restart, install, uninstall
+	c, bin/jws/conf/wrapper.conf/
+		wrapper.java.command=d:/programsfiles/jdk1.6/bin/java
+	d, type 'nexus start'
+		The nexus-weapp service is not installed. //so we nedd to install to windows services.
+	e, type 'nexus install'
+		after you execute this order, and you will see the nexus service in the windows services list.
+	f, when you installed, type 'localhost:8081/nexus' in the browser,
+		admin/admin123
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
