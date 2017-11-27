@@ -141,6 +141,114 @@ install nexus
 		admin/admin123
 	
 
+v8
+提交自己的jar文件（例如user-core）到nexus，执行命令mvn:deploy
+(1)3rd party	hosted
+(2)release		hosted
+(3)snaphsot		hosted
+(4)central		proxy
+
+例如，提交usre-core
+当pom文件中version为snapshot时，执行deploy，提交到(3)
+当version为release时，执行deploy，提交到(2)
+如里在mvnrepostory.com（中央仓库）中没有jar包，在官网有gav，
+需要以下载到本地（或者pom文件），然后上传至(1).
+
+nexus面向局域网
+
+(4)是存放从central repository下载下来的jar
+
+在user-parent的pom中使用nexus
+<repositorys>
+	<repository>
+		<id>nexus</id>
+		<name>Nexus Repository</name>
+		<url>此处配置maven-public的地址</url>
+		<!-- 可以下载release的jar包，默认true-->
+		<releases>
+			<enabled>true</enabled>
+		</releases>
+		<!-- snapshot默认是关闭的，需要手工开启 -->
+		<snaphsot>
+			<enabled>true</enabled>
+		</snaphsot>
+	</repository>
+</repositorys>
+
+但是如果想让其它项目也使用这个配置呢？
+修改maven的settings配置
+
+标签含义
+profile指的是配置，不止是nexus的配置
+
+//配置列表
+<profiles>
+	<!-- 每一个profile就是一个配置 -->
+	<profile>
+		<id>nexusProfile</id>
+
+		<repositories>
+			<repository>
+				<id>nexus</id>
+				<name>Nexus Repository</name>
+				<url>这时一般是私服的组地址</url>
+				<layout>default</layout>
+				<snapshotPolicy>always</snapshotPolicy>
+				<!-- 可以下载release的jar包，默认true-->
+				<releases>
+					<enabled>true</enabled>
+				</releases>
+				<!-- snapshot默认是关闭的，需要手工开启 -->
+				<snaphsot>
+					<enabled>true</enabled>
+				</snaphsot>
+			</repository>
+		</repositories>
+	<profile>
+<profiles>
+
+//激活配置列表
+<activeProfiles>
+	<activeProfile>nexusProfile</activeProfile>
+</activeProfiles>
+
+这样，每个项目的parent中不用再配置了！！！
+可以引入一个依赖，在maven console中就用看到下载路径。
+
+当把nexus关闭（nexus stop）时，在引入包时，先找nexus，找不到，会从中央仓库中找。
+中央仓库在model-builder包中。
+
+不要从central repository找，可以在settings文件中配置mirror.
+<mirror>
+	<id>nexusMirror</id>
+	<!-- 
+	当访问nexus,central时，会访问镜像地址，找不到就找不到喽！
+	一般推荐使用*，表示所有的reposiory都访问镜像地址
+	-->
+	<mirrorOf>nexus,central</mirrorOf>
+	<url>此处是镜像地址</url>
+</mirror>
+
+Note:
+当访问central时，首先会找maven的repository的配置，
+而且会使用它的配置，例如central中的snapshot的配置为true。
+但是我们想使用自己的配置呢？
+使用profile配置！！！
+<profile>
+	<id>centralProfile</id>
+	<!-- 此处的name要和一致 -->
+	<name>central</name>
+	<!-- 当配置mirror时，此地址用不到，随便配置个 -->
+	<url>http://*</url>
+	<layout>default</layout>
+	<snapshots>
+		<!-- 自定义 -->
+		<enabled>true</enabled>
+	<snaphsots>
+
+当找jar时，找到mirror, 使用nexus的属性配置，使用central的属性配置。
+
+
 
 
 
