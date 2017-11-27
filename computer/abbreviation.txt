@@ -252,3 +252,23 @@ carriage return linefeed
 DOS 磁盘操作系统
 Disk Operation System
 
+BSS 业务支撑系统
+Business Support System
+
+OSS 运营支撑系统
+Operation Support System
+
+MSS 管理支撑系统
+Management Support System
+
+OSS 一站式购物
+One Stop Shopping
+
+BOSS 业务运营支持系统
+Business Operation Support System
+
+OSS 开源软件（开放源代码软件）
+Open Source Software
+
+
+
