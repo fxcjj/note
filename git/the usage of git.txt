@@ -408,7 +408,7 @@ origin  git@github.com:fxcjj/fuckgit.git (push)
 git就会把分支推送到远程库对应的远程分支上。
 git push origin master
 
-如果要推送其他分支，比如dev，就改成
+如果要推送到远程库的其他分支，比如dev，就改成
 git push origin dev
 
 master分支是主分支，因此时刻与远程同步
