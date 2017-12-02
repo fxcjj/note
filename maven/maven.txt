@@ -179,7 +179,7 @@ nexus面向局域网
 修改maven的settings配置
 
 标签含义
-profile指的是配置，不止是nexus的配置
+profile指的是配置，不止是nexus的配置，包含其它公共配置。
 
 //配置列表
 <profiles>
@@ -213,12 +213,11 @@ profile指的是配置，不止是nexus的配置
 </activeProfiles>
 
 这样，每个项目的parent中不用再配置了！！！
-可以引入一个依赖，在maven console中就用看到下载路径。
+可以测试引入一个依赖，在maven console中就用看到下载路径，
+把nexus关闭（nexus stop）后，在引入包时，先找nexus，找不到，会从中央仓库中找。
+中央仓库在model-builder包中配置。
 
-当把nexus关闭（nexus stop）时，在引入包时，先找nexus，找不到，会从中央仓库中找。
-中央仓库在model-builder包中。
-
-不要从central repository找，可以在settings文件中配置mirror.
+当不想从central repository找，可以在settings文件中配置mirror.
 <mirror>
 	<id>nexusMirror</id>
 	<!-- 
@@ -230,38 +229,120 @@ profile指的是配置，不止是nexus的配置
 </mirror>
 
 Note:
-当访问central时，首先会找maven的repository的配置，
-而且会使用它的配置，例如central中的snapshot的配置为true。
+当访问central(mirrorOf中的配置)时，首先会找maven本身的repository的配置（model-builder包中），
+并且使用此配置，比如central中的snapshot的配置为true。
 但是我们想使用自己的配置呢？
 使用profile配置！！！
 <profile>
 	<id>centralProfile</id>
-	<!-- 此处的name要和一致 -->
+	<!-- 此处的name要和maven中的一致 -->
 	<name>central</name>
 	<!-- 当配置mirror时，此地址用不到，随便配置个 -->
 	<url>http://*</url>
 	<layout>default</layout>
 	<snapshots>
-		<!-- 自定义 -->
+		<!-- 覆盖maven的配置 -->
 		<enabled>true</enabled>
 	<snaphsots>
 
-当找jar时，找到mirror, 使用nexus的属性配置，使用central的属性配置。
+当寻找dependency时，找到mirror, 使用nexus的属性配置，使用central的属性配置。
 
 
 
+v9
+indexer
+nexus
+
+发布到nexus中
+	使用clean deploy
+	
+配置user-parent的pom.xml(在modules下面)
+	<distributionManagement>
+		<repository>
+			<id>user-releases</id>
+			<name>user releases repo</name>
+			<url>hosted类型release url</url>
+		</repository>
+		<snaphshotRepository>
+			<id>user-snapshots</id>
+			<name>user snapshots repo</name>
+			<url>hosted类型snapshot url</url>
+		</snapshotRepository>
+	</distributionManagement>
+	
+再次执行
+	clean deploy
+
+查看nexus用户
+	Security/Users
+	在此菜单下可以看到，anonymous用户只有默认权限，不能deployment.
+	所以，需要配置级别较高用户
+	
+修改settings文件配置用户
+	<!-- config users for user project -->
+	<server>
+      <id>user-releases</id>
+      <username>admin</username>
+      <password>admin123</password>
+    </server>
+	<server>
+	  <id>user-snapshots</id>
+      <username>admin</username>
+      <password>admin123</password>
+    </server>
+
+	
+遇到的错误
+1) [WARNING] Could not transfer metadata com.vic:user-parent:0.0.1-SNAPSHOT/maven-metadata.xml from/to user snapshot (http://localhost:8083/repository/maven-releases/): Failed to transfer file: http://localhost:8083/repository/maven-releases/com/vic/user-parent/0.0.1-SNAPSHOT/maven-metadata.xml. Return code is: 400 , ReasonPhrase:Repository version policy: RELEASE does not allow metadata in path: com/vic/user-parent/0.0.1-SNAPSHOT/maven-metadata.xml.
+
+原因：是因为我配置的distributionManagement/snaphshotRepository是release的地址，导致无法转换。
+
+2) [ERROR] Failed to execute goal org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy (default-deploy) on project user-parent: Failed to deploy artifacts: Could not transfer artifact com.vic:user-parent:pom:0.0.1-20171202.075024-1 from/to user snapshot (http://localhost:8083/repository/maven-snapshots/): Failed to transfer file: http://localhost:8083/repository/maven-snapshots/com/vic/user-parent/0.0.1-SNAPSHOT/user-parent-0.0.1-20171202.075024-1.pom. Return code is: 401, ReasonPhrase: Unauthorized. -> [Help 1]
+
+原因：未配置<server>标签，用户名admin, 密码admin123
 
 
 
+创建nexus仓库供rumor项目使用
+	Repositorys/Create Repository/Maven2(hosted)
+		1) name //rumor-releases
+		2) Version policy //release
+		3) Deployment policy //Allow redeploy
+		
+创建Privileges
+	Security/Privileges/Create privileges/Select Privileges Type(Repository View)
+	1) name //project-rumor-releases-all
+	2) Description
+	3) Format //maven2
+	4) Repository //rumor-releases
+	5) Actions //*
+	重复上述，创建snapshots的权限
 
+创建Role
+	Security/Roles/Create role/Nexus role
+	1) Role ID //role-rumor-all
+	2) Role name //role-rumor-all
+	3) Role Description
+	4) Privileges 
+		a, project-rumor-releases-all
+		b, project-rumor-snapshots-all
 
+创建User
+	Security/User/Create local user
+	1) ID //rumor
+	2) First Name, Last Name, Email, Password
+	3) Status //active
+	4) Roles
+		a, role-rumor-all
+	
+完成上述步骤后，在settings.xml中配置server为rumor用户。
+pom.xml中配置distributionManagement，执行deploy，你会看到jar上传到rumor-snapshots仓库上。
 
-
-
-
-
-
-
+遇到的问题
+	创建Privileges时，第一次选择了Application类型，使用了通配符，
+	发现在privileges列表中出现了project-rumor-all, x.rumor-releases.*, y.rumor-snapshots.*.
+	删除了project-rumor-all后，x.rumor-releases.*和y.rumor-snaphsots.*仍然存在。
+	没找到删除的地方！！！
 
 
 
