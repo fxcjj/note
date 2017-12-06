@@ -347,6 +347,346 @@ pom.xml中配置distributionManagement，执行deploy，你会看到jar上传到rumor-snapshot
 
 
 
+v10
+maven三套生命周期
+clean
+	pre-clean clean之前完成的工作
+	clean 移除所有上一次构建生成的文件
+	post-clean clean之后立刻完成的工作
+
+compile
+	validate
+	generate-sources
+	process-sources
+	generate-resources
+	process-resources 复制并处理资源文件，至目标目录，准备打包。
+	compile 编译项目的源代码
+	process-classes
+	generate-test-sources
+	process-test-sources
+	generate-test-resources
+	process-test-resources 复制并处理资源文件，至目标测试目录。
+	test-compile 编译测试源代码。
+	process-test-classes
+	test 使用合适的单元测试框架运行测试。这些测试代码不会被找包或部署
+	prepare-package
+	package 接受编译好的代码，打包成可发布的格式，如jar
+	pre-integration-test
+	integration-test
+	post-integration-test
+	verify
+	verify
+	install 将包安装至本地仓库，以让其它项目依赖。
+	deploy 将最终的包复制到远程的仓库，以让其它开发人员与项目共享。
+	
+site
+	pre-site 执行一些需要在生成站点文档之前完成的工作
+	site 生成项目的站点文档
+	post-site 执行一些需要在生成站点文档之后完成的工作，并且为部署做准备。
+	
+	
+插件位置
+	D:\repository\org\apache\maven\plugins
+
+pom中使用插件（user-core）
+	<build>
+		<plugins>
+			<!-- 把源代码打包 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.2.1</version>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<!-- 在compile后执行jar,test-jar -->
+						<goals>
+							<goal>jar</goal>
+							<goal>test-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+
+v11
+仓库和插件生命周期
+本地仓库、私有仓库、中央仓库
+nexus
+三套生命周期
+	clean, compile, site
+	
+在user-parent的pom中使用pluginManagement
+	pom.xml
+	<build>
+		<pluginManagement>
+		<plugins>
+			<!-- 把源代码打包 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.2.1</version>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<!-- 在compile后执行jar,test-jar -->
+						<goals>
+							<goal>jar</goal>
+							<goal>test-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compile-plugin</artifactId>
+				<version>3.0</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+		</plugins>
+		</pluginManagement>
+	</build>
+
+在子模块在引用parent的配置
+	pom.xml
+	<build>
+		<plugins>
+			<!-- 把源代码打包 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compile-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+	
+使用mojo插件创建执行sql
+	user-parent的pom.xml
+	<plugin>
+		<groupId>org.codehaus.mojo</groupId>
+		<artifactId>sql-maven-plugin</artifactId>
+		<version>1.5</version>
+		<dependencies>
+			<dependency>
+				<!-- mysql的驱动依赖 -->
+			</dependency>
+		</dependencies>
+		<configuration>
+			<driver>${jdbc.driver}</driver>
+			<url>${jdbc.url}</url>
+			<username>${jdbc.username}</username>
+			<password>${jdbc.pasword}</password>
+		</configuration>
+		<!-- 执行时绑定的阶段 -->
+		<executions>
+			<!-- compile后创建数据库 -->
+			<execution>
+				<id>create-db</id>
+				<phase>compile</phase>
+				<goals><goal>execute</goal></goals>
+				<configuration>
+					<sqlCommand>create database if not exists my_test</sqlCommand>
+				</configuration>
+			</execution>
+			<!-- test-compile后执行文件 -->
+			<execution>
+				<id>init-table</id>
+				<phase>test-compile</phase>
+				<goals><goal>execute</goal></goals>
+				<configuration>
+					<srcFile>src/main/resources/init.sql</srcFile>
+				</configuration>
+			</execution>
+		</executions>
+		
+	init.sql
+		use my_test;
+		create table if not exists t_user(
+			id int(10) auto_increment primary key,
+			username varchar(20),
+			pasword varchar(20)
+		);
+		
+
+v12
+surefire掌管测试
+
+默认执行类名
+	Test***
+	***Test
+	***TestCase
+
+自定义执行测试类
+	<plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.20.1</version>
+        <configuration>
+          <!-- 设置包含的测试类 -->
+		  <includes>
+			<include>**/Hello*</include>
+		  </includes>
+		  <!-- 设置不进行测试的类 -->
+		  <!--<excludes>
+			<exclude>Test*</exclude>
+		  </excludes>-->
+		  <!-- 跳过测试，但编译错误不会忽略，如果要忽略在compiler配置skip-->
+		  <skip>true</skip>
+        </configuration>
+      </plugin>
+
+忽略测试类的编译错误
+	在user-parent中pom.xml的comipler配置skip为true
+	  
+使用help
+	help:describe -DgrouId=xxx, -DartifactId=yyy
+
+手动忽略测试
+	package -DskipTests=true //跳过测试
+
+执行指定的测试类
+	clean package -Dtest=Hello.java
+
+生成测试覆盖率报告
+	cobertura:cobertura
+	
+可以配置此插件
+	在user-parent中的pom.xml配置，子模块引用时只需配置ga坐标
+	<!-- 测试覆盖率报告 -->
+	<plugin>
+		<groupId>org.codehaus.mojo</groupId>
+		<artifactId>cobertura-maven-plugin</artifactId>
+		<configuration>
+			<formats>
+				<format>html</format>
+				<format>xml</format>
+			</formats>
+		</configuration>
+		<executions>
+			<execution>
+				<id>cobertura-report</id>
+				<goals>
+					<goal>cobertura</goal>
+				</goals>
+				<phase>test</phase>
+			</execution>
+		</executions>
+	</plugin>
+	
+
+v14
+<servlet>
+<servlet-mapping>
+
+el
+isELIgnored=false
+
+copy-maven-plugin
+	project.build.outputDirectory指的是target/classes目录
+
+//定义属性
+catalina.home
+	d:/tomcat
+
+在user-parent的pom中配置
+<plugin>
+	<groupId>com.github.goldin
+	<artifactId>copy-maven-plugin
+	<version>0.2.5
+	<executions>
+		<execution>
+			<id>copy-war
+			<phase>package
+			<goals>
+				<goal>copy</goal>
+			</goals>
+			<configuration>
+				<resources>
+					<resource>
+						<!-- catalina.home指tomcat安装路径 -->
+						<targetPath>${catalina.home}/webapps</targetPath>
+						<!-- project.build.directory指的是target目录 -->
+						<directory>${project.build.directory}</directory>
+						<!-- 要copy的文件 -->
+						<includes>
+							<include>user-web.war</include>
+						</includes>
+					</resource>
+				</resources>
+			</configuration>
+		</execution>
+	</executions>
+
+</plugin>
+
+
+在user-web中引用
+	<build>
+		<plugin>
+			此处配置ga
+		
+配置jetty插件（在user-parent的pom中）
+	<plugin>
+		<groupId>org.mortbay.jetty
+		<artifactId>jetty-maven-plugin
+		<configuration>
+			<!-- 10秒扫一次 -->
+			<scanIntervalSeconds>10
+			<webApp>
+				<contextPath>/hello</contextPath>
+			</webApp>
+			<connectors>
+				<connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+					<port>8787</port>
+					<maxIdleTime>60000<maxIdleTime>
+				</connector>
+			</connectors>
+		</configuration>
+	Note: 未绑定version会自动下载合适版本
+		
+		
+在user-web中引用
+	<plugin>
+		此处配置ga
+	</plugin>
+
+手动启动jetty
+	build...
+	clean compile jetty:run
+
+访问地址
+	localhost:8787/hello/hello.do
+
+java 企业设计模式
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
