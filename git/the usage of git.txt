@@ -164,7 +164,7 @@ $ git diff HEAD -- readme.txt
 		nothing to commit, working directory clean
 
 9 远程仓库
-	1)在repo目录下使用git init初始化repo
+	1)在clairvoyant repo目录下使用git init初始化repo
 	2)在github上新建远程库，记得要把pubkey加到github上
 	3)关联一个远程库，在自己的clairvoyant库下面使用命令git remote add origin git@github.com:fxcjj/clairvoyant.git
 	4)关联后，使用命令git push -u origin master 第一次推送master分支的所有内容.

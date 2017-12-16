@@ -270,5 +270,7 @@ Business Operation Support System
 OSS 开源软件（开放源代码软件）
 Open Source Software
 
+CGLIB
+Code Generation Library
 
 
