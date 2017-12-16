@@ -1,17 +1,17 @@
 
 Java是强类型的，意味着每个变量都具有一种类型。
 
-数据类型
+数据类型分为二类
 1) primitive type //直接包含值
-	|--boolean
-	|--numeric type
-		|--integer type(byte,short,int,long,char)
-		|--floating-point type(float,double)
+	boolean
+	numeric type
+		integer type(byte,short,int,long,char)
+		floating-point type(float,double)
 2) reference type //引用对象
-	|--class type
-	|--interface type
-	|--array type
-	|--null type
+	class type
+	interface type
+	array type
+	null type
 
 
 基本类型

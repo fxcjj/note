@@ -1,0 +1,14 @@
+1、开源的（BSD协议），使用ANSI C编写，
+基于内存且支持持久化、高性能的key-value的NoSQL数据库
+
+2、支持数据结构类型丰富
+string, hash, lists, sets, sorted sets, 范围查询、bitmaps, hyperloglog3, 地理空间索引半径查询
+
+3、丰富的支持主流语言的客户端
+c, c++, python, erlang, R, c#, java, php, perl, go, js
+
+4、用途
+	缓存（stackoverflow）、数据库（微博）、消息中间件（微博）
+	
+5、官方网站
+	https://redis.io
