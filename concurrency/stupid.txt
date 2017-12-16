@@ -7,5 +7,3 @@
 4. signal driven io
 5. asynchronous io
 
-
-

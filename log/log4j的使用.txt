@@ -119,7 +119,7 @@ org.apache.log4j.RollingFileAppender（文件大小到达指定尺寸的时候�
 将日志信息输出到一个文件，通过指定文件的的尺寸，
 当文件大小到达指定尺寸的时候会自动把文件改名，如名为ex.log的文件会改名为ex.log.1，
 同时产生一个新的ex.log文件。如果新的文件再次达到指定尺寸，又会自动把文件改名为ex.log.2，
-同时产生一个ex.log文件。依此类推，直到ex.log. MaxBackupIndex，MaxBackupIndex的值可在配置文件中定义。
+同时产生一个ex.log文件。依此类推，直到ex.log.MaxBackupIndex，MaxBackupIndex的值可在配置文件中定义。
 org.apache.log4j.WriterAppender（将日志信息以流格式发送到任意指定的地方）
 
 
@@ -128,11 +128,13 @@ ConsoleAppender 选项
 Threshold=DEBUG:指定日志消息的输出最低层次。
 ImmediateFlush=true:默认值是true,意谓着所有的消息都会被立即输出。
 Target=System.err：默认情况下是：System.out,指定输出控制台
+
 FileAppender 选项
 Threshold=DEBUF:指定日志消息的输出最低层次。
 ImmediateFlush=true:默认值是true,意谓着所有的消息都会被立即输出。
 File=mylog.txt:指定消息输出到mylog.txt文件。
-Append=false:默认值是true,即将消息增加到指定文件中，false指将消息覆盖指定的文件内容。
+Append=false:默认值是true,即将消息追加到指定文件中，false指将消息覆盖指定的文件内容。
+
 RollingFileAppender 选项
 Threshold=DEBUG:指定日志消息的输出最低层次。
 ImmediateFlush=true:默认值是true,意谓着所有的消息都会被立即输出。
@@ -153,7 +155,7 @@ org.apache.log4j.TTCCLayout（包含日志产生的时间、线程、类别等�
 log4j.appender.A1.layout.ConversionPattern=%-4r %-5p %d{yyyy-MM-dd HH:mm:ssS} %c %m%n
 符号所代表的含义：
 -X号: X信息输出时左对齐；
-%p: 输出日志信息优先级，即DEBUG，INFO，WARN，ERROR，FATAL,
+%p: 输出日志信息级别（优先级），即DEBUG，INFO，WARN，ERROR，FATAL,
 %d: 输出日志时间点的日期或时间，默认格式为ISO8601，也可以在其后指定格式，比如：%d{yyy MMM dd HH:mm:ss,SSS}，输出类似：2002年10月18日 22：10：28，921
 %r: 输出自应用启动到输出该log信息耗费的毫秒数
 %c: 输出日志信息所属的类目，通常就是所在类的全名
@@ -165,7 +167,8 @@ log4j.appender.A1.layout.ConversionPattern=%-4r %-5p %d{yyyy-MM-dd HH:mm:ssS} %c
 %L: 输出代码中的行号
 %m: 输出代码中指定的消息,产生的日志具体信息
 %n: 输出一个回车换行符，Windows平台为"/r/n"，Unix平台为"/n"输出日志信息换行
-可以在%与模式字符之间加上修饰符来控制其最小宽度、最大宽度、和文本的对齐方式。如：
+可以在%与模式字符之间加上修饰符来控制其最小宽度、最大宽度、和文本的对齐方式。
+如：
 1)%20c：指定输出category的名称，最小的宽度是20，如果category的名称小于20的话，默认的情况下右对齐。
 2)%-20c:指定输出category的名称，最小的宽度是20，如果category的名称小于20的话，"-"号指定左对齐。
 3)%.30c:指定输出category的名称，最大的宽度是30，如果category的名称大于30的话，就会将左边多出的字符截掉，但小于30的话也不会有空格。
@@ -212,18 +215,18 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import cn.vic.log4j.son.TestLog4jSon;
 public class TestLog4j {
-static final Logger logger = Logger.getLogger(TestLog4j.class.getName());
-public static void main(String[] args) {
-PropertyConfigurator.configure("D://log4j.properties");
-logger.debug("TestLog4j debug message");
-logger.info("TestLog4j info message");
-logger.warn("TestLog4j warn message");
-logger.error("TestLog4j error message");
-logger.fatal("TestLog4j fatal message");
-// 调用TestLog4jSon对象的log()方法
-TestLog4jSon t1 = new TestLog4jSon();
-t1.log();
-}
+	static final Logger logger = Logger.getLogger(TestLog4j.class.getName());
+	public static void main(String[] args) {
+		PropertyConfigurator.configure("D://log4j.properties");
+		logger.debug("TestLog4j debug message");
+		logger.info("TestLog4j info message");
+		logger.warn("TestLog4j warn message");
+		logger.error("TestLog4j error message");
+		logger.fatal("TestLog4j fatal message");
+		// 调用TestLog4jSon对象的log()方法
+		TestLog4jSon t1 = new TestLog4jSon();
+		t1.log();
+	}
 }
 
 
@@ -231,14 +234,14 @@ TestLog4jSon.java
 package cn.vic.log4j.son;
 import org.apache.log4j.Logger;
 public class TestLog4jSon {
-static final Logger logger = Logger.getLogger(TestLog4jSon.class.getName());
-public void log() {
-logger.debug("TestLog4jSon debug message");
-logger.info("TestLog4jSon info message");
-logger.warn("TestLog4jSon warn message");
-logger.error("TestLog4jSon error message");
-logger.fatal("TestLog4jSon fatal message");
-}
+	static final Logger logger = Logger.getLogger(TestLog4jSon.class.getName());
+	public void log() {
+		logger.debug("TestLog4jSon debug message");
+		logger.info("TestLog4jSon info message");
+		logger.warn("TestLog4jSon warn message");
+		logger.error("TestLog4jSon error message");
+		logger.fatal("TestLog4jSon fatal message");
+	}
 }
 
 
@@ -339,7 +342,7 @@ VALUES('%m', '%p', '%r', '%c', '%t', '%d{yyyy-MM-dd HH:mm:ss}');
 则先把ex.log.1更名为ex.log.2，再把ex.log文件改名为ex.log.1
 3) 同理，当ex.log文件的大小再次超过5K，先把ex.log.2文件更名为ex.log.3，
 把ex.log.1文件更名为ex.log.2，再把ex.log文件改名为ex.log.1
-4) 当ex.log文件的大小再次超过5K，先把ex.log.2文件更名为ex.log.3，旧的ex.log.3文件将被覆盖；
+4) 因为MaxBackupIndex为3，当ex.log文件的大小再次超过5K，先把ex.log.2文件更名为ex.log.3，旧的ex.log.3文件将被覆盖；
 把ex.log.1文件更名为ex.log.2，旧的ex.log.2文件被覆盖
 最后把ex.log文件改名为ex.log.1并覆盖掉旧的ex.log.1文件。
 
