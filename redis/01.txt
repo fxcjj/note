@@ -1,3 +1,8 @@
+
+视频url
+/technology/尚学堂_大数据_redis视频教程
+
+
 1、开源的（BSD协议），使用ANSI C编写，
 基于内存且支持持久化、高性能的key-value的NoSQL数据库
 

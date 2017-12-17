@@ -1,0 +1,280 @@
+
+
+mysql希腊人开发的
+
+mariaDB和mysql作者一个人
+
+mariaDB免费
+
+//可视化
+redis desktop manager
+
+redis版本：2.8(经典版本)
+
+3.x自带集群模式 redis cluster
+
+每个网站对应一个队列
+
+当时使用mysql，受限于硬盘I/O
+提升列表操作性能，写一个内存数据库
+存储在内存，以极快速度堆入和弹出
+
+经过5年时间
+
+pivotal公司
+
+特点
+独特的键值对模型
+支持多种数据结构
+sql数据库（基于表格）
+memcached（键值都是字符串）
+文档数据库（couchDB, MongoDB）（由json/bson组成的文档）
+
+redis
+	string
+	...
+	
+	
+数据库有两种
+	硬盘数据库
+	内存数据库
+
+硬盘是把存储在硬盘，典型是mysql数据库
+
+附加功能
+	持久化功能
+	恢复
+	发布与订阅功能
+	过期键功能
+		为key设置一个过期时间，让它在指定的时间之后自动被删除 
+	事务功能
+	Lua脚本功能
+	主从复制
+	sentinel
+	集群
+	redis文档 //http//redis.io/commands
+	
+redis改进
+	2.6多参数支持，sadd,zadd等等
+	2.8添加了数据库通知功能，比如更新了哪个key，都会有通知
+	3.0版本推出了稳定集群
+
+twitter使用redis来存储用户时间线，user timeline
+stackoverflow使用redis来进行缓存和消息分发
+pinterest使用redis来构建follow model（谁关注了谁，谁被谁关注了）和interest
+graph(还有用户可能对哪些用户感兴趣)
+flicker 构建队列
+github 作为持久化的键值对数据库
+新浪 集群规模是32个tb，计数器，反向索引，排行榜
+消息队列、并存储用户关系
+知乎 计数、缓存、消息分发和任务调度
+
+安装redis
+	tar xf redis-2.8.tar
+	cd redis-2.8 //c写的需要编译安装
+	yum install gcc tcl -y //glibc-devl
+	make //进入主目录下编译c
+	cd ..
+	//在usr/local/目录下创建redis目录
+	mkdir redis
+	
+	//进入redis-2.8目录，安装到到/usr/local/redis目录下
+	cd redis-2.8
+	make PREFIX=/usr/hadoopsoft/redis install //安装到这个目录下
+		此目录下只有一个bin
+	至此，安装成功
+
+ss -tanl
+
+
+cd /redis-2.8/src/redis-sentinel
+cp redis-sentinel /usr/local/redis/bin/
+
+//配置环境变量， 我的是/etc/profile
+vim ~/.bash_profile
+export REDIS_HOME=/usr/local/redis
+export PATH=$PATH:$REDIS_HOME/bin
+source ~/.bash_profile
+
+//现在执行redis相关命令就会有反应
+redis-server --help
+
+//查看文件的二进制文件，进到/user/local/redis/bin
+file redis-server
+
+//做成后台daemon
+cd /usr/local/redis/utils/
+//安装服务
+./install_server.sh //默认port 6379
+...
+一路回车，成功
+
+/etc/init.d/redis_6379 //可以修改名称
+mv redis_6379 redisd
+
+service redised start //启动
+
+ss -tanl //查看端口，会看到6379端口正在监听
+
+redis-cli --help
+
+默认16个库
+
+在哪儿写的？
+/etc/redis/6379.conf
+
+此文件是配置redis相关
+
+redis有0~15个数据库
+
+设置string
+[root@localhost Desktop]# redis-cli
+127.0.0.1:6379> set mykey fuck
+OK
+127.0.0.1:6379> get mykey
+"fuck"
+127.0.0.1:6379> select 16
+(error) ERR invalid DB index
+127.0.0.1:6379[15]> select 0
+OK
+127.0.0.1:6379> 
+
+//可以exit直接指定数据库
+127.0.0.1:6379> exit
+[root@localhost Desktop]# redis-cli -n 1
+127.0.0.1:6379[1]> get mykey
+(nil)
+127.0.0.1:6379[1]> select 0
+OK
+127.0.0.1:6379> get mykey
+"fuck"
+127.0.0.1:6379> help
+redis-cli 2.8.24
+Type: "help @<group>" to get a list of commands in <group>
+      "help <command>" for help on <command>
+      "help <tab>" to get a list of possible help topics
+      "quit" to exit
+127.0.0.1:6379> help set
+
+  SET key value [EX seconds] [PX milliseconds] [NX|XX]
+  summary: Set the string value of a key
+  since: 1.0.0
+  group: string
+
+//在一个数据库中键是唯一的
+
+127.0.0.1:6379> set msg "hello" //设置msg对应hello
+OK
+127.0.0.1:6379> get msg
+"hello"
+127.0.0.1:6379> set msg "stupid"
+OK
+127.0.0.1:6379> get msg //说明被覆盖了
+"stupid"
+127.0.0.1:6379> set msg "smurfette" nx //not exists键不存在的时候才能设置
+(nil)
+127.0.0.1:6379> set msg2 "msg2" xx //键存在的时候才能设置
+(nil)
+127.0.0.1:6379> set name "king" ex 5 //设置5秒的过期时间
+OK
+127.0.0.1:6379> get name
+"king"
+127.0.0.1:6379> get name
+"king"
+127.0.0.1:6379> get name
+(nil)
+127.0.0.1:6379> 
+
+//查看所有的key
+127.0.0.1:6379> keys *
+1) "msg"
+2) "mykey"
+
+//同时设置多个，具有原子性
+127.0.0.1:6379> mset a 1 b 2 c 3
+OK
+127.0.0.1:6379> get a //取其中一个key
+"1"
+127.0.0.1:6379> mget a b c //取多个key
+1) "1"
+2) "2"
+3) "3"
+
+127.0.0.1:6379> MSETNX d 4 a 4 //不存在的时候才能设置，d不存在a存在，因为是原子操作，所以不成功
+(integer) 0
+127.0.0.1:6379> keys * //查看可知，d没有设置进去
+1) "a"
+2) "c"
+3) "b"
+4) "mykey"
+5) "msg"
+127.0.0.1:6379> getset a 4 //设置新值，返回老值
+"1"
+127.0.0.1:6379> get a //获取新值
+"4"
+127.0.0.1:6379> set myPhone "nokia"
+OK
+127.0.0.1:6379> append myPhone "-100" //追加
+(integer) 9
+127.0.0.1:6379> get myphone
+(nil)
+127.0.0.1:6379> get myPhone
+"nokia-100"
+127.0.0.1:6379> STRLEN myPhone //字符长度
+(integer) 9
+127.0.0.1:6379> keys my* //正则匹配
+1) "myPhone"
+2) "mykey"
+127.0.0.1:6379> keys my??? //正则匹配
+1) "mykey"
+
+//hello 索引从0到4，从-5到-1
+127.0.0.1:6379> get msg
+"hello"
+127.0.0.1:6379> SETRANGE msg 1 app //替换某部分
+(integer) 5
+127.0.0.1:6379> get msg
+"happo"
+127.0.0.1:6379> GETRANGE msg 0 3 //获取某部分值
+"happ"
+127.0.0.1:6379> GETRANGE msg -3 -1
+"ppo"
+127.0.0.1:6379> GETRANGE msg 0 -1 //获取全部
+"happo"
+
+127.0.0.1:6379> mset victor::email 123@qq.com victor::address shanghai
+OK
+127.0.0.1:6379> mget victor*
+1) (nil)
+127.0.0.1:6379> mget victor::email
+1) "123@qq.com"
+127.0.0.1:6379> mget victor::email victor::address
+1) "123@qq.com"
+2) "shanghai"
+127.0.0.1:6379>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
