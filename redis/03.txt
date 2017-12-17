@@ -1,0 +1,125 @@
+
+increby num 100
+get num
+decrby num 50
+get num
+increby num -50 //在原值上-50
+incr num //加1
+decr num //减1
+
+set num 10
+increyfloat num 3.14
+increyfloat num -0.14 //传递负值来达到减法效果
+
+set num 123
+strlen num //为3
+append num 456 //123456
+
+//关于string的操作
+help @String
+//关于set的操作
+help @set
+
+
+key值是二进制安全的，
+这意味着可以用任何二进制序列作为key值。
+
+key取值原则
+	不要太长，消耗内存，且在数据中查找这类键值的计算成本较高
+	不要太短，可读性较差
+
+字符串是一种最基本的redis值类型。
+
+redis字符串是二进制安全的，这意味着一个redis字符串能包含任意类型的数据。
+例如：一张jpeg格式的图片或者一个序列化的ruby对象
+
+一个字符串类型的值最多能存储512M字节的内容
+
+
+jedis
+
+//清空，谨慎！！！
+flushdb
+
+过期
+	设置过期时间
+	设置过期点
+	删除过期
+
+//过期时间
+set num 10 ex 3
+
+expire msg 3 //3秒msg过期
+
+pexpire key milliseconds
+
+//删除
+persist key
+
+ttl num //查看剩余生存时间
+
+ttl msg
+(integer) -2 //曾经活过
+
+键类型
+	type key
+键是否存在
+	exists key
+键重命名
+	rename key newkey
+	renamenx key newkey
+键删除
+	del key [key ...]
+	
+	
+位图bitmap
+	* 位图不是真正的数据类型，它是定义在字符串类型中
+	* 一个字符串类型的值最多能存储512M字节的内容
+	* 位上限：2^(9+10+10+3)=2^32b
+	
+设置某一位上的值
+	setbit key offset value
+	offset偏移量，从0开始
+
+获取某一位上的值
+	getbit key offset
+
+返回指定值0或者1在指定区间上第一次出现的位置
+ bitpos key bit [start] [end]
+
+
+//setbit例子
+set temp 0b011
+get temp
+setbit temp 0 1
+setbit temp 0 0 //有待考证
+
+bitpos temp 0 //0的位置
+
+
+set s1 ab
+
+bitpos s1 0 0 -1
+
+
+统计指定区间位数
+	bitcount key [start] [end]
+	
+	set s1 ab
+	bitcount s1
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
