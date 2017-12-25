@@ -92,7 +92,7 @@ ttl msg
 set temp 0b011
 get temp
 setbit temp 0 1
-setbit temp 0 0 //有待考证
+setbit temp 0 0 //有待考证???
 
 bitpos temp 0 //0的位置
 
@@ -108,7 +108,73 @@ bitpos s1 0 0 -1
 	set s1 ab
 	bitcount s1
 	
+登录不同的库
+	redis-cli --help
+	redis-cli -n 2
+
+清除当前库数据
+	flushdb
 	
+清除所有库中的数据
+	flushall
+
+位图bitmap
+网站用户的上线次数统计（活跃用户）
+用户ID为key,天作为offset，上线置为1
+ID为u500的用户，今年的第1天上线，第30天上线
+
+setbit u500 1 1
+setbit u500 30 1
+bitcount u500
+type u500
+get u500
+
+
+按天统计网站活跃用户
+天作为key，用户ID为offset，上线置为1
+求一段时间内活跃用户数
+15是用户ID
+setbit 20160602 15 1
+setbit 20160601 123 1
+setbit 20160606 123 1
+
+求6月1日到6月10日的活跃用户
+bittop or 20160601-10 20160601 20160602
+20160603 20160610
+
+bitcount 20160601-10
+
+结果为2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
