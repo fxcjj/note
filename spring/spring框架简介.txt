@@ -1,0 +1,33 @@
+aop
+ioc
+
+7个模块
+
+spring core
+提供基本功能。
+核心容器的主要组件BeanFactory，工厂模式的实现。
+BeanFactory使用IOC模式将应用程序的配置和依赖性规范与实际的应用程序代码分开
+
+Spring Context
+是一个配置文件，向Spring框架提供上下文信息。
+
+Spring AOP
+AOP的编程功能集成到了Spring框架中。
+所以很容易地使Spring框架管理的任何对象支持AOP。
+
+AOP应用于声明式事务管理
+
+Spring DAO
+
+Spring ORM
+包括jdo, hibernate, ibatis sql map
+
+Spring WEB
+基于spring context
+
+Spring MVC
+
+
+
+
+

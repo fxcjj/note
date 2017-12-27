@@ -17,3 +17,6 @@ c, c++, python, erlang, R, c#, java, php, perl, go, js
 	
 5、官方网站
 	https://redis.io
+	
+6、下载2.8版本地址
+	http://www.redis.net.cn/download/
