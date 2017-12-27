@@ -1,0 +1,71 @@
+
+From
+https://mp.weixin.qq.com/s/h99sXP4mvVFsJw6Oh3aU5A
+
+
+分页需求
+	微信消息过多时，拉取第N页消息
+	京东下单过多时，拉取第N页订单
+	浏览58同城，查看第N页帖子
+	
+这些业务场景会有对应的消息表、订单表、帖子表
+特点
+	1)有一个业务主键id，例如：msg_id, order_id, tiezi_id
+	2)分页排序是按照非业务主键id来排序的，业务中经常按照时间time来排序order by
+
+分库需求
+	随着数据量的增大，数据库需要进行水平切分
+
+分库依据
+	partition key
+	主键id取模的算法来分库
+
+全局视野法
+
+业务折衷法
+
+终极武器-二次查询法
+
+五、总结
+
+今天介绍了解决“跨N库分页”这一难题的四种方法：
+
+ 
+
+方法一：全局视野法
+
+（1）将order by time offset X limit Y，改写成order by time offset 0 limit X+Y
+
+（2）服务层对得到的N*(X+Y)条数据进行内存排序，内存排序后再取偏移量X后的Y条记录
+
+这种方法随着翻页的进行，性能越来越低。
+
+ 
+
+方法二：业务折衷法-禁止跳页查询
+
+（1）用正常的方法取得第一页数据，并得到第一页记录的time_max
+
+（2）每次翻页，将order by time offset X limit Y，改写成order by time where time>$time_max limit Y
+
+以保证每次只返回一页数据，性能为常量。
+
+ 
+
+方法三：业务折衷法-允许模糊数据
+
+（1）将order by time offset X limit Y，改写成order by time offset X/N limit Y/N
+
+ 
+
+方法四：二次查询法
+
+（1）将order by time offset X limit Y，改写成order by time offset X/N limit Y
+
+（2）找到最小值time_min
+
+（3）between二次查询，order by time between $time_min and $time_i_max
+
+（4）设置虚拟time_min，找到time_min在各个分库的offset，从而得到time_min在全局的offset
+
+（5）得到了time_min在全局的offset，自然得到了全局的offset X limit Y
