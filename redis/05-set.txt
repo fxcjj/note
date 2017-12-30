@@ -1,0 +1,203 @@
+
+Set集合
+* 无序的、去重的
+* 元素是字符串类型
+* 最多包含2^32-1元素
+
+增加一个或多个元素
+	sadd key member [member ...]
+	如果元素已经存在，则自动忽略
+
+举例
+	sadd friends peter
+	sadd friends jack tom john
+	sadd friends may tom
+
+移除一个或多个元素
+	srem key member [member ...]
+	元素不存在，自动忽略
+
+举例
+	srem friends tom //return 1
+	srem friends tom may //return 2
+	
+	
+返回集合包含的所有元素
+	* smembers key
+	* 如果集合元素过多，例如百万个，需要遍历，可能会造成服务器阻塞，生产环境应避免使用
+	
+检查给定元素是否存在于集合中
+	* sismember key member
+	
+such as:
+	smembers friends //查看元素,无序的
+	sismember friends tom //查看元素是否存在 
+	
+
+集合的无序性
+	* sadd girls ann amy gigi grace helen judy kate kelly joy niki nicole rose
+	* sadd boys martin king victor
+	* smembers girls
+	* smembers boys
+	* 注意，smembers有可能返回不同的结果，所以，如果需要存储有序且不重复的数据使用有序集合，
+		存储有序可重复的使用列表。
+		
+随机返回集合中指定个数元素
+	* srandmember key [count]
+	* 如果count为正数，且小于集合基数，那么命令返回一个包含count个元素的数组，
+		数组中元素各不相同。如果count大于等于集合基数，那么返回整个集合。
+	* 如果count为负数，那么命令返回一个数组，数组中的元素可能会重复出现多次，
+		而数组的长度为count的绝对值
+	* 如果count为0，返回空
+	* 如果count不指定，随机返回一个元素
+
+举例
+	* sadd friend peter jack
+	* srandmember friend 3
+	* srandmember friend -5
+
+返回集合中元素的个数
+	* scard key
+	* 键的结果会保存信息，集合长度就记录在里面，所以不需要遍历
+	
+随机从集合中移除并返回这个被移除的元素
+	* spop key
+
+把元素从源集合移动到目标集合
+	* smove source destination member
+	
+
+Set集合操作
+差集
+	* sdiff key [key ...], 从第一个key的集合中去除其它集合和自己的交集部分
+	* sdiffstore destination key [key ...]，将差集结果存储到目标key中
+	
+举例
+	* sadd number1 123 456 789
+	* sadd number2 123 456 999
+	* sdiff number1 number2 //只剩789
+	* sdiffstore number3 number1 number2 //将789存储到number3中
+	
+交集
+	* sinter key [key ...]，取所有集体交集部分
+	* sinterstore destination key [key ...], 将交集结果存储到目标key中
+
+举例
+	* sadd number1 123 456 789
+	* sadd number2 123 456 999
+	* sinter number1 number2 //123, 456
+
+并集
+	* sunion key [key ...]，取所有集体并集
+	* sunionstore destination key [key ...]，将并集结果存储到目标key中
+
+举例
+	* sadd number1 123 456 789
+	* sadd number2 123 456 999
+	* sunion number1 number2 //123, 456, 789, 999
+
+
+* 新浪微博的共同关注
+* 需求：当用户访问另一个用户的时候，会显示出两个用户共同关注哪些相同的用户
+* 设计：将每个用户关注的用户放在集合中，求交集即可
+* 实现如下：
+peter={john, jack, may}
+ben={john, jack, tom}
+那么peter和ben的共同关注为
+sinter peter ben 结果为john, jack
+
+可定期执行交集操作，不用点击时执行sinter
+
+Sorted Set有序集合
+* 类似set集合
+* 有序的、去重的
+* 元素是字符串类型
+* 每一个元素都关联着一个浮点数分值（score），并按照分值
+	从小到大的顺序排列集合中的元素。分值可以相同
+* 最多包含2^32-1元素
+
+
+分值	1		22		322
+元素	好忆	知道	slj
+
+分值可以是点赞数、好评数等，排行榜出来了！！！
+
+
+增加一个或多个元素
+	* zadd key score member [score member ...]
+	* 如果元素已经存在，则使用新的score
+	
+举例
+	* zadd fruits 3.2 香蕉
+	* zadd fruits 2.9 西瓜
+	* zadd fruits 4.0 石榴 7.0 梨 5.8 芒果
+	* 加的时候已经排序了！
+
+移除一个或多个元素
+	* zrem key member [member ...]
+	* 元素不存在，自动忽略
+	
+举例
+	* zrem fruits 梨
+	* zrem fruits 西瓜
+	
+显示分值
+	* zscore key member
+	
+举例
+	* zscore fruits 芒果
+	* zscore fruits 西瓜
+	
+	计算机并不能精确表达每一个浮点数，都是一种近似表达
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
