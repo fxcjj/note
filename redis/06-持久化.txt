@@ -1,0 +1,100 @@
+两种方式
+	* rdb(Redis DB)
+	* aof(append only file)
+
+创建rdb文件
+	1、save命令，阻塞
+	2、bgsave命令，后台执行，不阻塞
+	3、使用save配置选项设置自动保存条件被满足，服务器自动执行bgsave
+		save 900 1
+		save 60 2
+
+save命令
+	* redis>save
+	* redis服务器阻塞
+	* 如果rdb文件已经存在，将覆盖
+
+bgsave命令
+	* fork()子进程
+	* redis服务器继续提供服务
+	* 子进程创建rdb文件，创建完成提醒redis服务器
+	
+rdb缺点
+	按照时间间隔存储数据，如果在存储时间点之前发生故障，，
+	重启机器，数据已经丢失。
+	所以，有了aof，它记录的是执行命令，即重新执行命令会恢复数据。
+
+aof
+	也会丢失数据，因为：
+	系统调用write函数，不会直接写，
+	而是将内容缓冲起来，等缓冲区满或者用户执行fsync和fdatasync才
+	会将内容真正写入到硬盘。
+	所以，如果在写之前停机，那么数据就会丢失。
+
+aof默认路径
+	var/lib/redis/6379/appendonly.aof
+
+aof持久化提供了appenndfsync选项
+	* always
+		server每写入一个命令，就会调用一次fdatasync，将cache中的内容write到硬盘，不会丢失数据。
+	* everysec
+		每一秒调用一次fdatasync，最多只丢失一秒内的执行的命令数据。
+	* no
+		server不主动调用fdatasync，由os调用将cache中的内容write到硬盘，
+		意外停机，丢失数据量不确定。
+	* 运行速度：always速度慢，，everysec和no都很快
+	* 默认值：everysec
+
+conf文件
+	appendonly no //默认不开启
+	appendfilename "appendonly.aof" //默认文件名称
+	appendfsync everysec //默认值每秒
+
+aof文件中的冗余命令
+	* aof文件会越来越大，所以提供了重写功能,
+		通过这个功能，可以产生新的aof文件
+	* 新aof文件与旧aof文件完全一样
+	* 新aof文件会使用尽可能少的命令记录数据库数据，体积比旧aof文件小很多
+	* aof重写期间，服务不阻塞
+	* 两种方式触发重写
+		* client向server发送bgrewriteaof命令
+		* auto-aof-rewrite-min-size <size> 
+			默认64mb，当达到64mb时重写，当再次达成auto-aof-rewrite-percentage指定
+			的百分比时，才会重写，例如：size为20mb，percentage为50，当达到20mb时重写，
+			当达到10mb时，就会触发重写。
+	
+提供多个redis服务
+	针对每个业务使用不同的appenndfsync选项
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
