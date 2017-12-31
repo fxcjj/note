@@ -151,28 +151,180 @@ Sorted Set有序集合
 	计算机并不能精确表达每一个浮点数，都是一种近似表达
 
 
+增加或者减少分值
+	* zincreby key increment member
+	* increment为负数就是减少
 
+举例
+	* zincreby fruits 1.5 西瓜
+	* zincreby fruits -0.3 香蕉
+
+返回元素的排名（索引）
+	* zrank key member
+	
+举例
+	* zrank fruits 西瓜
+	* zrank fruits 石榴
+	* zrank fruits 芒果
+
+返回元素的逆序排名
+	* zrevrank key member
+	
+举例
+	* zrevrank fruits 西瓜
+	* zrevrank fruits 石榴
+	* zrevrank fruits 芒果
+
+
+返回指定索引区间元素
+	* zrange key start stop [withscores]
+	* 如果score相同，则按照字典序lexicographical order排列
+	* 默认按照score从小到大，如果需要score从大到小排列，使用zrevrange
+
+举例
+	* zrange fruits 0 2
+	* zrange fruits -5 -4
+	* zrange fruits 0 -1 withscores
+	
+返回指定索引区间元素
+	* zrevrange key stat stop [withscores]
+	* 如果score相同，则按照字典序lexicographical order的逆序排列
+	* 默认按照score从大到小，如果需要score从小到大排列，使用zrange
+	
+举例
+	* zrevrange fruits 0 3
+	* zrevrange fruits -5 -4
 	
 
+返回指定分值区间元素
+	* zrangebyscore key min max [withscores] [limit offset count]
+	* 返回score默认属于[min, max]之间，元素按照score升序排列，score相同字典序
+	* limit中的offset代表跳过多少个元素，count是返回几个。类似于mysql
+	* 使用小括号，修改区间为开区间，例如(5、(10、5)
+	* -inf和+inf表示负无穷和正无穷
+
+举例
+	* zrangebyscore fruits 4.0 7.0
+	* zrangebyscore fruits (4 7
+	* zrangebyscore fruits -inf +inf
+	
+	
+返回指定分值区间元素
+	* zrevrangebyscore key min max [withscores] [limit offset count]
+	* 返回score默认属于[min, max]之间，元素按照score降序排列，score相同字典降序
+	* limit中的offset代表跳过多少个元素，count是返回几个。类似于mysql
+	* 使用小括号，修改区间为开区间，例如(5、(10、5)
+	* -inf和+inf表示负无穷和正无穷
+
+举例
+	* zrangebyscore fruits 4.0 7.0
+	* zrangebyscore fruits (4 7
+	* zrangebyscore fruits -inf +inf
+
+
+移除指定排名范围的元素
+	* zremrangebyrank key start stop
+	
+举例
+	* zremrangebyrank fruits 0 2 //0到2排名删除
+	* zrange fruits 0 -1
+	
+移除指定分值范围的元素
+	* zremrangebyscore key min max
+	
+举例
+	* zremrangebyscore fruits 3.0 5.0 //按score删除，闭区间，即3<=x<=6
+	* zrange fruits 0 -1
+
+返回集合中元素个数
+	* zcard key
+	
+返回指定范围中元素的个数
+	* zcount key min max
+	* zcount fruits 4 7
+	* zcount fruits (4 7 //4<x<=7
+
+并集
+	* zunionstore destination numkeys key [key ...] [weights weight] [aggregate sum|min|max]
+	* numkeys指定key的数量，必须
+	* weights选项，与前面设定的key对应，对应key中每一个score都要乘以这个权重
+	* aggregate选项，指定并集结果的聚合方式
+	* sum: 将所有集合中某一个元素的score值之和作为结果中该成员的score值
+	* min: 将所有集合中某一个元素的score值中最小值作为结果中该成员的score值
+	* max: 将所有集合中某一个元素的score值中最大值作为结果中该成员的score值
+
+举例
+	* zadd scores1 70 tom 80 peter 60 john
+	* zadd scores2 90 peter 60 ben
+	* zunionstore score-all 2 scores1 scores2 //默认去重且score相加，如170 peter
+	* zunionstore score-all2 2 scores1 scores2 aggregate sum
+	* zunionstore score-all3 2 scores1 scores2 weight 1 0.5 aggregate sum
+		note: 125 peter，权重1给了scores1, 权重0.5给了scores2
+
+交集
+	* zinterstore destination numkeys key [key ...] [weights weight] [aggregate sum|min|max]
+	* numkeys指定key的数量，必须
+	* weights选项，与前面设定的key对应，对应key中每一个score都要乘以这个权重
+	* aggregate选项，指定交集结果的聚合方式
+	* sum: 将所有集合中某一个元素的score值之和作为结果中该成员的score值
+	* min: 将所有集合中某一个元素的score值中最小值作为结果中该成员的score值
+	* max: 将所有集合中某一个元素的score值中最大值作为结果中该成员的score值
+
+
+网易音乐排行榜
+	加：zincreby加进去，加时会自动排序
+	取：
+
+
+分析
+每首歌的歌名作为元素（先不考虑重复）
+每首歌的播放次数作为分值
+zrevrange来获取播放次数最多的歌曲（就是最多播放榜了，云音乐热歌榜，没有竞价，没有权重）
+python演示
 
 
 
+新浪微博翻页
+新闻网站、博客、论坛、搜索引擎、页面列表条目多，都需要分页
+blog这个key中使用的时间戳作为score
+zadd blog 1407000000 '今天天气不错' //value写blogId就行了
+zadd blog 1450000000 '今天我们学习redis'
+zadd blog 1560000000 '几个redis使用示例'
+zrevrange blog 10 20
+note: 同属于一个人的博客
 
 
+京东图书畅销榜
+单日榜，计算出周榜单、月榜单、年榜单
+
+怎么做？
+
+zadd bookboard-001 1000 java 1500 redis 2000 hadoop
+zadd bookboard-002 1020 java 1500 redis 2100 hadoop
+zadd bookboard-003 1720 java 1510 redis 3000 hadoop //数是累积的
+zunionstore bookboard-001:003 3 bookboard-001 bookboard-002 bookboard-003,
+行吗？？？
+
+所以不行！！！
+
+直接取最后一个就可以了！！！
+
+也可以
+zadd bookboard-001 1000 java 1500 redis 2000 hadoop
+zadd bookboard-002 1020 java 1500 redis 2100 hadoop
+zadd bookboard-003 1720 java 1510 redis 3000 hadoop //数是不累积的，而是有增有减，使用max
+zunionstore bookboard-001:003 3 bookboard-001 bookboard-002 bookboard-003 aggregate max
 
 
+并集，使用max
+注意：参与并集运算的集合较多，会造成redis服务器阻塞，因此最好放在
+空闲时间或者备用服务器上进行计算
 
+3.5-4英寸 存储到set
+	
+3G 存储到set
 
-
-
-
-
-
-
-
-
-
-
+多个条件筛选，求交集即可
 
 
 
