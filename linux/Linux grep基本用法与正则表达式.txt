@@ -113,4 +113,3 @@ grep -nA 3 fine a.log
 grep -nA 3 fine a.log | tail -n 8
 从末尾查找，最多显示8行，显示匹配行后面3行
 
-

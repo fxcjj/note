@@ -1,0 +1,103 @@
+
+http://blog.csdn.net/xxx9001/article/details/52196833
+
+
+一、安装mognodb
+1. 下载地址：http://www.mongodb.org/downloads
+我的网盘：
+technology/mongodb/mongodb-3.0.6.zip
+
+document
+https://docs.mongodb.com/manual/
+
+2. 解压到自己的目录
+	d:\programfiles\mongodb3.0.6
+	程序文件都在bin目录中，其它两个目录分别是C++调用是头文件和库文件。
+	bin目录下包含如下几个程序：
+	1. mongo.exe，命令行客户端工具。
+	2. mongod.exe，数据库服务程序。
+	3. mongodump.exe，数据库备份程序。
+	4. mongoexport.exe，数据导出工具。
+	5. mongofiles.exe，GridFS工具。
+	6. mongoimport.exe，数据导入工具。
+	7. mongorestore.exe，数据库恢复工具。
+	8. mongos.exe，貌似是性能检测工具。
+	
+3. 创建文件夹d:\mongodb\data\db, d:\mongodb\data\log,
+	分别用来安装db和日志文件，在log文件夹下创建一个日志文件mongodb.log，
+	即d:\mongodb\data\log\mongodb.log
+	
+4. 运行cmd.exe进入dos命令界面，执行下列命令
+	> cd d:\programfiles\mongodb3.0.6\bin
+	> mongod -dbpath "d:\mongodb\data\db"
+如下：
+C:\Users\Victor>mongod -dbpath "d:\mongodb\data\db"
+2018-01-11T10:05:00.838+0800 I JOURNAL  [initandlisten] journal dir=d:\mongodb\data\db\journal
+2018-01-11T10:05:00.839+0800 I JOURNAL  [initandlisten] recover : no journal files present, no recovery needed
+2018-01-11T10:05:00.860+0800 I JOURNAL  [durability] Durability thread started
+2018-01-11T10:05:00.861+0800 I JOURNAL  [journal writer] Journal writer thread started
+2018-01-11T10:05:00.869+0800 I CONTROL  [initandlisten] MongoDB starting : pid=15076 port=27017 dbpath=d:\mongodb\data\db 64-bit host=DESKTOP-OPJ386A
+2018-01-11T10:05:00.870+0800 I CONTROL  [initandlisten] targetMinOS: Windows Server 2003 SP2
+2018-01-11T10:05:00.871+0800 I CONTROL  [initandlisten] db version v3.0.6
+2018-01-11T10:05:00.871+0800 I CONTROL  [initandlisten] git version: 1ef45a23a4c5e3480ac919b28afcba3c615488f2
+2018-01-11T10:05:00.871+0800 I CONTROL  [initandlisten] build info: windows sys.getwindowsversion(major=6, minor=1, build=7601, platform=2, service_pack='Service Pack 1') BOOST_LIB_VERSION=1_49
+2018-01-11T10:05:00.871+0800 I CONTROL  [initandlisten] allocator: tcmalloc
+2018-01-11T10:05:00.872+0800 I CONTROL  [initandlisten] options: { storage: { dbPath: "d:\mongodb\data\db" } }
+2018-01-11T10:05:01.009+0800 I NETWORK  [initandlisten] waiting for connections on port 27017
+
+Note: 看到类似信息，说明启动成功，默认mongodb监听的端口是27017。
+可以不用进到mongodb3.0.6\bin目录下执行mongod，方法是将d:\programfiles\mongodb3.0.6\bin加到环境变量path中
+
+5.测试连接
+新建一个cmd窗口，执行mongo，出现如下信息说明测试通过，此时进入了test这个数据库。
+如下：
+C:\Users\Victor>mongo
+MongoDB shell version: 3.0.6
+connecting to: test
+>
+
+输入exit或者ctrl+c退出
+
+6. 当mongod.exe被关闭时，mongo.exe就无法连接到数据库。
+因此每次想使用mongodb数据库都要开启mongod.exe程序，所以比较麻烦，此时我们可以将MongoDB安装为windows服务
+
+运行cmd，进入bin目录，执行下列命令：
+mongod --dbpath "d:\mongodb\data\db" --logpath "d:\mongodb\data\log\mongodb.log" --install --serviceName "MongoDB"
+
+如下：
+2018-01-11T10:37:12.776+0800 I CONTROL  Trying to install Windows service 'MongoDB'
+2018-01-11T10:37:12.778+0800 I CONTROL  Service 'MongoDB' (MongoDB) installed with command line '"D:\Program Files\mongodb-3.0.6\bin\mongod.exe" --dbpath d:\mongodb\data\db --logpath d:\mongodb\data\log\mongodb.log --service'
+2018-01-11T10:37:12.778+0800 I CONTROL  Service can be started from the command line with 'net start MongoDB'
+
+//启动MongoDB
+D:\programfiles\mongodb-3.0.6\bin>net start MongoDB
+MongoDB 服务正在启动 .
+MongoDB 服务已经启动成功。 
+
+可能出现如下错误：
+2018-01-08T18:04:59.905+0800 I CONTROL  Trying to install Windows service 'MongoDB'
+2018-01-08T18:04:59.906+0800 I CONTROL  Error connecting to the Service Control Manager: 拒绝访问。 (5)
+
+原因是没有管理员权限，找到命令d:\windows\system32\cmd.exe，右击以管理员身份运行。
+
+7. 关闭服务和删除进程
+//关闭服务
+D:\programfiles\mongodb-3.0.6\bin>net start MongoDB
+
+//删除服务，是remove
+D:\programfiles\mongodb-3.0.6\bin>mongod --dbpath "d:\mongodb\data\db" --logpath "d:\mongodb\data\log\mongodb.log" --remove --serviceName "MongoDB"
+
+
+二、使用mongodb
+
+三、高级应用
+
+
+插件
+
+
+
+
+
+
+

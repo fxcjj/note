@@ -1,0 +1,89 @@
+
+
+一、查看当前某个数据库大小
+二、查看数据量排名前100的表
+三、查看索引数据排名前100的表
+四、查看当前某个表大小
+五、查看表的最后mysql修改时间
+六、查看某个数据库支持的最大数据量
+七、查看某个表支持的最大数据量
+
+
+preface
+每一个连接实例下都有一个information_schema数据库，
+它存储了其它数据库的信息。
+
+其中tables表结构字段有：
+
+TABLE_SCHEMA: 数据库名
+TABLE_NAME: 表名
+ENGINE: 所使用的存储引擎
+TABLES_ROWS: 表当前记录数
+DATA_LENGTH: 数据大小
+INDEX_LENGTH: 索引大小
+
+其它字段请参考mysql手册。
+
+Note: data_length以字节为单位，转换为MB，需要data_length/1024/1024
+
+
+一、查看当前某个数据库大小
+
+数据库大小 = 数据大小 + 索引数据大小。
+
+use information_schema;
+SELECT
+-- 统计数据大小，单位MB
+-- concat(round(sum(DATA_LENGTH/1024/1024), 2), 'MB') 
+-- 数据大小，单位MB
+sum(data_length)/1024/1024 +
+-- 索引数据大小，单位MB
+sum(index_length)/1024/1024
+from information_schema.TABLES 
+WHERE table_schema = 'cardiovascular';
+
+
+二、查看数据量排名前100的表
+SELECT table_name, data_length/1024/1024, table_rows, engine 
+FROM information_schema.TABLES
+WHERE table_schema = 'cardiovascular'
+ORDER BY DATA_LENGTH DESC
+limit 100;
+
+
+三、查看索引数据排名前100的表
+SELECT table_name, data_length/1024/1024, 
+index_length/1024/1024, table_rows, engine 
+FROM information_schema.TABLES
+WHERE table_schema = 'cardiovascular'
+ORDER BY 
+DATA_LENGTH DESC,
+INDEX_LENGTH DESC
+limit 100;
+
+
+四、查看当前某个表大小
+SELECT 
+-- 数据大小，单位MB
+sum(data_length)/1024/1024 +
+-- 索引数据大小，单位MB
+sum(index_length)/1024/1024
+FROM information_schema.TABLES 
+WHERE table_schema = 'cardiovascular'
+and table_name = 'c_user';
+
+
+五、查看表的最后mysql修改时间
+SELECT table_name, update_time 
+FROM information_schema.TABLES 
+WHERE table_schema = 'cardiovascular'
+可以通过查看数据库中表的mysql修改时间，来确定mysql数据库是否已经长期不再使用。
+
+
+六、查看某个数据库支持的最大数据量
+七、查看某个表支持的最大数据量
+
+
+
+
+

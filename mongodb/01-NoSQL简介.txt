@@ -1,0 +1,48 @@
+
+
+
+http://www.runoob.com/mongodb/nosql.html
+
+
+NoSQL非关系型的数据存储
+全新的思维
+NoSQL有时也称作Not Only SQL的缩写
+NoSQL用于超大规模数据的存储（例如谷歌或Facebook每天为他们的用户收集万亿比特的数据）。
+这些类型的数据存储不需要固定的模式，无需多余操作就可以横向扩展。
+
+为什么使用NoSQL ?
+今天我们可以通过第三方平台（如：Google,Facebook等）可以很容易的访问和抓取数据。
+用户的个人信息，社交网络，地理位置，用户生成的数据和用户操作日志已经成倍的增加。
+我们如果要对这些用户数据进行挖掘，那SQL数据库已经不适合这些应用了, NoSQL数据库的发展也却能很好的处理这些大的数据。
+
+实例
+社会化关系网:
+
+Each record: UserID1, UserID2 
+Separate records: UserID, first_name,last_name, age, gender,... 
+Task: Find all friends of friends of friends of ... friends of a given user.
+Wikipedia 页面 :
+
+Large collection of documents 
+Combination of structured and unstructured data 
+Task: Retrieve all pages regarding athletics of Summer Olympic before 1950.
+
+
+select fun, profit from real_world where relational=false
+因此，对NoSQL最普遍的解释是"非关联型的"，强调Key-Value Stores和文档数据库的优点，而不是单纯的反对RDBMS。
+
+
+谁在使用
+现在已经有很多公司使用了 NoSQL：
+Google
+Facebook
+Mozilla
+Adobe
+Foursquare
+LinkedIn
+Digg
+McGraw-Hill Education
+Vermont Public Radio
+
+
+
