@@ -1,0 +1,355 @@
+
+Set集合
+* 无序的、去重的
+* 元素是字符串类型
+* 最多包含2^32-1元素
+
+增加一个或多个元素
+	sadd key member [member ...]
+	如果元素已经存在，则自动忽略
+
+举例
+	sadd friends peter
+	sadd friends jack tom john
+	sadd friends may tom
+
+移除一个或多个元素
+	srem key member [member ...]
+	元素不存在，自动忽略
+
+举例
+	srem friends tom //return 1
+	srem friends tom may //return 2
+	
+	
+返回集合包含的所有元素
+	* smembers key
+	* 如果集合元素过多，例如百万个，需要遍历，可能会造成服务器阻塞，生产环境应避免使用
+	
+检查给定元素是否存在于集合中
+	* sismember key member
+	
+such as:
+	smembers friends //查看元素,无序的
+	sismember friends tom //查看元素是否存在 
+	
+
+集合的无序性
+	* sadd girls ann amy gigi grace helen judy kate kelly joy niki nicole rose
+	* sadd boys martin king victor
+	* smembers girls
+	* smembers boys
+	* 注意，smembers有可能返回不同的结果，所以，如果需要存储有序且不重复的数据使用有序集合，
+		存储有序可重复的使用列表。
+		
+随机返回集合中指定个数元素
+	* srandmember key [count]
+	* 如果count为正数，且小于集合基数，那么命令返回一个包含count个元素的数组，
+		数组中元素各不相同。如果count大于等于集合基数，那么返回整个集合。
+	* 如果count为负数，那么命令返回一个数组，数组中的元素可能会重复出现多次，
+		而数组的长度为count的绝对值
+	* 如果count为0，返回空
+	* 如果count不指定，随机返回一个元素
+
+举例
+	* sadd friend peter jack
+	* srandmember friend 3
+	* srandmember friend -5
+
+返回集合中元素的个数
+	* scard key
+	* 键的结果会保存信息，集合长度就记录在里面，所以不需要遍历
+	
+随机从集合中移除并返回这个被移除的元素
+	* spop key
+
+把元素从源集合移动到目标集合
+	* smove source destination member
+	
+
+Set集合操作
+差集
+	* sdiff key [key ...], 从第一个key的集合中去除其它集合和自己的交集部分
+	* sdiffstore destination key [key ...]，将差集结果存储到目标key中
+	
+举例
+	* sadd number1 123 456 789
+	* sadd number2 123 456 999
+	* sdiff number1 number2 //只剩789
+	* sdiffstore number3 number1 number2 //将789存储到number3中
+	
+交集
+	* sinter key [key ...]，取所有集体交集部分
+	* sinterstore destination key [key ...], 将交集结果存储到目标key中
+
+举例
+	* sadd number1 123 456 789
+	* sadd number2 123 456 999
+	* sinter number1 number2 //123, 456
+
+并集
+	* sunion key [key ...]，取所有集体并集
+	* sunionstore destination key [key ...]，将并集结果存储到目标key中
+
+举例
+	* sadd number1 123 456 789
+	* sadd number2 123 456 999
+	* sunion number1 number2 //123, 456, 789, 999
+
+
+* 新浪微博的共同关注
+* 需求：当用户访问另一个用户的时候，会显示出两个用户共同关注哪些相同的用户
+* 设计：将每个用户关注的用户放在集合中，求交集即可
+* 实现如下：
+peter={john, jack, may}
+ben={john, jack, tom}
+那么peter和ben的共同关注为
+sinter peter ben 结果为john, jack
+
+可定期执行交集操作，不用点击时执行sinter
+
+Sorted Set有序集合
+* 类似set集合
+* 有序的、去重的
+* 元素是字符串类型
+* 每一个元素都关联着一个浮点数分值（score），并按照分值
+	从小到大的顺序排列集合中的元素。分值可以相同
+* 最多包含2^32-1元素
+
+
+分值	1		22		322
+元素	好忆	知道	slj
+
+分值可以是点赞数、好评数等，排行榜出来了！！！
+
+
+增加一个或多个元素
+	* zadd key score member [score member ...]
+	* 如果元素已经存在，则使用新的score
+	
+举例
+	* zadd fruits 3.2 香蕉
+	* zadd fruits 2.9 西瓜
+	* zadd fruits 4.0 石榴 7.0 梨 5.8 芒果
+	* 加的时候已经排序了！
+
+移除一个或多个元素
+	* zrem key member [member ...]
+	* 元素不存在，自动忽略
+	
+举例
+	* zrem fruits 梨
+	* zrem fruits 西瓜
+	
+显示分值
+	* zscore key member
+	
+举例
+	* zscore fruits 芒果
+	* zscore fruits 西瓜
+	
+	计算机并不能精确表达每一个浮点数，都是一种近似表达
+
+
+增加或者减少分值
+	* zincreby key increment member
+	* increment为负数就是减少
+
+举例
+	* zincreby fruits 1.5 西瓜
+	* zincreby fruits -0.3 香蕉
+
+返回元素的排名（索引）
+	* zrank key member
+	
+举例
+	* zrank fruits 西瓜
+	* zrank fruits 石榴
+	* zrank fruits 芒果
+
+返回元素的逆序排名
+	* zrevrank key member
+	
+举例
+	* zrevrank fruits 西瓜
+	* zrevrank fruits 石榴
+	* zrevrank fruits 芒果
+
+
+返回指定索引区间元素
+	* zrange key start stop [withscores]
+	* 如果score相同，则按照字典序lexicographical order排列
+	* 默认按照score从小到大，如果需要score从大到小排列，使用zrevrange
+
+举例
+	* zrange fruits 0 2
+	* zrange fruits -5 -4
+	* zrange fruits 0 -1 withscores
+	
+返回指定索引区间元素
+	* zrevrange key stat stop [withscores]
+	* 如果score相同，则按照字典序lexicographical order的逆序排列
+	* 默认按照score从大到小，如果需要score从小到大排列，使用zrange
+	
+举例
+	* zrevrange fruits 0 3
+	* zrevrange fruits -5 -4
+	
+
+返回指定分值区间元素
+	* zrangebyscore key min max [withscores] [limit offset count]
+	* 返回score默认属于[min, max]之间，元素按照score升序排列，score相同字典序
+	* limit中的offset代表跳过多少个元素，count是返回几个。类似于mysql
+	* 使用小括号，修改区间为开区间，例如(5、(10、5)
+	* -inf和+inf表示负无穷和正无穷
+
+举例
+	* zrangebyscore fruits 4.0 7.0
+	* zrangebyscore fruits (4 7
+	* zrangebyscore fruits -inf +inf
+	
+	
+返回指定分值区间元素
+	* zrevrangebyscore key min max [withscores] [limit offset count]
+	* 返回score默认属于[min, max]之间，元素按照score降序排列，score相同字典降序
+	* limit中的offset代表跳过多少个元素，count是返回几个。类似于mysql
+	* 使用小括号，修改区间为开区间，例如(5、(10、5)
+	* -inf和+inf表示负无穷和正无穷
+
+举例
+	* zrangebyscore fruits 4.0 7.0
+	* zrangebyscore fruits (4 7
+	* zrangebyscore fruits -inf +inf
+
+
+移除指定排名范围的元素
+	* zremrangebyrank key start stop
+	
+举例
+	* zremrangebyrank fruits 0 2 //0到2排名删除
+	* zrange fruits 0 -1
+	
+移除指定分值范围的元素
+	* zremrangebyscore key min max
+	
+举例
+	* zremrangebyscore fruits 3.0 5.0 //按score删除，闭区间，即3<=x<=6
+	* zrange fruits 0 -1
+
+返回集合中元素个数
+	* zcard key
+	
+返回指定范围中元素的个数
+	* zcount key min max
+	* zcount fruits 4 7
+	* zcount fruits (4 7 //4<x<=7
+
+并集
+	* zunionstore destination numkeys key [key ...] [weights weight] [aggregate sum|min|max]
+	* numkeys指定key的数量，必须
+	* weights选项，与前面设定的key对应，对应key中每一个score都要乘以这个权重
+	* aggregate选项，指定并集结果的聚合方式
+	* sum: 将所有集合中某一个元素的score值之和作为结果中该成员的score值
+	* min: 将所有集合中某一个元素的score值中最小值作为结果中该成员的score值
+	* max: 将所有集合中某一个元素的score值中最大值作为结果中该成员的score值
+
+举例
+	* zadd scores1 70 tom 80 peter 60 john
+	* zadd scores2 90 peter 60 ben
+	* zunionstore score-all 2 scores1 scores2 //默认去重且score相加，如170 peter
+	* zunionstore score-all2 2 scores1 scores2 aggregate sum
+	* zunionstore score-all3 2 scores1 scores2 weight 1 0.5 aggregate sum
+		note: 125 peter，权重1给了scores1, 权重0.5给了scores2
+
+交集
+	* zinterstore destination numkeys key [key ...] [weights weight] [aggregate sum|min|max]
+	* numkeys指定key的数量，必须
+	* weights选项，与前面设定的key对应，对应key中每一个score都要乘以这个权重
+	* aggregate选项，指定交集结果的聚合方式
+	* sum: 将所有集合中某一个元素的score值之和作为结果中该成员的score值
+	* min: 将所有集合中某一个元素的score值中最小值作为结果中该成员的score值
+	* max: 将所有集合中某一个元素的score值中最大值作为结果中该成员的score值
+
+
+网易音乐排行榜
+	加：zincreby加进去，加时会自动排序
+	取：
+
+
+分析
+每首歌的歌名作为元素（先不考虑重复）
+每首歌的播放次数作为分值
+zrevrange来获取播放次数最多的歌曲（就是最多播放榜了，云音乐热歌榜，没有竞价，没有权重）
+python演示
+
+
+
+新浪微博翻页
+新闻网站、博客、论坛、搜索引擎、页面列表条目多，都需要分页
+blog这个key中使用的时间戳作为score
+zadd blog 1407000000 '今天天气不错' //value写blogId就行了
+zadd blog 1450000000 '今天我们学习redis'
+zadd blog 1560000000 '几个redis使用示例'
+zrevrange blog 10 20
+note: 同属于一个人的博客
+
+
+京东图书畅销榜
+单日榜，计算出周榜单、月榜单、年榜单
+
+怎么做？
+
+zadd bookboard-001 1000 java 1500 redis 2000 hadoop
+zadd bookboard-002 1020 java 1500 redis 2100 hadoop
+zadd bookboard-003 1720 java 1510 redis 3000 hadoop //数是累积的
+zunionstore bookboard-001:003 3 bookboard-001 bookboard-002 bookboard-003,
+行吗？？？
+
+所以不行！！！
+
+直接取最后一个就可以了！！！
+
+也可以
+zadd bookboard-001 1000 java 1500 redis 2000 hadoop
+zadd bookboard-002 1020 java 1500 redis 2100 hadoop
+zadd bookboard-003 1720 java 1510 redis 3000 hadoop //数是不累积的，而是有增有减，使用max
+zunionstore bookboard-001:003 3 bookboard-001 bookboard-002 bookboard-003 aggregate max
+
+
+并集，使用max
+注意：参与并集运算的集合较多，会造成redis服务器阻塞，因此最好放在
+空闲时间或者备用服务器上进行计算
+
+3.5-4英寸 存储到set
+	
+3G 存储到set
+
+多个条件筛选，求交集即可
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

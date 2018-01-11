@@ -1,0 +1,247 @@
+04
+
+
+List列表
+* 基于linked list实现
+* 元素是字符串类型
+* 列表头尾增删快、中间增删慢，增删元素是常态
+* 元素可重复
+* 最多包含2^31-1元素
+* 从左到右，从0开始
+* 从右到左，从-1开始
+
+命令说明
+	B block块，阻塞
+	L left左
+	R right右
+	X exist存在 
+
+左右或者头尾压入元素
+	lpush key value [value...]
+	lpushx key value
+	rpush key value [value...]
+	rpushx key value
+
+左右或者头尾弹出元素
+	lpop key
+	rpop key
+	
+从一个列表尾部弹出元素压入到另一个列表的头部
+	rpoplpush source destination
+	
+返回列表中指定范围元素
+	lrange key start stop
+	lrange key 0 -1 表示返回所有元素
+
+获取指定位置元素
+	lindex key index
+
+设置指定位置元素的值
+	lset key index value
+
+列表长度，元素个数
+	llen key
+
+从列表头部开始删除值等于value的元素count次
+	lrem key count value
+	count > 0: 从表头开始向表尾搜索，移除与value相等的元素，数量为count
+	count < 0: 从表尾开始向表头搜索，移除与value相等的元素，数量为count的绝对值
+	count = 0: 移除表中所有与value相等的值
+
+举例
+	rpush listkey c abc c ab 223 ab bj ab redist list
+	lrem listkey 2 ab
+	lrange listkey 0 -1
+
+
+lpush list c
+lpush list java python php //php位于python的左边
+rpush list c
+rpop list //右边弹出c
+llen list //长度
+rpoplpush list list2 //右弹出左push
+type list2
+lrange list 0 -1 //所有元素
+lrange list 0 1
+
+lindex list 2 //指定元素
+lset list 2 fuck
+
+去除指定范围外元素，不会操作源key，只是返回数据
+	ltrim key start stop
+	
+举例
+	rpush listkey a abc vi bj cd
+	ltrim list 1 -1 //删除了a，其它有
+	ltrim listkey 1 10000
+
+微博的评论最后500条
+	ltrim u1234:forumid:comments 0 499
+
+
+在列表中某个存在的值（pivot）前或后插入元素
+	linsert key before|after pivot value
+	key和pivot不存在，不进行任何操作
+
+举例
+	rpush lst carl king victor
+	linsert lst after martin
+	linsert lst before jack
+	
+
+阻塞
+	* 如果弹出的列表不存在 或者 为空，就会阻塞
+	* 超时时间设置为0，就是永久阻塞，直到有数据可以弹出
+	* 如果多个客户端阻塞在同一个列表上，使用first in first service原则，先到先服务
+
+左右或者头尾阻塞弹出元素
+	blpop key [key...] timeout
+	brpop key [key...] timeout
+
+从一个列表尾部阻塞弹出元素压入到另一个列表的头部
+	brpoplpush source destination timeout
+	
+
+Hash散列
+* 由field和关联的value组成的map键值对
+* field和vlaue是字符串类型
+* 一个hash中最多包含2^32-1键值对
+
+key				hash
+message		id			123
+			name		zhangsan
+
+设置单个字段
+	* hset key field value 
+	* hsetnx key field value
+		* key的filed不存在的情况下执行，key不存在直接创建
+		
+such as:
+hset victor qq 110
+hget victor qq
+
+
+设置多个字段
+	* hmset key field value [field value...]
+	
+such as:
+hmset victor qq 110 email 110@qq.com
+
+	
+返回字段个数
+	* hlen key
+
+such as:
+hlen victor //返回2个元素
+	
+	
+判断字段是否存在 
+	* hexists key field
+	* key或者field不存在，返回0
+	
+such as:
+hexists victor gender //返回0因为不存在
+hexists victor qq //返回1
+
+	
+返回字段值
+	* hget key field
+	
+返回多个字段值
+	* hmget key field [field...]
+
+返回所有的键值对
+	* hgetall key
+	
+such as:
+hgetall victor
+output:
+qq
+110
+email
+110@qq.com
+
+
+返回所有字段名
+	* hkeys key
+	
+返回所有的值
+	* hvals key
+
+在字段对应的值上进行整数的增量计算
+	* hincreby key field increment
+
+such as:
+hincreby victor age 18 //age没有会自动加进去	
+hincreby victor age 1 //会变成19
+
+
+在字段对应的值上进行浮点数的增量计算
+	* hincrebyfloat key field increment
+
+such as:
+hincrebyfloat victor age 2.9 //返回19.9
+
+	
+删除指定的字段
+	* hdel key field [field...]
+
+举例
+	hincreby numbers x 100
+	hincreby numbers x -50
+	hincrebyfloat numbers x 3.14
+	hdel numbers x
+	
+	
+
+Hash用途
+* 节约内存空间
+* 每创建一个键，它都会为这个键储存一些附加的管理（比如这个键的类型，这个键最后一次被访问的时间等等）
+* 所以数据库里面的键越多，redis数据库服务器在储存附加管理信息方面耗费的内存就越多，
+	花在管理数据库键上的cpu也会越多在字段对应的值上进行浮点数的增量计算
+
+多个key去做，也可以	
+message::10034::id 111
+message::10034::sender martin
+message::10034::receiver grace
+
+但是，下面更好
+	|
+message::1
+	id
+	sender
+	receiver
+	
+message::2
+	id
+	sender
+	receiver
+
+上面是每个用户对应key 
+hset key field value
+
+note: 设置超时只能在key上
+
+
+不适合hash的情况
+	* 使用二进制位操作命令：因为redis目前支持对字符串键进行setbit, getbit, bitop等操作，
+		如果你想使用这些操作，那么只能使用字符串键，虽然散列也能保存二进制数据，但不支持setbit类似操作。
+		
+	* 使用过期功能： redis的键过期功能目前只能对键进行过期操作，而不能对散列的字段进行
+		过期操作，因为如果你要对键值对数据使用过期功能的话，那么只能把键值对储存在字符串里面。
+		
+	
+微博的好友关注
+用户id为key，field为好友id，value为关注时
+user:1000 user:304 20150808
+
+用户维度统计
+统计数包括：关注数、粉丝数、喜欢商品数、发帖数
+用户为key，不同维度为field，value为统计数
+
+比如关注了5人
+hset user:100000 follow 5
+hincreby user:100000 follow 1
+
+
+
