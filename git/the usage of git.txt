@@ -323,7 +323,7 @@ HEAD is now at fbd673d add line
 git checkout master
 git checkout -b issue-110
 
-//修得bug后，切换到master分支，并完成合并，最后删除issue-110分支。
+//修复bug后，切换到master分支，并完成合并，最后删除issue-110分支。
 git checkout master
 git merge --no-ff -m "fix bug" issue-110
 
