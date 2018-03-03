@@ -112,7 +112,7 @@ cd /usr/local/redis/utils/
 /etc/init.d/redis_6379 //可以修改名称
 mv redis_6379 redisd
 
-service redised start //启动
+service redisd start //启动
 
 ss -tanl //查看端口，会看到6379端口正在监听
 
@@ -228,7 +228,7 @@ OK
 127.0.0.1:6379> keys my??? //正则匹配
 1) "mykey"
 
-//hello 索引从0到4，从-5到-1
+//hello 索引从0到4，后面开始数从-5到-1
 127.0.0.1:6379> get msg
 "hello"
 127.0.0.1:6379> SETRANGE msg 1 app //替换某部分

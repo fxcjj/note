@@ -142,6 +142,9 @@ install nexus
 	
 
 v8
+//deploy
+mvn deploy:deploy-file -Dmaven.test.skip=true -Dfile=D:\pica_common-1.1.9.1.jar -DgroupId=com.picahealth.common -DartifactId=pica_common -Dversion=1.1.9.1 -Dpackaging=jar -DrepositoryId=nexus -Durl=http://47.92.24.162:8081/repository/pica-3rdParty/
+
 提交自己的jar文件（例如user-core）到nexus，执行命令mvn:deploy
 (1)3rd party	hosted
 (2)release		hosted

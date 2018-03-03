@@ -49,7 +49,8 @@ flushdb
 //过期时间
 set num 10 ex 3
 
-expire msg 3 //3秒msg过期
+//指定key的过期时间为3秒
+expire msg 3
 
 pexpire key milliseconds
 

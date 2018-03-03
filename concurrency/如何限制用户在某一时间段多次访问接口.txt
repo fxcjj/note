@@ -1,0 +1,24 @@
+如何限制用户在某一时间段内访问接口次数
+
+
+https://www.cnblogs.com/leechenxiang/p/6181449.html
+
+// 设置在redis中的缓存，累加1
+long count = jedis.incr(redisKey);
+
+// 如果该key不存在，则从0开始计算，并且当count为1的时候，设置过期时间
+if (count == 1) {
+	jedis.expire(redisKey, limit.timeSecond());
+//                redisTemplate.expire(redisKey, limit.time(), TimeUnit.MILLISECONDS);
+}
+
+// 如果redis中的count大于限制的次数，则报错
+if (count > limit.limitCounts()) {
+	// logger.info("用户IP[" + ip + "]访问地址[" + url + "]超过了限定的次数[" + limit.count() + "]");
+	if (ShiroFilterUtils.isAjax(request)) {
+		HttpServletResponse httpServletResponse = WebUtils.toHttp(response);  
+		httpServletResponse.sendError(ShiroFilterUtils.HTTP_STATUS_LIMIT_IP_REQUEST);
+	} else {
+		throw new LimitIPRequestException();
+	}
+}
