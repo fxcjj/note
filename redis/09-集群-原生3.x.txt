@@ -1,0 +1,78 @@
+
+
+
+3.0
+无主从概念
+
+两两节点通信，网络IO会多问题
+
+16384个槽位 对应 16进制 2^14
+槽位可以迁移
+
+解压redis-3.0
+cd redis-3.0
+install gcc
+make
+mkdir redis
+make prefix=/usr/softward/redis install
+
+mkdir cluster-test
+cd cluster-test
+mkdir 7000 7001 7002 7003 7004 7005
+cd 7000 //在每个配置中创建配置文件
+	cluster-enabled yes
+	port 7000
+	#其它配置文件以此类推
+   
+#启动对应的redis实例 
+cd 700x
+#配置环境变量
+	export REDIS_HOME /usr/softward/redis
+	export PATH=$PATH:$REDIS_HOME/bin
+	
+redis-server redis.conf //在每个700X目录下执行
+
+6个实例都是master状态
+
+700x是客户端连接的端口
+1700x是内部通信的端口 //因为配置了cluster-enabled yes
+
+创建集群
+脚本槽位分配通过redis-trib这个ruby脚本来分配，3个主实例，
+3个从实例
+yum install ruby rubygems -y 
+gem install redis //ruby连接redis的枢纽
+(gem install --local /usr/softward/redis-3.3.0.gem 本地安装也可以) 
+http://rubygems.org/gems/redis
+
+#此命令要在redis/src目录下执行，此目录下有redis-trib.rb
+./redis-trib.rb create --replica 1 127.0.0.1:7000 127.0.0.1:7001 127.0.0.1:7002 127.0.0.1:7003 ...
+
+redis-cli -p 7002 -c //-c表示集群模式
+set msg fuck
+get msg
+set date 1034
+get date
+
+#杀掉一个主进程，查看日志是否会将从升级主
+ps aux | grep 7000
+kill -9 4129
+
+#已经将7003升级为主
+redis-cli -p 7003 -c
+#设置key，自动跳转到7002上
+set mykey 12
+-> Redirected to slot [214234] located at 127.0.0.1:7002
+#需要再次set
+
+当再次启动7000时，此时为slave
+
+当其中的主（及从）挂掉时，cluster不提供服务。
+可以试着连接其中一个会提示
+	* CLUSTERDOWN The cluster is down
+
+
+
+
+
+

@@ -1,0 +1,191 @@
+08-集群-Twemproxy模式
+
+
+
+v2
+Twemproxy模式
+
+Twitter开发，代理用户的读写请求
+
+			client
+			  |
+			  V
+		---------------
+		| twemproxy   |
+		---------------
+		/	  |		\
+	   /	  |		 \
+	sA		  sB 	  sC
+	
+代理池的概念，一个twemproxy可以有多个池，不同的端口来对应不同的池，和暴露端口
+
+在twemproxy一级中会有多个池的概念，
+每个池管理多个server。
+twemproxy只是转发
+
+
+Twemproxy
+* Twitter开发的代理服务器，他兼容redis和memcached，允许用户将
+多个redis服务器添加到一个服务池（pool）里面，并通过用户选择的散列函数和
+分布函数，将来自客户端的命令请求分发给服务器池中的各个服务器。
+
+* 通过使用twemproxy我们可以将数据库分片到多台redis服务器上面，并使用这些服务
+器来分担系统压力以及数据库容量：在服务器硬件条件相同的情况下，对于一个包含n
+台redis服务器的池来说，池中每台平均1/N的客户端命令请求。
+
+* 向池里添加更多服务器可以线性的扩展系统处理命令请求的能力，以及系统能够保存的数据量。
+
+
+Twemproxy配置
+	sxt:
+	 listen: 192.168.56.291:22121
+	 hash: fnvla_64
+	 distribution: ketama
+	 auto_eject_hosts: true //在twemproxy一级中是否拒绝，不拒绝查询server返回
+	 redis: true //支持redis
+	 server_retry_timeout: 2000
+	 server_failure_limit: 3
+	 servers:
+	  - 192.168.56.201:6379:1
+
+
+
+代码出来之前，是怎么用的呢？
+根据自己的业务去使用指定的服务器，比如写，就找主，读，就找从。
+
+
+Twemproxyp安装
+Twemproxy
+	autoconfig-2.69.tar.gz
+	automake-1.15.tar.gz
+	libtool-2.4.5.tar.gz
+	twemproxy-0.4.1.tar.gz
+	
+yum安装是比较旧的,所以只能自己安装
+
+1) 解压twemproxy
+	tar xf twemproxy-0.4.1.tar.gz
+2) 进入twemproxy目录
+	cd twemproxy
+		* configure.ac
+		* Makefile.am
+		
+tar xf autoconfig-2.69.tar.gz
+cd autoconfig-2.69
+如果不配就放到了/usr/local下面了,放/usr这里就自动放在/usr/bin下面的了
+./configure --prefix-/usr
+make
+make install
+autoconf -V
+
+tar xf automake-1.15.tar.gz
+./configure --prefix-/usr
+make
+make install
+
+tar xf libtool-2
+./configure --prefix-/usr
+make
+make install
+
+tar xf twemproxy
+cd twemproxy
+aclocal -> aclocal.m4 //直接执行生成aclocal.m4
+autoconfig
+mkdir config
+autoheader
+libtoolize
+automake -a
+#此时里面才有configure
+./configure //准备好之后执行这个
+make
+make install //sbin是启动时的命令
+#启动需要/usr/local/sbin/nutcracker
+
+
+生成一个文件
+	在twemproxy目录下
+	nutcracker.xy.yml
+	sxt:
+	 listen: 192.168.56.291:22121
+	 hash: fnvla_64
+	 distribution: ketama
+	 auto_eject_hosts: true //在twemproxy一级中是否拒绝，不拒绝查询server返回
+	 redis: true //支持redis
+	 server_retry_timeout: 2000
+	 server_failure_limit: 3
+	 servers:
+	  - 192.168.56.201:6379:1
+	  - 192.168.56.202:6379:1
+	  - 192.168.56.203:6379:1
+
+启动twemproxy得先保证我们的redis主都先起来了
+service redisd start
+
+nutcracker -d -c nutcracker.xy.yml
+-d代表daemon后台
+twemproxy代理了redis的协议
+那我们能直接连它吗？
+redis-cli -p 22121
+redis-cli -p 22121 -h 192.168.80.201
+
+set msg hello
+get msg 
+set date 2015
+get date
+sadd numbers 1 3 6 2
+
+
+准备三个主
+启动twemproxy
+	* cd /usr/local/sbin/
+	* nutcracker -d -c /usr/software/twemproxy-0.5.1/nutcracker.xy.yml
+	
+使用twemproxy代理，各个主服务器没有数据同步。
+
+在twemproxy set时，可以在集群中的某个服务器get到
+
+如果存储数据的node挂了，那就不能获取数据了。
+针对此node可以做主从，挂了会有新的node。
+
+缺点
+	容错
+		* 因为某台服务器都会有对应的区间段，
+		某个节点挂了，数据就访问不到了，如果挂了的那台服务
+		器能转移到另一台服务器，那是可以的。但twemproxy暂时做不到。
+	扩展：每台服务器有对应区间段？
+
+主从+哨兵（集群）
+	此模式可以满足大部分需求。分担读压力
+	
+twemproxy模式（集群）
+	此模式分担写压力
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

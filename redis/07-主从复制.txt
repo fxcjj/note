@@ -1,0 +1,93 @@
+
+主从复制创建
+
+第一种方式：
+配置当前服务成为某redis服务的slave
+	redis-server --slaveof <master-ip> <master-port>
+
+举例
+	//成为127.0.01:6379的slave服务
+	redis> redis-server --port 6380 --slaveof 127.0.0.1 6379
+	
+	//启动6380服务
+	redis> redis-server --port 6380
+		可以set，再次转换为slave
+	//转换为slave，set时出错
+	slaveof 127.0.0.1 6379
+	
+	
+	
+slaveof host port命令，将当前服务器状态从master修改为别的服务器的slave
+	redis> slaveof 192.168.1.1 6379 //将服务器转换为slave
+	redis> slaveof no noe //将服务器重新恢复为master，不会丢弃已同步数据
+
+第二种方式
+配置方式：启动时，服务器读取配置文件，并自动成为指定服务器的从服务器
+	* slaveof <master-ip> <master-port>
+	* slaveof 127.0.0.1 6379
+
+note: 建议使用第一种方式
+
+
+redis哨兵
+高可用sentinel
+	* 官方提供的高可用方案，可以用它管理多个redis服务实例
+	* 编译后产生redis-sentinel程序文件
+	* redis sentinel是一个分布式系统，可以在一个架构中运行多个sentinel进程
+
+启动sentinel
+	* 将src目录下产生的redis-sentinel程序文件复制到$REDIS_HOME/bin
+	* 启动一个运行在sentinel模式下的redis服务实例
+		* redis-sentinel //或者执行下面命令
+		* redis-server /path/to/sentinel.conf --sentinel
+	* redis sentinel是一个分布式系统，可以在一个架构中运行多个sentinel进程
+
+监控monitoring
+	* sentinel会不断检查master和slaves是否正常
+	* 每一个sentinel可以监控任意多个master和该master下的slaves
+	
+sentinel网络
+	* 监控同一个master的sentinel会自动连接，组成一个分布式的
+		sentinel网络，互相通信并交换彼此关于被监视服务器的信息
+	* 	---------------------------------
+		|			sentinel网络		|
+		| sentinel sentinel sentinel	|	
+		|								|
+		|			主服务器			|
+		|	从					从		|
+		---------------------------------
+
+服务器下线
+	* 当一个sentinel认为被监视的服务器已经下线时，它会向网络中的其他sentinel进行确认，
+		判断该服务器是否真的已经下线
+	* 如果下线的服务器为主服务器，那么sentinel网络将对下线主服务器进行自动故障转移，
+		通过将下线主服务器的某个从服务器提升为新的主服务器，并让其从服务器转为复制新
+		的主服务器，以此来让系统重新回到上线的状态。
+
+
+sentinel配置文件
+	* 至少包含一个监控配置选项，用于指定被监控master的相关信息
+	* sentinel monitor <name> <ip> <port> <quorum>, 例如
+		sentinel monitor mymaster 127.0.0.1 6379 2
+		监视mymaster的主服务器，服务器ip和端口，将这个主服务器判断为下线失效至少
+		需要２个sentinel同意，如果多数sentinel同意才会执行故障转移
+	* sentinel会根据master的配置自动发现master的slaves
+	* sentinel默认端口号为26379
+
+
+sentinel配置举例
+	* 执行以下两条命令，将创建两个监视主服务器s1的sentinel实例：
+	* $redis-sentinel sentinel1.conf
+	* $redis-sentinel sentinel2.conf
+	* 其中sentinel1.con的内容为：
+		port 26379
+		sentinel monitor s1 127.0.0.1 6379 2
+	* sentinel2.conf的内容为
+		port 26380
+		sentinel monitor s1 127.0.0.1 6379 2
+	
+	
+
+
+
+
