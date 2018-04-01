@@ -1,0 +1,61 @@
+
+-- ----------------------------
+-- Table structure for `t_repeat`
+-- ----------------------------
+DROP TABLE IF EXISTS `t_repeat`;
+CREATE TABLE `t_repeat` (
+  `id` int(11) NOT NULL DEFAULT '0',
+  `sample_code` varchar(20) CHARACTER SET utf8 DEFAULT NULL,
+  `name` varchar(50) CHARACTER SET utf8 DEFAULT NULL,
+  `gender` varchar(20) CHARACTER SET utf8 DEFAULT NULL,
+  `code` varchar(20) CHARACTER SET utf8 DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+-- Records of t_repeat
+-- ----------------------------
+INSERT INTO `t_repeat` VALUES ('1', 'AB1', '张三', '男', '001');
+INSERT INTO `t_repeat` VALUES ('2', 'AB2', '李四', '男', '009');
+INSERT INTO `t_repeat` VALUES ('3', 'AB1', '小玲', '女', '008');
+INSERT INTO `t_repeat` VALUES ('4', 'AB1', '小倩', '女', '004');
+
+
+
+-- 统计sample_code重复的数量
+select sample_code, count(*) as count from t_repeat group by sample_code HAVING count > 1;
+
+-- 查看重复的记录
+select * from t_repeat where sample_code in (
+	select sample_code from t_repeat group by sample_code HAVING count(sample_code) > 1
+)
+
+-- 取每个组的最大id
+select max(id) from t_repeat group by sample_code
+
+-- 删除重复记录，保留重复记录中最大id的记录
+delete from t_repeat where id not in(
+	select max(id) from t_repeat group by sample_code
+)
+
+/*
+执行上面语句，报错[Err] 1093 - You can't specify target table 't_repeat' for update in FROM clause
+错误的意思是说，不能先select出同一表中的某些值，再update这个表（同一个语句中）。
+改写如下：
+Warning: 如果没有其它数据，可以这么写，否则会删掉其它数据的！！！
+*/
+delete from t_repeat where id not in(
+	select maxid from (
+		select max(id) as maxid from t_repeat group by sample_code
+	) b
+)
+
+-- 根据多个字段查询重复记录
+select * from t_repeat GROUP BY name, code HAVING count(*) > 1
+
+-- 删除重复记录，保留最大id记录
+delete from t_repeat where id not in (
+	select maxid from (
+		select max(id) as maxid from t_repeat GROUP BY name, code
+	) b
+)
