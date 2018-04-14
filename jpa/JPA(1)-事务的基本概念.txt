@@ -1,7 +1,11 @@
 From
 http://blog.csdn.net/a494303877/article/category/6518694
 
+JPA
+Java Persistence API，java持久化api。
+是java ee 5.0平台标准的orm规范，使得应用程序以统一的方式访问持久层。
 jpa是数据持久化到数据库的抽象描述。
+
 
 事务（Transaction, TX）
    对于一次数据操作，涉及的变更要么全都成功，要么全部失败。不存在除此之外的任何情况。

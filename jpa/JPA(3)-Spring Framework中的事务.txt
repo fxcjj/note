@@ -22,9 +22,12 @@ Spring提供以下两种方案实现事务划分：
 1) Resource-local 本地事务
 2) Global全局事务(一般需要应用服务器提供的容器环境，所以也称为Container事务)
 
-对于本地事务而言，它没有办法针对多个事务性资源，往往只能针对单一的事务资源。而且它也过于底层，对于业务逻辑的侵入性很强，这一点写过基于JDBC应用的同学都知道，20行代码里面可能只有5行是业务相关的，剩下15行都用来处理事务和相关异常了。所以这样的代码很难维护，看上去也不那么优雅。
+对于本地事务而言，它没有办法针对多个事务性资源，往往只能针对单一的事务资源。而且它也过于底层，对于业务逻辑的侵入性很强，
+这一点写过基于JDBC应用的同学都知道，20行代码里面可能只有5行是业务相关的，剩下15行都用来处理事务和相关异常了。所以这样的代码很难维护，看上去也不那么优雅。
 
-对于全局事务而言，它克服了本地事务的缺点，能够处理多个事务性资源(典型的比如数据库，消息队列等)。但是它依赖于笨重的JTA(Java Transaction API)，这一套和事务相关的API用起来也是让人叫苦不迭，和JDBC类似，都有太过底层的问题。更重要的是，JTA一般是应用服务器才会提供的服务，因此使用全局事务的条件也算是比较苛刻。
+对于全局事务而言，它克服了本地事务的缺点，能够处理多个事务性资源(典型的比如数据库，消息队列等)。但是它依赖于笨重的JTA(Java Transaction API)，
+这一套和事务相关的API用起来也是让人叫苦不迭，和JDBC类似，都有太过底层的问题。更重要的是，JTA一般是应用服务器才会提供的服务，
+因此使用全局事务的条件也算是比较苛刻。
 
 SO，针对以上的种种痛点，Spring Framework建立了一套关于事务的抽象。
 让开发人员可以在任何环境中方便地使用事务来管理资源。甚至在一般情况下连应用服务器也不需要了，使用一般的Web容器即可，
@@ -39,9 +42,13 @@ public interface PlatformTransactionManager {
     void commit(TransactionStatus status) throws TransactionException;
     void rollback(TransactionStatus status) throws TransactionException;
 }
-org.springframework.transaction.PlatformTransactionManager接口本质上是一个服务提供接口(Service Provider Interface, SPI)。这也算是实现系统扩展性的一种经典设计模式了，具体可以参考维基百科。比如我们所熟知的JDBC就是依赖于这一模式，各种数据库厂商都实现了JDBC SPI中的功能从而使他们的数据库能够和Java应用通信。
+org.springframework.transaction.PlatformTransactionManager接口本质上是一个服务提供接口(Service Provider Interface, SPI)。
+这也算是实现系统扩展性的一种经典设计模式了，具体可以参考维基百科。比如我们所熟知的JDBC就是依赖于这一模式，
+各种数据库厂商都实现了JDBC SPI中的功能从而使他们的数据库能够和Java应用通信。
 
-接口中定义的每个方法都可能会抛出一个名为TransactionException的异常，这个异常不像是JTA的相关接口中定义的那些异常基本上都是受检异常(Checked Exception)，而TransactionException是一个运行时异常(Runtime Exception)。这也反映出了Spring Framework的设计原则，尽量不给开发人员添乱。毕竟处理事务相关的异常可不是一门轻松活。
+接口中定义的每个方法都可能会抛出一个名为TransactionException的异常，这个异常不像是JTA的相关接口中定义的那些异常基本上都是受检异常(Checked Exception)，
+而TransactionException是一个运行时异常(Runtime Exception)。这也反映出了Spring Framework的设计原则，尽量不给开发人员添乱。
+毕竟处理事务相关的异常可不是一门轻松活。
 一般而言都是直接抛出去，谁有能力处理交给谁吧。所以这里将异常定义为运行时异常默认了开发人员不会处理它，当然如果有能力处理的话加上try…catch语句就好了。
 
 下面简要介绍一下上述接口中的三个方法：
@@ -55,7 +62,8 @@ TransactionStatus getTransaction(TransactionDefinition definition) throws Transa
 
 Interface that defines Spring-compliant transaction properties. 
 Based on the propagation behavior definitions analogous to EJB CMT attributes.
-翻译一下就是：这个接口定义了Spring兼容的事务属性。这些属性类似于EJB CMT中关于事务传播(Transaction Propagation)行为的定义。而这个事务传播实际上就是指的@TransactionAttribute中定义的那些个属性，诸如MANDATORY，REQUIRED，REQUIRES_NEW等，详情可以参考这里。
+翻译一下就是：这个接口定义了Spring兼容的事务属性。这些属性类似于EJB CMT中关于事务传播(Transaction Propagation)行为的定义。
+而这个事务传播实际上就是指的@TransactionAttribute中定义的那些个属性，诸如MANDATORY，REQUIRED，REQUIRES_NEW等，详情可以参考这里。
 
 知道了这一点，再来看看里面定义了些什么：
 
@@ -84,7 +92,8 @@ public interface TransactionDefinition {
     boolean isReadOnly();
     String getName();
 }
-可见，这个接口里面定义了各种属性，同时也定义了获取一个事务属性的方法。所以将该接口作为上述getTransaction方法的参数，目的就很清晰了：根据所描述事务的属性来获取具体的事务。就好比传入一个config对象，得到一个符合该config定义的对象那样。
+可见，这个接口里面定义了各种属性，同时也定义了获取一个事务属性的方法。所以将该接口作为上述getTransaction方法的参数，
+目的就很清晰了：根据所描述事务的属性来获取具体的事务。就好比传入一个config对象，得到一个符合该config定义的对象那样。
 
 然后，方法返回的TransactionStatus又是啥呢：
 
@@ -96,11 +105,14 @@ public interface TransactionStatus extends SavepointManager, Flushable {
     void flush();
     boolean isCompleted();
 }
-这就很明显了，它和之前介绍过的JTA提供用于实现BMT的UserTransaction相似度很高。它代表的就是一个当前执行线程所关联的一个具体事务对象。根据TransactionDefinition所定义的事务属性，这个具体的事务对象可以是一个刚刚创建的(当传播属性定义为PROPAGATION_REQUIRES_NEW时)，也可以是复用的一个事务对象(当传播属性定义为PROPAGATION_SUPPORTS或者PROPAGATION_REQUIRED并且确实运行在事务环境中时)。
+这就很明显了，它和之前介绍过的JTA提供用于实现BMT的UserTransaction相似度很高。它代表的就是一个当前执行线程所关联的一个具体事务对象。
+根据TransactionDefinition所定义的事务属性，这个具体的事务对象可以是一个刚刚创建的(当传播属性定义为PROPAGATION_REQUIRES_NEW时)，
+也可以是复用的一个事务对象(当传播属性定义为PROPAGATION_SUPPORTS或者PROPAGATION_REQUIRED并且确实运行在事务环境中时)。
 
 PlatformTransactionManager接口中剩下的两个方法commit()和rollback()看名字就知道它们怎么用了，因此不再一一介绍了。
 
-PlatformTransactionManager接口的实现是需要根据具体的环境而被注入到运行时环境中的，比如JTA，JDBC，hibernate等。关于具体的注入方法可以参考Spring Framework的相关文档，这里就不再细说。
+PlatformTransactionManager接口的实现是需要根据具体的环境而被注入到运行时环境中的，比如JTA，JDBC，hibernate等。
+关于具体的注入方法可以参考Spring Framework的相关文档，这里就不再细说。
 
 四、声明式的事务管理(Declarative Transaction Management)
 
@@ -111,13 +123,15 @@ b, 开发人员所需要做的只是根据底层环境提供相应的配置即可。
 c, 可以对任何类使用声明式事务管理，而不像EJB CMT那样只能对有限的几种类型，比如@Stateful，@Stateless等会话Bean。
 d, 声明式的回滚规则，比如指定抛出了哪些类型的异常时才发生回滚。这一特性是EJB CMT中不存在的。
 e, 通过AOP技术定制化事务行为，比如在事务发生回滚的时候执行自定义代码。而在EJB CMT中对于回滚你能做的仅仅是调用setRollbackOnly()。
-f, 和EJB CMT比较相近的一点是，它们都在发生了运行时异常(Runtime Exception)时会触发回滚操作，但是对于受检异常(Checked 		Exception)是不会主动回滚的，一般的理解是需要开发人员来处理，在catch语句中显式地执行回滚操作。
+f, 和EJB CMT比较相近的一点是，它们都在发生了运行时异常(Runtime Exception)时会触发回滚操作，但是对于受检异常(Checked Exception)是不会主动回滚的，
+一般的理解是需要开发人员来处理，在catch语句中显式地执行回滚操作。
 
 说的这么好听，那么如何使用声明式的事务管理呢。其实用法很简单，就两个步骤(以注解配置方式为例)： 
 1. 在@Configuration的JavaConfig类中使用@EnableTransactionManagement 
 2. 在需要使用事务的类或者方法上使用@Transactional
 
-要想理解它是如何实现的，首先需要了解AOP Proxy这一概念。也就是说，在开发人员声明了@Transactional之后，Spring Framework会利用AOP技术生成一个代理对象(Proxy)，这个代理对象使用TransactionInterceptor并结合PlatformTransactionManager来实现事务的相关功能。
+要想理解它是如何实现的，首先需要了解AOP Proxy这一概念。也就是说，在开发人员声明了@Transactional之后，Spring Framework会利用AOP技术生成一个代理对象(Proxy)，
+这个代理对象使用TransactionInterceptor并结合PlatformTransactionManager来实现事务的相关功能。
 
 在Spring Framework没有介入之前，只存在上图中的调用者和目标方法这两个部分。而在介入后利用AOP以及动态代理技术首先为方法所在对象创建了一个代理对象，
 然后根据配置生成各种AOP任务，如上图中的事务Advisor以及其它类型的Advisor(日志任务等)。然后在真正发生方法调用的时候，调用的顺序如上图中的数字1-8。
