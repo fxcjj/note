@@ -8,8 +8,6 @@ https://www.cnblogs.com/meibao/p/4973043.html
 
 
 
-
-
 -- very slow
 select pd.id, pd.name from p_doctor pd 
 where EXISTS (
