@@ -1,0 +1,145 @@
+
+一、基本思想
+	vertical
+	horizontal
+	
+二、切分策略
+1. 事务问题
+2. 跨节点join问题
+3. 跨节点count,order by,group by以及聚合函数问题
+
+
+db_01
+	t_user
+	t_topic
+	t_reply
+	
+db_02
+	t_user
+	t_topic
+	t_reply
+
+
+反向的Merge
+
+
+用户
+产品
+订单
+
+
+一旦数据库被切分到多个物理结点上，我们将不能再依赖数据库自身的主键生成机制。
+一方面，某个分区数据库自生成的id无法保证在全局上是唯一的；
+另一方面，应用程序在插入数据之前需要先获得id，以便进行sql路由；
+
+目前几种可行的主键生成策略
+1. UUID
+使用UUID作主键是最简单的方案，但是缺点也是非常明显的。
+由于UUID非常的长，除占用大量存储空间外，最主要的问题是在索引上，
+在建立索引和基于索引进行查询时都存在性能问题。
+
+2. 数据库中维护一个sequence表
+表结构类似于：
+create table sequence (
+	'tablename' varchar(30) not null,
+	'nextid' bigint(20) not null,
+	primary key ('tablename')
+) engine=innodb
+
+每当需要为某个表的新记录生成id时就从t_sequence表中取出对应表的next_id，
+将将next_id的值加1后更新到数据库中以备下次使用。
+此文案比较简单，但缺点同样明显：由于所有插入查询都需要访问此表，那么很容易成为
+系统性能瓶颈，同时它也存在单点问题，一旦该表数据库失效，整个应用程序将无法工作。
+有人提出使用master-slave进行主从同步，但这也只能解决单点问题，
+并不能解决读写比为1：1的访问压力问题。
+
+3. 一种极为优秀的主键生成策略
+
+原文链接
+http://code.flickr.com/blog/2010/02/08/ticket-servers-distributed-unique-primary-keys-on-the-cheap/
+
+它与t_sequence表方案有些类似，但却能很好地解决性能瓶颈和单点问题，
+是一种非常可靠而高效的全局主键生成方案。
+
+
+分为两台sequence服务器
+
+sequence server1
+table: t_sequence
+	id //auto_increment, auto_increment_offset=1, auto_increment_increment=2
+	stub //char(1) not null, unique
+	
+sequence server2
+table: t_sequence
+	id //auto_increment, auto_increment_offset=2, auto_increment_increment=2
+	stub //char(1) not null, unique
+	
+//获取id
+REPLACE INTO t_sequence_user(stub) VALUES('a');
+SELECT LAST_INSERT_ID();
+	
+大体思想是：
+建立两台以上的数据库ID生成服务器，每个服务器都有一个记录各表当前ID的sequence表，
+但是sequence中的ID增长的步长是服务器的数量，起始值依次错开，这样相当于把ID的生成散列
+到了每个服务节点上。
+例如：
+我们设置两台数据库ID生成服务，第一台服务器上的sequence表设置初始值为1，步长为2。
+第二台服务器上的sequence表设置初始值为2，步长为2，那么结果就是奇数的ID都将从第一台服务上生成，
+偶数的ID都从第二台服务上生成，这样就将生成ID的压力分散到两台服务器上，同时配合应用程序的控制，
+当一个服务器失效后，系统能自动切换到另一个服务器上获取ID，从而保证了系统的容错。
+
+几点细节说明：
+1. flickr的数据库ID生成服务器是专用服务器，服务器上只有一个数据库，数据库中表都是用于生成
+sequence的，这也是因为auto_increment_offset和auto_increment_increment这两个数据库变量
+都是数据库实例级别的变量。
+2. flickr的方案中表中的stub字段只是一个char(1) not null存根字段并且有唯一约束，并非表名，
+因此，一般来说，一个sequence表只有一条纪录，可以同时为多张表生成id。
+如果需要表的id是有连续的，需要为该表单独建立sequence表。
+3. 使用replace into和last_insert_id自带功能，只会产生一条记录
+4. select last_insert_id()必须要与replace into语句在同一个数据库连接下才能得到刚刚插入的新id，
+否则返回值总是0.
+6. 该方案中sequence表使用的是MyISAM引擎，以获取更高的性能。
+注意：MyISAM引擎使用的是表级别的锁，MyISAM对表的读写是串行的，因为不必担心在并发时两次读取会
+得到同一个ID（另外，应用程序也不需要同步，每个请求的线程都会得到一个新的connection，不存在需要
+同步的共享资源）。经过实际对比测试，使用一样的sequence表进行id生成，MyISAM引擎要比innodb表现高出很多。
+7. 可使用纯jdbc实现对sequence表的操作，以便获得更高的效率，实验表明，即使只使用spring jdbc性能也不及
+纯jdbc来得快。
+
+实现该方案，应用程序同样需要做一些处理，主要两方面的工作：
+1. 自动均衡数据库ID生成服务器的访问。
+2. 确保在某个数据库ID生成服务器失效的情况下，能将请求转发到其它服务器上执行。
+
+
+
+
+
+
+
+
+
+
+//设置auto_increment_x
+https://www.cnblogs.com/DBArtist/p/auto_increment.html
+
+
+
+
+
+set @@auto_increment_increment=2;
+
+set @@auto_increment_offset=1;
+
+show variables like 'auto_inc%';
+
+
+
+
+
+
+
+
+
+
+
+
+
