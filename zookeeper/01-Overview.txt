@@ -1,0 +1,55 @@
+
+http://zookeeper.apache.org/doc/current/index.html
+
+
+Zookeeper: A distributed coordination service for distributed applications
+
+Design Goals
+	simple
+	replicated
+	ordered
+	fast
+	
+Data model and the hierarchical namespace
+	The name space provided by ZooKeeper is much like that of a stardand file system.
+
+Nodes and ephemeral nodes
+	node
+	ephemeral node
+	
+Conditional updates and watches
+		ZooKeeper supports the concept of watches. 
+		Clients can set a watch on a znodes. A watch will be triggered and removed 
+		when the znode changes. When a watch is triggered the client receives a packet
+		saying that the znode has changed. And if the connection between the client 
+		and one of the Zoo Keeper servers is broken, the client will receive a local
+		notification. These can be used to [tbd].
+
+Guarantees
+	Sequential Consistency
+	Atomicity
+	Single System Image
+	Reliability
+	Timeliness
+	
+Simple API
+	create
+	delete
+	exists
+	get data
+	set data
+	get children
+	sync
+
+Implementation
+
+Uses
+
+Performance
+
+Reliability
+
+The Zookeeper Project
+
+
+
