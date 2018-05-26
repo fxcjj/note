@@ -12,3 +12,27 @@ From github.com:fxcjj/note
 rm -f master.lock
 
 
+2、当前库关联了vic_parent，重新关联另外一个库时报的错
+$ git remote add origin git@github.com:fxcjj/vic_user.git
+fatal: remote origin already exists.
+
+执行：
+git remote rm origin
+
+再次执行git remote add origin git@github.com:fxcjj/vic_user.git即可
+
+如果执行git remote rm origin报错，手动修改gitconfig文件
+$ vi .git/config
+[core]
+        repositoryformatversion = 0
+        filemode = false
+        bare = false
+        logallrefupdates = true
+        symlinks = false
+        ignorecase = true
+        hideDotFiles = dotGitOnly
+[remote "origin"]
+        url = git@github.com:fxcjj/vic_user.git
+        fetch = +refs/heads/*:refs/remotes/origin/*
+
+删除[remote "origin"]即可
