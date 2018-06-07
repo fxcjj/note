@@ -108,7 +108,7 @@ grep -n "^$" a.log #显示输出空行的行号
 ls -l | grep "^d" #查询当前目录下的目录
 grep -3 coupon a.log #显示匹配行的上下3行
 grep -h fine *.log #当前目录下有a.log, b.log，输出匹配行，但不打印文件名
-grep -nA 3 fine a.log
+grep -nA 3 fine a.log #匹配行的后3行
 
 grep -nA 3 fine a.log | tail -n 8
 从末尾查找，最多显示8行，显示匹配行后面3行

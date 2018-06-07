@@ -1,0 +1,131 @@
+
+
+三、zookeeper服务
+3.1 zookeeper数据类型
+zookeeper拥有一个层次的命名空间。
+znode兼具文件和目录两种特点。
+
+/
+	/NameService
+		/Server2
+		/Server1
+	/configuration
+	/GroupMembers
+		/Member1
+		/Member2
+	/App
+		/App1
+		/App2
+		/App3
+	
+每个znode由3部分组成
+1. stat: 此为状态信息，描述该znode的版本、权限等信息。
+2. data: 与该znode关联的数据。
+3. children: 该znode下的子节点。
+
+
+3.1.1 zookeeper节点znode
+zookeeper目录树中每一个节点对应一个znode。每个znode维护着一个属性结构，它包含
+版本号（dataVersion），时间戳（ctime,mtime）等状态信息。
+zookeeper正是使用节点的这些特性来实现它的某些特定功能。
+
+每当znode的数据改变时，它拥有的版本号将会增加。
+每当客户端检索数据时，它将同时检索数据的版本号。并且如果一个客户端执行了某个节点的
+更新或删除操作，它也必须提供要被操作的数据版本号。
+如果所提供的数据版本号与实际不匹配，那么这个操作将会失败。
+
+znode是客户端访问zookeeper的主要实体，它包含以下几个特征：
+1. watches
+client可以在节点上设置watch（我们称之为monitor）。
+当节点发生变化时（数据的增、删、改）将会触发watch所对应的操作。
+当watch被触发时，zookeeper将会向客户端发送且仅发送一条通知，因为watch只能被触发一次。
+	
+2. 数据访问
+every node's data must be atomicity operation, in other word. 
+The read operation will get all data of the znode, and write operation will replace whole data of the znode.
+additionally, every znode has own acl(access control list), this list specifies user's rights, 
+即限定了特定用户对目标节点可以执行的操作。
+
+3. 节点类型
+ZooKeeper中的节点有两种，分别为临时节点和永久节点。节点的类型在创建时即被确定，并且不能改变。
+　　ZooKeeper的临时节点：该节点的生命周期依赖于创建它们的会话。一旦会话结束，临时节点将被自动删除，当然可以也可以手动删除。另外，需要注意是，ZooKeeper的临时节点不允许拥有子节点。
+　　ZooKeeper的永久节点：该节点的生命周期不依赖于会话，并且只有在客户端显示执行删除操作的时候，他们才能被删除。
+
+4. 顺序节点（唯一性保证）
+当创建Znode的时候，用户可以请求在ZooKeeper的路径结尾添加一个递增的计数。这个计数对于此节点的父节点来说是唯一的，它的格式为“%10d”(10位数字，没有数值的数位用0补充，例如“0000000001”)。当计数值大于232-1时，计数器将溢出。
+
+org.apache.zookeeper.CreateMode中定义了四种节点类型，分别对应：
+
+PERSISTENT：永久节点
+
+EPHEMERAL：临时节点
+
+PERSISTENT_SEQUENTIAL：永久节点、序列化
+
+EPHEMERAL_SEQUENTIAL：临时节点、序列化
+
+
+3.1.2 zookeeper中的时间
+zookeeper有多种记录时间的形式，其中包含以下几个主要属性
+1. zxid
+	cZxid: 是节点的创建时间所对应的zxid格式时间戳。
+	mZxid：是节点的修改时间所对应的zxid格式时间戳。
+
+2. 版本号
+	version: 节点数据版本号
+	cversion: 子节点版本号
+	aversion: 节点所拥有的ACL版本号
+
+
+3.1.3 节点的属性结构
+czxid
+mzxid
+ctime
+mtime
+...
+pzxid
+
+3.14 znode总结
+1. znode中的数据可以有多个版本，在查询该znode数据时就需要带上版本信息。如：set path version / delete path version
+2. znode可以是临时znode，由create -e 生成的节点，一旦创建这个znode的client与server断开连接，该znode将被自动删除。
+client和server之间通过heartbeat来确认连接正常，这种状态称之为session，断开连接后session失效。
+3. 临时znode不能有子znode。
+
+4. znode可以自动编号，由create -s 生成的节点，例如在 create -s /app/node 已存在时，将会生成 /app/node00***001节点。
+
+5. znode可以被监控，该目录下某些信息的修改，例如节点数据、子节点变化等，可以主动通知监控注册的client。
+In fact，通过这个特性，可以完成许多重要应用，例如配置管理、信息同步、分布式锁等等。
+
+
+3.2 zookeeper服务中的操作
+create
+delete
+exists
+getACL/setACL
+getChildren
+getData/setData
+sync
+
+3.2.1 watch触发器
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

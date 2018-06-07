@@ -1,0 +1,142 @@
+
+二、Zookeeper的搭建方式
+
+Zookeeper安装方式有三种，单机模式和集群模式和伪集群模式。
+
+1. 单机模式：Zookeeper只运行在一台服务器上，适合测试环境。
+2. 伪集群模式：在一台物理机上运行多个Zookeeper实例。
+3. 集群模式：Zookeeper运行在一个集群上，适合生产环境，这个计算集群被称为一个“集合体”（ensemble）。
+
+Zookeeper通过复制来实现高可用性，只要集合体中半数以上的机器处于可用状态，它就能够保证服务继续。
+为什么一定要超过半数呢？这跟Zookeeper的复制策略有关：zookeeper确保对znode树的每一个修改都会被复制到集合体中超过半数的机器上。
+
+1.1 Zookeeper的单机模式搭建
+1) 下载zookeeper
+2) 解压：tar -zxvf zookeeper-3.4.5.tar.gz 重命名：mv zookeeper-3.4.5 zk
+3) 配置文件：在conf目录下删除zoo_sample.cfg文件，创建一个配置文件zoo.cfg。
+	tickTime=2000
+	dataDir=/usr/local/zk/data
+	dataLogDir=/usr/local/zk/dataLog        
+	clientPort=2181
+4) 配置环境变量：为了今后操作方便，我们需要对Zookeeper的环境变量进行配置，方法如下在/etc/profile文件中加入如下内容：
+	export ZOOKEEPER_HOME=/usr/local/zk
+	export PATH=.:HADOOP H OME/bin: ZOOKEEPER_HOME/bin:JAVA H OME/bin: PATH
+5) 启动ZooKeeper的Server：zkServer.sh start；关闭ZooKeeper的Server：zkServer.sh stop
+
+
+1.2 Zookeeper的伪集群模式搭建
+参考集群模式搭建
+
+
+1.3 Zookeeper的集群模式搭建
+为了获得可靠地Zookeeper服务，用户应该在一个机群上部署Zookeeper。
+只要机群上大多数的Zookeeper服务启动了，那么总的Zookeeper服务将是可用的。
+集群的配置方式，和前两种类似，同样需要进行环境变量的配置。在每台机器上conf/zoo.cf配置文件的参数设置相同。
+
+1.3.1 创建myid文件
+在dataDir(/usr/local/zk/data)目录创建myid文件
+Server0机器的内容为：0
+Server1机器的内容为：1
+Server2机器的内容为：2
+
+1.3.2 编写配置文件
+在conf目录下删除zoo_sample.cfg文件，创建一个配置文件zoo.cfg。
+如下内容：
+# The number of milliseconds of each tick
+tickTime=2000
+
+# The number of ticks that the initial
+# synchronization phase can take
+initLimit=10
+
+# The number of ticks that can pass between
+# sending a request and getting an acknowledgement
+syncLimit=5
+
+# the directory where the snapshot is stored.
+dataDir=/usr/local/zk/data
+
+# the port at which the clients will connect
+clientPort=2181
+
+#the location of the log file
+dataLogDir=/usr/local/zk/logs
+
+server.0=192.168.42.128:2288:3388
+server.1=192.168.42.129:2288:3388
+server.2=192.168.42.130:2288:3388
+
+1.3.3 开放防火墙端口
+chkconfig iptables on //设置开机启动 
+service iptables start //启动防火墙
+
+#开放防火墙端口
+vi /etc/sysconfig/iptables
+
+添加如下内容：
+#zookeeper
+-A INPUT -m state --state NEW -m tcp -p tcp --dport 2181 -j ACCEPT
+-A INPUT -m state --state NEW -m tcp -p tcp --dport 2288 -j ACCEPT
+-A INPUT -m state --state NEW -m tcp -p tcp --dport 3388 -j ACCEPT
+
+
+#重启防火墙
+service iptables restart
+
+
+1.3.3 启动
+分别在3台机器上启动ZooKeeper的Server：zkServer.sh start；
+
+1.3.4 可能遇到的问题
+2018-06-07 22:17:56,983 [myid:1] - WARN  [QuorumPeer[myid=1]/0:0:0:0:0:0:0:0:2181:QuorumCnxManager@588] - Cannot open channel to 0 at election address /192.168.42.128:3388
+java.net.NoRouteToHostException: No route to host (Host unreachable)
+	at java.net.PlainSocketImpl.socketConnect(Native Method)
+	at java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl.java:350)
+	at java.net.AbstractPlainSocketImpl.connectToAddress(AbstractPlainSocketImpl.java:206)
+	at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:188)
+	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)
+	at java.net.Socket.connect(Socket.java:589)
+	at org.apache.zookeeper.server.quorum.QuorumCnxManager.connectOne(QuorumCnxManager.java:562)
+	at org.apache.zookeeper.server.quorum.QuorumCnxManager.connectAll(QuorumCnxManager.java:614)
+	at org.apache.zookeeper.server.quorum.FastLeaderElection.lookForLeader(FastLeaderElection.java:843)
+	at org.apache.zookeeper.server.quorum.QuorumPeer.run(QuorumPeer.java:913)
+2018-06-07 22:17:56,984 [myid:1] - INFO  [QuorumPeer[myid=1]/0:0:0:0:0:0:0:0:2181:QuorumPeer$QuorumServer@167] - Resolved hostname: 192.168.42.128 to address: /192.168.42.128
+2018-06-07 22:17:56,989 [myid:1] - WARN  [QuorumPeer[myid=1]/0:0:0:0:0:0:0:0:2181:QuorumCnxManager@588] - Cannot open channel to 2 at election address /192.168.42.130:3388
+java.net.NoRouteToHostException: No route to host (Host unreachable)
+	at java.net.PlainSocketImpl.socketConnect(Native Method)
+	at java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl.java:350)
+	at java.net.AbstractPlainSocketImpl.connectToAddress(AbstractPlainSocketImpl.java:206)
+	at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:188)
+	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)
+	at java.net.Socket.connect(Socket.java:589)
+	at org.apache.zookeeper.server.quorum.QuorumCnxManager.connectOne(QuorumCnxManager.java:562)
+	at org.apache.zookeeper.server.quorum.QuorumCnxManager.connectAll(QuorumCnxManager.java:614)
+	at org.apache.zookeeper.server.quorum.FastLeaderElection.lookForLeader(FastLeaderElection.java:843)
+	at org.apache.zookeeper.server.quorum.QuorumPeer.run(QuorumPeer.java:913)
+2018-06-07 22:17:56,990 [myid:1] - INFO  [QuorumPeer[myid=1]/0:0:0:0:0:0:0:0:2181:QuorumPeer$QuorumServer@167] - Resolved hostname: 192.168.42.130 to address: /192.168.42.130
+2018-06-07 22:17:56,990 [myid:1] - INFO  [QuorumPeer[myid=1]/0:0:0:0:0:0:0:0:2181:FastLeaderElection@852] - Notification time out: 60000
+
+上面的错误是我在机器1上执行zkServer.sh status出现的错误。原因是因为防火墙的问题，关闭防火墙。
+
+#防火墙列表
+service iptables status
+
+#关闭防火墙
+service iptables stop
+
+
+
+
+
+
+
+centosa是源
+centosa-1是centosa的链接克隆
+centosb是centosa的完整克隆
+
+
+
+Refer to
+https://blog.csdn.net/fjmjuhqc/article/details/73483940
+
+http://www.paymoon.com/index.php/2015/06/04/zookeeper-building/
