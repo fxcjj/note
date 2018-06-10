@@ -1,0 +1,76 @@
+
+
+一、下载地址
+https://github.com/apache/incubator-dubbo-ops
+
+dubbo-ops
+The following modules in Apache Dubbo(incubating) have been moved here:
+	
+	dubbo-admin //管理控制台
+	dubbo-monitor-simple //简易监控中心
+	dubbo-registry-simple
+	
+How to use it
+You can get a release of dubbo monitor in two steps:
+
+Step 1:
+	git clone https://github.com/apache/incubator-dubbo-ops
+Step 2:
+	cd incubator-dubbo-ops && mvn package
+	Then you will find:
+
+* dubbo-admin-2.0.0.war in incubator-dubbo-ops\dubbo-admin\target directory.You can deploy it into your application server.
+* dubbo-monitor-simple-2.0.0-assembly.tar.gz in incubator-dubbo-ops\dubbo-monitor-simple\target directory. Unzip it you will find the shell scripts for starting or stopping monitor.
+* dubbo-registry-simple-2.0.0-assembly.tar.gz in incubator-dubbo-ops\dubbo-registry-simple\target directory. Unzip it you will find the shell scripts for starting or stopping registry.
+
+将dubbo-monitor-simple-2.0.0-assembly.tar.gz解压，得到dubbo-monitor-simple-2.0.0。
+修改此目录下的conf/dubbo.properties，可以配置注册中心、暴露服务的端口、web网页端口等信息。
+根据实际情况配置。内容如下
+
+dubbo.container=log4j,spring,registry,jetty
+dubbo.application.name=simple-monitor
+dubbo.application.owner=
+#dubbo.registry.address=multicast://224.5.6.7:1234
+dubbo.registry.address=zookeeper://192.168.42.128:2181?backup=192.168.42.129:2181,192.168.42.130:2181
+#dubbo.registry.address=redis://127.0.0.1:6379
+#dubbo.registry.address=dubbo://127.0.0.1:9090
+#monitor-simple也是一个提供者，这个是对外暴露服务的端口
+dubbo.protocol.port=7070
+#web网页端口
+dubbo.jetty.port=6060
+#存放数据目录
+dubbo.jetty.directory=${user.home}/monitor
+dubbo.charts.directory=${dubbo.jetty.directory}/charts
+dubbo.statistics.directory=${user.home}/monitor/statistics
+#dubbo.log4j.file=logs/dubbo-demo-consumer.log
+#dubbo.log4j.level=WARN
+
+
+二、在linux下执行，./start.sh或者windows下执行start.bat。
+
+在浏览器中输入：http://localhost:6060即可看到效果。
+
+
+三、遇到的问题
+a) 执行assembly.bin/start.bat时出现以下错误
+Exception in thread "main" java.lang.NoClassDefFoundError: javax/servlet/FilterChain
+        at java.lang.ClassLoader.defineClass1(Native Method)
+        at java.lang.ClassLoader.defineClass(Unknown Source)
+        at java.security.SecureClassLoader.defineClass(Unknown Source)
+        at java.net.URLClassLoader.defineClass(Unknown Source)
+        at java.net.URLClassLoader.access$100(Unknown Source)
+        at java.net.URLClassLoader$1.run(Unknown Source)
+        at java.net.URLClassLoader$1.run(Unknown Source)
+        at java.security.AccessController.doPrivileged(Native Method)
+        at java.net.URLClassLoader.findClass(Unknown Source)
+        at java.lang.ClassLoader.loadClass(Unknown Source)
+        at sun.misc.Launcher$AppClassLoader.loadClass(Unknown Source)
+        at java.lang.ClassLoader.loadClass(Unknown Source)
+        at com.alibaba.dubbo.container.jetty.JettyContainer.start(JettyContainer.java:56)
+        at com.alibaba.dubbo.container.Main.main(Main.java:85)
+	
+解决方案：
+原因是没有servlet-api.jar，从tomcat/lib下copy一个即可。
+
+参考
+https://blog.csdn.net/qq897958555/article/details/76919298

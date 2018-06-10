@@ -1,0 +1,128 @@
+
+
+一、下载地址
+https://github.com/apache/incubator-dubbo-ops
+
+dubbo-ops
+The following modules in Apache Dubbo(incubating) have been moved here:
+	
+	dubbo-admin
+	dubbo-monitor-simple
+	dubbo-registry-simple
+	
+How to use it
+You can get a release of dubbo monitor in two steps:
+
+Step 1:
+	git clone https://github.com/apache/incubator-dubbo-ops
+Step 2:
+	cd incubator-dubbo-ops && mvn package
+	Then you will find:
+
+* dubbo-admin-2.0.0.war in incubator-dubbo-ops\dubbo-admin\target directory.You can deploy it into your application server.
+* dubbo-monitor-simple-2.0.0-assembly.tar.gz in incubator-dubbo-ops\dubbo-monitor-simple\target directory. Unzip it you will find the shell scripts for starting or stopping monitor.
+* dubbo-registry-simple-2.0.0-assembly.tar.gz in incubator-dubbo-ops\dubbo-registry-simple\target directory. Unzip it you will find the shell scripts for starting or stopping registry.
+
+
+二、修改dubbo.properties文件
+路径：src/webapp/WEB-INF/dubbo.properties
+如果zookeeper是单机，配置：
+dubbo.registry.address=zookeeper://192.168.42.128:2181
+
+如果zookeeper是集群，配置：
+dubbo.registry.address=zookeeper://192.168.42.128:2181?backup=192.168.42.129:2181,192.168.42.130:2181
+
+
+三、或者导入项目到eclipse中
+在incubator-dubbo-ops目录执行mvn clean，然后mvn eclipse:eclipse(转换为eclipse项目)
+
+然后部署到tomcat中
+
+
+四、访问
+在浏览器中输入 http://localhost:8080/dubbo-admin-2.0.0
+
+用户名和密码都是root或者guest
+
+在 系统管理/系统状态 菜单下可以看到zookeeper已经连接成功。
+
+
+五、运行dubbo-demo
+5.1 项目地址
+https://github.com/apache/incubator-dubbo
+
+pull到本地后，需要install
+
+5.2 配置dubbo-demo-provider
+修改src/main/resources/META-INF/spring/dubbo-demo-provider.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://dubbo.apache.org/schema/dubbo"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+       http://dubbo.apache.org/schema/dubbo http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
+
+    <!-- provider's application name, used for tracing dependency relationship -->
+    <dubbo:application name="demo-provider"/>
+
+    <!-- use multicast registry center to export service -->
+    <!-- <dubbo:registry address="multicast://224.5.6.7:1234"/> -->
+    <dubbo:registry address="zookeeper://192.168.42.128:2181?backup=192.168.42.129:2181,192.168.42.130:2181"/>
+    
+
+    <!-- use dubbo protocol to export service on port 20880 -->
+    <dubbo:protocol name="dubbo" port="20880"/>
+	
+    <!-- service implementation, as same as regular local bean -->
+    <bean id="demoService" class="com.alibaba.dubbo.demo.provider.DemoServiceImpl"/>
+
+    <!-- declare the service interface to be exported -->
+    <dubbo:service interface="com.alibaba.dubbo.demo.DemoService" ref="demoService"/>
+
+</beans>
+
+运行Provider类即可，此时在dubbo-admin的服务治理/提供者页面可以看到刚刚运行的提供者。
+
+5.3 配置dubbo-demo-consumer
+修改src/main/resources/META-INF/spring/dubbo-demo-consumer.xml文件
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://dubbo.apache.org/schema/dubbo"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+       http://dubbo.apache.org/schema/dubbo http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
+
+    <!-- consumer's application name, used for tracing dependency relationship (not a matching criterion),
+    don't set it same as provider -->
+    <dubbo:application name="demo-consumer"/>
+
+    <!-- use multicast registry center to discover service -->
+    <!-- <dubbo:registry address="multicast://224.5.6.7:1234"/> -->
+    <dubbo:registry address="zookeeper://192.168.42.128:2181?backup=192.168.42.129:2181,192.168.42.130:2181"/>
+
+    <!-- generate proxy for the remote service, then demoService can be used in the same way as the
+    local regular interface -->
+    <dubbo:reference id="demoService" check="false" interface="com.alibaba.dubbo.demo.DemoService"/>
+
+</beans>
+
+运行Consumer类即可，此时在dubbo-admin的服务治理/消费者页面可以看到刚刚运行的消费者。
+
+
+5.4 运行多个provider
+可以copy一份到eclipse的另一workspace，修改dubbo端口，运行Provider类即可。
+可以禁用其中一个provider，看下consumer请求的provider。
+注意，当只有一个provider时，禁用是无效的。
+
+
+六、引入monitor-simple
+参考
+\note\zookeeper\安装dubbo-monitor-simple.txt
+
+5.5 遇到的问题
+a) 在dubbo-demo目录下，mvn clean出现错误
+Non-resolvable import POM: Failure to find com.alibaba:dubbo-bom:pom:2.7.0-SNAPSHOT in https://oss.sonatype.org/content/repositories/snapshots was cached in the local repository, resolution will not be reattempted until the update interval of sonatype-nexus-snapshots has elapsed or updates are forced @ line 39, column 25 -> [Help 2]
+
+原因：
+没有install父pom到本地。
+

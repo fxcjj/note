@@ -116,13 +116,16 @@ java.net.NoRouteToHostException: No route to host (Host unreachable)
 2018-06-07 22:17:56,990 [myid:1] - INFO  [QuorumPeer[myid=1]/0:0:0:0:0:0:0:0:2181:QuorumPeer$QuorumServer@167] - Resolved hostname: 192.168.42.130 to address: /192.168.42.130
 2018-06-07 22:17:56,990 [myid:1] - INFO  [QuorumPeer[myid=1]/0:0:0:0:0:0:0:0:2181:FastLeaderElection@852] - Notification time out: 60000
 
-上面的错误是我在机器1上执行zkServer.sh status出现的错误。原因是因为防火墙的问题，关闭防火墙。
+上面的错误是我在机器1上执行zkServer.sh status出现的错误。原因是因为防火墙的问题，关闭防火墙即可（不关闭呢？）。
 
 #防火墙列表
 service iptables status
 
 #关闭防火墙
 service iptables stop
+
+
+
 
 
 

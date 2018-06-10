@@ -1,0 +1,156 @@
+
+一、项目结构
+
+vic_parent
+声明所有依赖地址，所有项目继承此项目
+
+vic_api
+声明公共接口
+
+vic_common
+公共服务
+
+vic_order
+订单项目，即是provider也是consumer
+
+vic_user
+用户项目，即是provider也是consumer
+
+二、导入dubbo,zookeeper,spring包
+见vic_parent
+
+三、在vic_api中定义服务接口
+DemoService
+	sayHello(String name);
+
+四、在vic_order中定义provider
+
+4.1 引入dubbo,zookeeper依赖
+<dependency>
+	<groupId>com.vic</groupId>
+	<artifactId>vic_api</artifactId>
+	<version>${project.parent.version}</version>
+</dependency>
+
+<dependency>
+	<groupId>org.apache.curator</groupId>
+	<artifactId>curator-framework</artifactId>
+</dependency>
+
+<dependency>
+	<groupId>com.alibaba</groupId>
+	<artifactId>dubbo</artifactId>
+</dependency>
+
+<dependency>
+	<groupId>org.apache.zookeeper</groupId>
+	<artifactId>zookeeper</artifactId>
+</dependency>
+
+<dependency>
+	<groupId>com.github.sgroschupf</groupId>
+	<artifactId>zkclient</artifactId>
+</dependency>
+
+4.2 声明dubbo的schema，修改vst_order的spring-service.xml中声明如下：
+
+<!-- provider's application name, used for tracing dependency relationship -->
+<dubbo:application name="demo-provider"/>
+
+<!-- use multicast registry center to export service -->
+<!-- <dubbo:registry address="multicast://224.5.6.7:1234"/> -->
+<dubbo:registry address="zookeeper://192.168.42.128:2181?backup=192.168.42.129:2181,192.168.42.130:2181"/>
+
+<!-- use dubbo protocol to export service on port 20880 -->
+<dubbo:protocol name="dubbo" port="20880"/>
+
+<!-- service implementation, as same as regular local bean -->
+<!-- <bean id="demoService" class="com.order.provider.DemoServiceImpl"/> -->
+
+<!-- declare the service interface to be exported -->
+<dubbo:service interface="com.vic.service.DemoService" ref="demoService"/>
+
+<!-- 添加monitor监控 -->
+<dubbo:monitor protocol="registry"/>
+
+4.3 定义实现
+@Service("demoService")
+public class DemoServiceImpl implements DemoService {
+
+	public String sayHello(String name) {
+		return "Hello, " + name;
+	}
+	
+}
+
+五、在vic_user中定义consumer
+
+5.1 引入dubbo,zookeeper依赖
+<dependency>
+	<groupId>com.vic</groupId>
+	<artifactId>vic_api</artifactId>
+	<version>${project.parent.version}</version>
+</dependency>
+
+<dependency>
+	<groupId>org.apache.curator</groupId>
+	<artifactId>curator-framework</artifactId>
+</dependency>
+
+<dependency>
+	<groupId>com.alibaba</groupId>
+	<artifactId>dubbo</artifactId>
+</dependency>
+
+<dependency>
+	<groupId>org.apache.zookeeper</groupId>
+	<artifactId>zookeeper</artifactId>
+</dependency>
+
+<dependency>
+	<groupId>com.github.sgroschupf</groupId>
+	<artifactId>zkclient</artifactId>
+</dependency>
+
+5.2 声明dubbo的schema，修改vst_user的spring-service.xml中声明如下：
+<!-- consumer's application name, used for tracing dependency relationship (not a matching criterion),
+don't set it same as provider -->
+<dubbo:application name="demo-consumer"/>
+
+<!-- use multicast registry center to discover service -->
+<!-- <dubbo:registry address="multicast://224.5.6.7:1234"/> -->
+<dubbo:registry address="zookeeper://192.168.42.128:2181?backup=192.168.42.129:2181,192.168.42.130:2181"/>
+
+<!-- generate proxy for the remote service, then demoService can be used in the same way as the
+local regular interface -->
+<dubbo:reference id="demoService" check="false" interface="com.vic.service.DemoService"/>
+
+<!-- 添加monitor监控 -->
+<dubbo:monitor protocol="registry"/>
+
+5.3 使用
+
+@Controller
+@RequestMapping("/user")
+public class UserController extends AbstractBaseController {
+	
+	@Autowired
+	private DemoService demoService;
+	
+	@RequestMapping(value = "/rpc")
+	@ResponseBody
+	public Object test(HttpServletRequest req) /*throws BusinessException*/ {
+		String str = demoService.sayHello("john");
+		return str;
+	}
+}
+
+在页面上调用localhost:8081/vic_user/user/rpc即可。
+
+六、引入管理控制台及监控
+参考
+\note\zookeeper\安装dubbo-admin及运行demo.txt
+\note\zookeeper\安装dubbo-monitor-simple.txt
+
+七、Github地址
+https://github.com/fxcjj?tab=repositories
