@@ -1,4 +1,4 @@
-
+﻿
 二、Zookeeper的搭建方式
 
 Zookeeper安装方式有三种，单机模式和集群模式和伪集群模式。
@@ -139,7 +139,7 @@ centosb是centosa的完整克隆
 
 
 
-Refer to
+References
 https://blog.csdn.net/fjmjuhqc/article/details/73483940
 
 http://www.paymoon.com/index.php/2015/06/04/zookeeper-building/

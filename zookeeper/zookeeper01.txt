@@ -1,4 +1,4 @@
-
+﻿
 
 三、zookeeper服务
 3.1 zookeeper数据类型
@@ -107,25 +107,6 @@ getData/setData
 sync
 
 3.2.1 watch触发器
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
