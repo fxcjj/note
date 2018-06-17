@@ -1,0 +1,112 @@
+
+
+存储过程
+是SQL语句和控制语句的预编译集合，以一个名称存储并作为一个单元处理。
+
+优点
+* 增强SQL语句的功能和灵活性
+* 实现较快的执行速度
+* 减少网络流量 //delete from user where id = 1; 存储过程只需传过来一个ID
+
+CREATE
+[DEFINER = {user | CURRENT_USER}]
+PROCEDURE sp_name ([proc_parameter[,...]])
+[characteristic ...] routine_body
+
+proc_parameter:
+[IN | OUT | INOUT ] param_name type
+
+* IN，表示该参数的值必须在调用存储过程时指定
+* OUT，表示该参数的值 可以被存储过程改变，并且可以返回
+* INOUT，表示该参数的调用时指定，并且可以被改变和返回
+
+
+
+过程体
+* 过程体由合法的SQL语句构成
+* 过程体可以是任意SQL语句 //CRUD
+* 过程体如果为复合结构则使用BEGIN...END语句
+* 复合结构可以包含声明，循环，控制结构	
+
+调用存储过程
+* CALL sp_name([parameter[,...]])
+* CALL sp_name[()]
+
+//删除存储过程
+DROP PROCEDURE [IF EXISTS] sp_name
+
+
+//创建查看版本的存储过程
+CREATE PROCEDURE sp1() SELECT VERSION();
+//调用
+//CALL sp1()/sp1;
+
+eg
+//创建一个删除用户的procedure
+delimiter //
+CREATE PROCEDURE removeUserById(IN userId INT UNSIGNED)
+BEGIN
+DELETE FROM user WHERE id = userId; //参数名称不能和表中字段名相同，否则全删了！
+END
+//
+
+//调用，删除3用户
+CALL removeUserById(3);
+
+eg
+//删除指定用户，并返回剩余数目
+delimiter //
+CREATE PROCEDURE removeUserReturnUserNums(IN p_id INT UNSIGNED, OUT userNums INT UNSIGNED)
+BEGIN
+DELETE FROM user WHERE id = p_id;
+SELECT COUNT(id) FROM user INTO userNums;
+END
+//
+
+//@nums是用户变量
+CALL removeUserReturnUserNums(2, @nums);
+
+* 使用DECLARE声明的变量在BEGIN...END有效
+* 使用DECLARE时，必须在第一行
+* 在BEGIN...END之间声明的为局部变量
+
+
+//这种方式声明，对当前客户端有效，用户变量
+SET @i = 7;
+
+
+
+//得到删除、更新等影响的行数
+ROW_COUNT();
+
+INSERT user(username) VALUES('tom'),('martin'),('king');
+select ROW_COUNT();
+output: 3
+
+//根据年龄删除，返回删除的用户和剩余的用户
+delimiter //
+
+CREATE PROCEDURE aaa(IN p_age SMALLINT UNSIGNED, OUT delUserNums SMALLINT UNSIGNED, OUT userCounts SMALLINT UNSIGNED)
+BEGIN
+DELETE FROM user WHERE age = p_age;
+SELECT ROW_COUNT() INTO delUserNums;
+SELECT COUNT(id) FROM user INTO userCounts;
+END
+//
+
+//调用
+CALL aaa(20, @a, @b);
+
+查看用户变量
+SELECT @a, @b;
+
+
+存储过程与自定义函数的区别
+* 存储过程实现的功能要复杂一些，而函数的针对性更强
+* 存储过程可以返回多个值，函数只能有一个返回值
+* 存储过程一般独立的来执行，而函数可以作为其他SQL语句的组成部分来出现
+
+
+
+
+

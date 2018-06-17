@@ -1,0 +1,165 @@
+
+mysql default port
+3306
+
+super user
+root
+
+
+
+整型
+tinyint 	0~255(0~2^8-1)
+smallint	0~65535(0~2^16-1)
+mediumint	0~16777215(0~2^24-1)
+int			0~4294967295(0~2^32-1)
+bigint		0~18446744073709551615(0~2^64-1)
+
+
+浮点型
+//M总位数，D小数点后面的位数
+float[(M,D)]
+double[(M,D)]
+
+
+日期时间型
+列类型		存储需求
+YEAR		1
+TIME		3
+DATE		3
+DATETIME	8
+TIMESTAMP	4
+
+字符型
+CHAR(M) //CHAR(4) 存储abc时，会补个空格
+VARCHAR(M) //存多少就是多少
+TINYTEXT
+TEXT
+MEDIUMTEXT
+LONGTEXT
+ENUM('vlaue1','value2',...)
+SET('vlaue1','value2',...)
+
+
+数据表
+//open database
+USER database_name;
+
+//show current use database
+SELECT DATABASE();
+
+CREATE TABLE [IF NOT EXISTS] table_name (
+	column_name data_type,
+	...
+);
+
+// use database
+USE DB_NAME;
+
+// create table
+CREATE TABLE tb1 (
+	username VARCHAR(20),
+	age TINYINT UNSIGNED,
+	salary FLOAT(8,2) UNSIGNED
+);
+
+// 查看表信息
+SHOW CREATE TABLE province;
+
+//查看数据表列表
+SHOW TABLES [FROM db_name]
+[LIKE 'pattern' | WHERE expr]
+
+// show tables
+SHOW TABLES;
+
+// show data table structure
+SHOW COLUMNS FROM tb_name
+
+
+//INSERT
+INSERT [INTO] tb_name [(col_name, ...)]
+VALUE(val, ...);
+
+
+//SELECT
+SELECT expr, ... FROM tb_name
+
+//show all data in table
+SELECT * FROM tbl_name;
+
+
+//NULL,NOT NULL
+CREATE TABLE tb2 (
+	username VARCHAR(20) UNSIGNED NOT NULL,
+	age TINYINT UNSIGNED NULL
+);
+
+
+//AUTO_INCREMENT
+* 自动编号，且必须与主键组合使用
+* 默认情况下，起始值为1，每次的增量为1
+
+CREATE TABLE tb3(
+	id SMALLINT UNSIGNED AUTO_INCREMENT,
+	username VARCHAR(30) NOT NULL
+);
+
+ERROR 1075 (42000): Incorrect table definition; there can be only one auto colum
+n and it must be defined as a key
+
+注意: 
+AUTO_INCREMENT必须与主键一起使用，但是主键不一定和AUTO_INCREMENT一起使用！！！
+
+
+PRIMARY KEY
+* 主键约束
+* 每张数据表只能存在一个主键
+* 主键保证记录的唯一性
+* 主键自动为NOT NULL
+
+UNIQUE KEY
+* 唯一约束
+* 唯一约束可以保证记录的唯一性
+* 唯一约束的字段可以为空值（NULL）
+* 每张数据表可以存在多个唯一约束
+
+CREATE TABLE tb5(
+	id SMALLINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+	username VARCHAR(30) UNIQUE KEY,
+	hobby VARCHAR(30) NOT NULL UNIQUE KEY
+);
+
+Note: 一个列设置为UNIQUE KEY时，值可以为NULL。
+
+DEFAULT
+CREATE TABLE tb6(
+	id SMALLINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+	username VARCHAR(30) UNIQUE KEY,
+	gender ENUM('1', '2', '3') DEFAULT '3'
+);
+
+Chapter
+数据类型
+	字符型
+	整型
+	浮点型
+	日期时间型
+	
+数据表操作
+	插入记录
+	查找记录
+	
+记录操作
+	创建数据表
+	约束的使用
+
+
+
+
+
+
+
+
+
+
+

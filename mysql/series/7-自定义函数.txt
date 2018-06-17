@@ -1,0 +1,80 @@
+
+内置函数不够用？咋办？
+
+自定义函数
+用户自定义函数（ user-defined function ，UDF）是一种对
+MySQL扩展的途径，其用法与内置函数相同。
+
+
+* 自定义函数的两个必要条件
+（1）参数  //不是必备的，eg: VERSION(); 即有返回值，但不一定有参数
+（2）返回值
+
+* 函数可以返回任意类型的值，同样可以接收这些类型的参数，
+	参数与返回值没有内在的联系。
+	参数数量不能超过1024
+
+* 创建自定义函数
+CREATE FUNCTION function _name
+RETURNS
+{STRING|INTEGER|REAL|DECIMAL}
+routine_body -- 函数体
+
+* 函数体由合法的SQL语句构成
+* 函数体可以是简单的SELECT或INSERT语句
+* 函数体如果为复合结构则使用BEGIN...END语句
+* 复合结构可以包含声明，循环，控制结构	
+
+
+//删除function
+drop function [if exists] f2;
+
+
+//创建返回中文格式的日期
+create function f1() returns varchar(30)
+return date_format(now(),'%Y年%m月%d日 %H点%i分:%s秒');
+
+
+//调用
+select f1();
+
+
+//计算两个数的平均值
+create function f2(num1 smallint unsigned, num2 smallint unsigned)
+returns float(10,2) unsigned
+return (num1+num2)/2;
+
+//调用
+select f2(10, 20);
+
+
+//创建返回插入记录的ID
+create function adduser(usename varchar(20))
+returns int unsigned
+return
+insert user(username) values(username);
+
+Note: 
+delimiter是设置为命令终止符号，代替分号，因为分号在begin...end中会用到；
+
+delimiter //
+
+create function adduser(username varchar(20))
+returns int unsigned
+begin
+insert user(username) values(username);
+return last_insert_id();
+end
+//
+
+//调用
+select adduser('小泽');
+
+
+
+
+
+
+
+
+
