@@ -1,0 +1,125 @@
+
+(1)插入记录
+INSERT [INTO] tbl_name [(col_name,...)] 
+{VALUES | VALUE} ({expr | DEFAULT},...),(...),...
+
+
+当ID为自增时，插入语句可以这样：
+INSERT users VALUES(NULL/DEFAULT,'Tom',23);
+
+//插入多条记录
+INSERT users VALUES(NULL,'Tom','p1'),
+(DEFAULT,'Rose',md5('p2'));
+
+
+(2)插入记录
+INSERT [INTO] tbl_name SET col_name = {expr|DEFAULT}, ...
+Note: 一次只能插入一条记录！！！
+
+(3)
+
+
+更新记录（单表更新）
+UPDATE [LOW_PRIORITY] [IGNORE] table_reference SET
+col_name1 = {expr|DEFAULT}[, col_name2={exprs|DEFAULT}}] ...
+[WHERE where_condition]
+
+//每个用户增加5岁
+UPDATE user SET age = age + 5;
+
+//id为偶数时更新年龄
+UPDATE user SET age = age + 5 WHERE id % 2 = 0;
+
+
+删除记录（单表删除）
+DELETE FROM tbl_name [WHERE where_condition]
+
+
+查找记录
+SELECT select_expr [, select_expr ...]
+[
+	FROM table_reference
+	[WHERE where_condition]
+	[GROUP BY {col_name|position} [ASC|DESC],...]
+	[HAVING where_condition]
+	[ORDER BY {col_name|position} [ASC|DESC],...]
+	[LIMIT {[offset,] row_count | row_count OFFSET offset}]
+]
+
+查询表达式
+* 星号（*）表示所有列
+* tbl_name.*表示表的所有列
+* 多个列之间用英文逗号（,）分隔
+* 使用AS或空字符取别名（使用时）
+* 别名可用于GROUP BY, ORDER BY或HAVING子句。
+
+条件表达式
+对记录进行过滤，如果没有指定WHERE子句，则显示所有记录。
+在WHERE表达式中，可以使用MySQL支持的函数或运算符。
+
+查询结果分组
+[GROUP BY {col_name | position}, [ASC|DESC], ...]
+
+//以性别分组，只有三个记录，有一条人妖
+SELECT * FROM user GROUP BY gender;
+
+分组条件，对分组后进行条件过滤
+[HAVING where_condition]
+SELECT gender FROM user GROUP BY gender
+HAVING age > 23;
+ERROR 1054 (42S22): Unknown column 'age' in 'having clause'
+
+Note: HAVING后面的字段必须在select查询中或使用聚合函数（max,min,count,sum）
+
+修改如下：
+SELECT gender, age FROM user GROUP BY gender
+HAVING age > 23;
+
+或者
+
+SELECT gender FROM user GROUP BY gender
+HAVING count(id) > 2;
+
+
+对查询结果 进行排序
+[ORDER BY {col_name | expr | position} [ASC | DESC], ...]
+
+//年龄升序，相同时，按id降序
+SELECT * FROM user ORDER BY age, id DESC;
+
+
+
+限制查询结果返回的数量
+[LIMIT {[offset,] row_count | row_count OFFSET offset}]
+
+//返回2条记录，从0到1
+SELECT * FROM user LIMIT 2;
+
+//返回2条记录，从3到开始
+SELECT * FROM user LIMIT 2;
+
+SELECT * FROM user ORDER BY id DESC LIMIT 2,2;
+
+//将user表中年龄大于20的记录插入表usera表中
+INSERT usera(username) SELECT username FROM user WHERE age > 8;
+
+
+Chapter
+记录操作
+INSERT
+	* 普通INSERT
+	* INSERT SET
+	* INSERT SELECT
+UPDATE
+	* 单表更新
+	* 多表更新（第五章）
+DELETE
+	* 单表删除
+	* 多表删除（第五章）
+SELECT
+	* SELECT
+	* GROUP BY
+	* HAVING
+	* ORDER BY
+	* LIMIT
+	

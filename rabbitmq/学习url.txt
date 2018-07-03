@@ -1,0 +1,15 @@
+
+//SpringMVC和rabbitmq集成使用
+https://blog.csdn.net/jmdonghao/article/details/77798130
+
+//关于RabbitMQ以及RabbitMQ和Spring的整合
+https://www.cnblogs.com/s648667069/p/6401463.html
+
+//消息队列 RabbitMQ 与 Spring 整合使用
+https://www.cnblogs.com/libra0920/p/6230421.html
+
+//RabbitMQ与spring集成,配置完整的生产者和消费者
+https://blog.csdn.net/xun573017588/article/details/77099535
+
+//windows x64下安装RabbitMQ
+https://blog.csdn.net/u014308482/article/details/53994401

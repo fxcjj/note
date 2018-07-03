@@ -1,0 +1,114 @@
+
+
+mysql瑞典MySQL AB公司开发，目前属于Oracle公司
+开源的关系型数据库库管理系统
+社区版、企业版
+
+MySQL安装方式
+* MSI安装（Windows Installer）
+* ZIP安装
+
+// 配置mysql
+/Program Files/MySQL/bin/MySQLInstanceConfiguration.exe
+
+配置文件
+	* 在MySQL 5.6.8之前，会将配置文件直接放在安装目录下。在之后的版本中进行了修改。
+		在MySQL启动过程中，会按照下面的顺序搜索my.ini文件
+		http://blog.csdn.net/starnight_cbj/article/details/4492555
+	* 查看my.ini路径：找到MySQL 5.6 Command Line Client，右击->属性->目标。
+		在目标一栏中有"C:\Program Files\MySQL\MySQL Server 5.6\bin\mysql.exe" 
+		"--defaults-file=C:\ProgramData\MySQL\MySQL Server 5.6\my.ini" 
+		"-uroot" "-p" "--default-character-set=utf8"
+	* 修改最大连接数
+		max_connections=23
+	* 查看是否修改
+		在MySQL命令行中输入
+		show variables like '%max_connections%';
+	* 查看其它属性和状态的方法，可以参考这篇日志
+		http://blog.csdn.net/starnight_cbj/article/details/4492555
+
+bin目录，存储可执行文件
+data目录，存储数据文件
+docs文档
+include目录，存储包含的头文件 
+lib目录，存储库文件
+share,错误消息和字符集文件
+
+启动MySQL服务
+net start mysql
+
+服务停止
+net stop mysql
+
+
+使用MySQL
+
+//clear the screnn
+cls
+
+//已经将mysql/bin放在了windows的path中
+//查看版本
+mysql -V
+
+//登录
+//端口默认3306，可以不写
+//-h主机默认127.0.0.1，可以不写
+mysql -uroot -p -P3306 -h127.0.0.1
+
+//退出
+exit;
+squit;
+\q;
+
+
+//MySQL提示符
+\D  完整的日期
+\d	当前数据库名
+\h	主机名
+\u	当前用户名
+
+//修改mysql提示符，显示localhost
+a, mysql -uroot -p --prompt \h
+
+//登录后操作
+b, prompt mysql>
+
+MySQL语句的规范
+* 关键字与函数名称全部大写
+* 数据名称、表名称、字段名称小写
+* SQL语句必须以分号结尾
+
+//查看当前版本
+SELECT VERSION();
+
+//查看当前用户
+SELECT USER();
+
+
+//创建数据库
+CREATE {DATABASE | SCHEMA} [IF NOT EXISTS] db_name 
+[DEFAULT] CHARACTER SET [=] charset_name
+
+CREATE DATABASE t1;
+
+//查看数据库
+SHOW DATABASES;
+
+//查看数据库的SQL
+SHOW CREATE DATABASE t1;
+
+//创建数据库使用gbk
+CREATE DATABASE IF NOT EXISTS t2 CHARACTER SET gbk;
+
+//修改数据库
+ALTER {DATABASE | SCHEMA} [db_name]
+[DEFAULT] CHARACTER SET [=] charset_name
+
+//修改编码
+ALTER DATABASE t2 CHARACTER SET = utf8;
+ 
+//删除数据库
+DROP {DATABASE | SCHEMA} [IF EXISTS] db_name
+
+
+

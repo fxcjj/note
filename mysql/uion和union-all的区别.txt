@@ -1,0 +1,124 @@
+Union和Union All的区别
+
+数据库：ORACLE
+
+--创建表结构
+drop table student;
+create table student (
+	id int primary key,
+	name nvarchar2(50) not null,
+	score number not null
+);  
+
+--测试数据
+insert into student values(1,'Aaron',78);
+insert into student values(2,'Bill',76);
+insert into student values(3,'Cindy',89);
+insert into student values(4,'Damon',90);
+insert into student values(5,'Ella',73);
+insert into student values(6,'Frado',61);
+insert into student values(7,'Gill',99);
+insert into student values(8,'Hellen',56);
+insert into student values(9,'Ivan',93);
+insert into student values(10,'Jay',90);
+commit;
+
+使用UNION
+SELECT * FROM student WHERE id < 4
+UNION
+SELECT * FROM student WHERE id > 2 AND id < 6;
+结果将是
+    id  NAME    score   
+------  ------  --------
+     1  Aaron   78      
+     2  Bill    76      
+     3  Cindy   89      
+     4  Damon   90      
+     5  Ella    73
+
+使用UNION ALL
+SELECT * FROM student WHERE id < 4
+UNION ALL
+SELECT * FROM student WHERE id > 2 AND id < 6;
+结果将是
+    id  NAME    score   
+------  ------  --------
+     1  Aaron   78      
+     2  Bill    76      
+     3  Cindy   89      
+     3  Cindy   89      
+     4  Damon   90      
+     5  Ella    73 
+
+区别一：UNION删除重复数行，UNION ALL未作处理。
+
+交换下SELECT语句的位置
+使用UNION
+SELECT * FROM student WHERE id > 2 AND id < 6
+UNION
+SELECT * FROM student WHERE id < 4;
+结果将是
+    id  NAME    score   
+------  ------  --------
+     1  Aaron   78      
+     2  Bill    76      
+     3  Cindy   89      
+     4  Damon   90      
+     5  Ella    73
+
+使用UNION ALL
+SELECT * FROM student WHERE id > 2 AND id < 6
+UNION ALL
+SELECT * FROM student WHERE id < 4;
+结果将是
+    id  name    score   
+------  ------  --------
+     3  Cindy   89      
+     4  Damon   90      
+     5  Ella    73      
+     1  Aaron   78      
+     2  Bill    76      
+     3  Cindy   89   
+	 
+区别二：对于UNION，两次结果的顺序是一样的，这是因为UNION会自动排序。对于UNION ALL，两次结果不同，是因为它不会自动排序。
+
+排序规则
+那么这个自动排序的规则是什么呢？交换一下SELECT后面字段的顺序（前面使用SELECT * 相当于SELECT ID, NAME, SCORE），看看结果如何：
+SELECT score,id,name FROM student WHERE id < 4
+UNION
+SELECT score,id,name FROM student WHERE id > 2 AND id < 6;
+
+结果：
+score       id  name    
+------  ------  --------
+73           5  Ella    
+76           2  Bill    
+78           1  Aaron   
+89           3  Cindy   
+90           4  Damon   
+
+可是看到，此时是按照字段SCORE来对结果进行排序的（前面SELECT *的时候是按照ID进行排序的）。
+如果想自行控制排序，使用ORDER BY。不过在写法上有需要注意的地方：
+SELECT score,id,name FROM student WHERE id < 4
+UNION
+SELECT score,id,name FROM student WHERE id > 2 AND id < 6 order by id;
+
+结果：
+score       id  name    
+------  ------  --------
+78           1  Aaron   
+76           2  Bill    
+89           3  Cindy   
+90           4  Damon   
+73           5  Ella    
+
+order by子句必须写在最后一个结果集里，并且其排序规则将改变操作后的排序结果。 
+
+总结：
+UNION 对两个结果集进行并集操作，不包括重复行，同时进行默认规则的排序；
+UNION ALL 对两个结果集进行并集操作，包括重复行，不进行排序；
+INTERSECT 对两个结果集进行交集操作，不包括重复行，同时进行默认规则的排序；
+MINUS 对两个结果集进行差操作，不包括重复行，同时进行默认规则的排序。
+可以在最后一个结果集中指定Order by子句改变排序方式。
+
+

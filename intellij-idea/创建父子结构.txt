@@ -1,0 +1,15 @@
+
+分为两种结构
+1. 父子层级
+exotic-sail
+	|--sail-api
+	|--sail-commmon
+	|--pom.xml
+
+2. 同一层级
+exotic-sail
+sail-api
+sail-commmon
+
+References
+https://blog.csdn.net/gdsgdh308227363/article/details/79722491

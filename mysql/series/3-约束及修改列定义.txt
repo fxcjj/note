@@ -1,0 +1,189 @@
+﻿
+约束
+1、约束保证数据的完整性和一致性。
+2、约束分为表级约束和列级约束
+3、约束类型包括：
+	NOT NULL(非空约束)
+	PRIMARY KEY(主键约束)
+	UNIQUE KEY(唯一约束)
+	DEFAULT(默认约束)
+	FOREIGN KEY(外键约束)
+
+* 保证数据的完整性和一致性
+* 实现一对一或一对多关系
+
+外键约束的要求
+1、父表和子表必须使用相同的存储引擎，而且禁止使用临时表。
+2、数据表的存储引擎只能为InnoDB。
+3、外键列和参照列必须具有相似的数据类型。其中数字的长度或
+	是否有符号位必须相同；而字符的长度则可以不同。
+4、外键列和参照列必须创建索引。如果外键列不存在索引的话，MySQL将自动创建索引。
+
+编辑数据表的默认存储引擎
+MySQL配置文件
+	default-storage-engine=INNODB
+
+
+//外键在数字的情况下，必须类型相同
+//字符可以相似
+mysql> CREATE TABLE user(
+    -> id SMALLINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    -> username VARCHAR(30) NOT NULL,
+    -> pid SMALLINT UNSIGNED,
+    -> FOREIGN KEY (pid) REFERENCES province(id));
+Query OK, 0 rows affected (0.86 sec)
+
+
+//查看索引
+SHOW INDEXES FROM tb_name\G;
+
+SHOW CREATE TABLE user;
+
+外键约束的参照操作
+1、CASCADE
+	从父表删除或更新且自动删除或更新子表中匹配的行
+2、SET NULL
+	从父表删除或更新行，并设置子表中的外键列为NULL。
+	如果使用该选项，必须保证子表列没有指定NOT NULL。
+3、RESTRICT
+	拒绝对父表的删除或更新操作。
+4、NO ACTION
+	标准SQL的关键字，在MySQL中与RESTRICT相同。
+
+//删除父表的记录时，会级联删除子表的记录
+//ON DELETE CASCADE
+CREATE TABLE users1 (
+	id SMALLINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(30) NOT NULL,
+    pid SMALLINT UNSIGNED,
+    FOREIGN KEY (pid) REFERENCES province(id) ON DELETE CASCADE
+);
+
+//更新父表的记录时，会级联更新子表的记录????
+//ON UPDATE CASCADE
+CREATE TABLE users2 (
+	id SMALLINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(30) NOT NULL,
+    pid SMALLINT UNSIGNED,
+    FOREIGN KEY (pid) REFERENCES province(id) ON UPDATE CASCADE
+);
+
+
+//删除父表的记录时，会设置子表记录的外键为NULL???
+CREATE TABLE users3 (
+	id SMALLINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(30) NOT NULL,
+    pid SMALLINT UNSIGNED,
+    FOREIGN KEY (pid) REFERENCES province(id) SET NULL
+);
+
+
+
+
+表级约束与列级约束
+对一个数据列建立的约束，称为列级约束。
+对多个数据列建立的约束，称为表级约束。
+列级约束即可以在列定义时声明，也可以在列定义后声明。
+表级约束只能在列定义后声明。
+
+修改数据表
+添加单列
+ALTER TABLE tb_name ADD [COLUMN] col_name
+column_definition [FIRST | AFTER col_name]
+
+//在所有列之后
+ALTER TABLE user ADD age TINYINT UNSIGNED NOT NULL DEFAULT 10;
+
+//在某列之后
+ALTER TABLE user ADD psw TINYINT UNSIGNED NOT NULL username;
+
+添加多列
+ALTER TABLE tb_name ADD [COLUMN] 
+(ol_name column_definition, ...)
+
+删除列
+ALTER TABLE tbl_name DROP col_name;
+
+//删除username列
+ALTER TABLE user DROP username;
+
+//删除多列
+ALTER TABLE user DROP username, DROP psw;
+
+
+//添加主键约束
+ALTER TABLE tb_name ADD [CONSTRAINT [symbol]]
+PRIMARY KEY [index_typ] (index_col_name, ...)
+
+
+//添加一列
+ALTER TABLE user ADD id SMALLINT UNSIGNED;
+
+//将id修改为主键
+ALTER TABLE user ADD CONSTRAINT PK_user_id PRIMARY KEY(id);
+
+//添加UNIQUE约束
+ALTER TABLE user ADD UNIQUE (username);
+
+//添加外键约束
+ALTER TABLE user ADD FOREIGN KEY(pid) REFERENCES province(id);
+
+//添加/删除默认约束
+ALTER TABLE tb_name ALTER [COLUMN] col_name
+{SET DEFAULT literal | DROP DEFAULT}
+
+//添加默认约束
+ALTER TABLE user ALTER age SET DEFAULT 10;
+
+//删除默认约束
+ALTER TABLE user ALTER age DROP DEFAULT;
+
+
+//删除主键约束
+ALTER TABLE tb_name DROP PRIMARY KEY;
+
+//删除主键约束
+ALTER TABLE tb_name DROP {index|key} index_name;
+
+//查看表的索引
+SHOW INDEXES FROM user;
+
+//删除外键约束
+ALTER TABLE tb_name DROP FOREIGN KEY fk_symbol
+
+
+//修改列定义
+ALTER TABLE tb_name MODIFY [COLUMN] col_name
+column_definition [FIRST | AFTER col_name]
+
+//修改列名称
+ALTER TABLE tb_name CHANGE old_col_name new_col_name column_definition
+[FIRST | AFTER col_name]
+
+
+//表更名
+方法1
+	ALTER TABLE tb_name RENAME [TO|AS] new_tb_name;
+
+方法2
+	RENAME TABLE tb_name TO new_tb_name
+	[, tb_name2 TO new_tb_name2] ...
+
+
+
+约束
+	按功能分：NOT NULL, PRIMARY KEY, UNIQUE KEY,
+	DEFAULT, FOREIGN KEY
+	按数据列的数目分：表级约束，列级约束
+	
+修改数据表
+	字段操作：添加/删除字段、修改列定义、修改列名称等
+	约束操作：添加/删除各种约束
+	数据表的操作：数据表更名（两种方法）
+
+
+
+
+
+
+
