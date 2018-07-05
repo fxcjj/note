@@ -246,7 +246,7 @@ a ≡ a (mod m)
 
 
 
-Reference
+References
 https://www.cnblogs.com/zhangziqiu/archive/2011/03/30/ComputerCode.html
 http://blog.csdn.net/u011080472/article/details/51280919
 

@@ -1,0 +1,347 @@
+
+MySQL数据库优化
+
+1. Mysql基础操作
+2. 常用的sql技巧
+3. sql语句优化
+4. mysql数据库优化
+5. myisam表锁
+6. mysql服务器优化
+
+
+第十五集 MySQL基础操作（一）
+
+一、mysql基础操作
+1.1 mysql表复制
+参考note/mysql/mysql之insert语句.txt
+
+1.2 mysql索引
+普通索引、唯一索引、主键索引
+alter table t1 add index ...
+
+1.3 mysql视图
+create view v_name as select * from t1 where id > 4 and id < 8;
+视图是一个中间表，当修改源表时，索引表会动态变化。
+删除源表，查看索引表，会提示源表不存在错误。
+
+1.4 mysql内置函数
+字符串函数
+concat,substring,length,space
+
+数学函数
+ceiling,max,min,bin,sqrt,rand
+
+日期函数
+year,week,now,unix_timestamp,datediff
+
+1.5 mysql预处理语句
+prepare stmt1 from 'select * from t1 where id > ?';
+set @i=5
+execute stmt1 using @i;
+
+//delete
+drop prepare stmt1;
+
+
+1.6 mysql事务处理
+myisam不支持事务。
+set autocommit=0;
+切换为innodb，可使用savepoint,rollback (to p1)
+
+1.7 mysql存储
+参考note/mysql/procedure.txt
+
+1.8 mysql触发器
+//插入t1表时，同时在t2表中插入一条数据
+\d //
+create trigger t1 before insert on t1 for each now
+begin
+insert into t2(name) values(new.name)
+end//
+
+//删除t1表记录时，同时删除t2表记录
+\d //
+create trigger t2 before delete on t1 for each row
+begin
+delete from t2 where id = old.id;
+end//
+
+//修改t1表记录时，同时修改t2表记录
+\d //
+create trigger t3 before update on t1 for each row
+begin
+update t2 set id = new.id where id = old.id;
+end//
+
+//查看触发器
+show triggers;
+
+注意：
+a) 两个表的id要对应起来
+b) delete删除表是一行一行删除，很慢，使用truncate删除表，很快。
+c) new表示新增的一行，old表示存在的一行。
+
+
+1.9 重排auto_increment值
+清空表的时候，不能用
+delete from table_name;
+而是使用：
+truncate table table_name;
+这个auto_increment就恢复成1了
+
+或者清空内容后直接用alter命令修改表：
+alter table table auto_increment = 1;
+
+
+二、常见sql技巧
+2.1 正则表达式的使用
+//以hello开头
+select "hello world" regexp '^hello';
+
+2.2 巧用rand()提取随机行
+select * from f_user ORDER BY RAND();
+select RAND() * 100;
+
+2.3 复用group by的with rollup子句统计
+可以检索出更多的分组聚合信息
+
+2.4 用bit group functions做统计
+bit_and, bit_or
+
+2.5 使用外键需要注意的问题
+只有innodb引擎的表支持外键，myisam虽然能执行成功，但不起作用。
+实际工作中，不鼓励使用外键。
+
+
+2.6 mysql中help的使用
+? %, ? create, ? opti%k, ? reg%, ? contents
+
+\G，表示对每条记录展示。
+
+
+三、sql语句优化
+3.1 优化sql语句的一般步骤
+
+show status查看sql的执行效率。
+
+格式
+show [session|global] status;
+
+说明
+session（默认）表示当前连接
+global表示自数据库启动至今
+
+show status;
+
+show global status;
+
+//本次登录总共插入多少条记录
+show status like 'Com_insert%';
+show status like 'Com_delete%';
+show status like 'Com_update%';
+show status like 'Com_select%';
+
+//只针对innodb，表示影响的行数
+InnoDB_rows_read
+InnoDB_rows_insert
+InnoDB_rows_update
+InnoDB_rows_select
+
+其它
+connections 连接mysql的数量
+Uptime 服务器已经工作的秒数
+Slow_queries 慢查询的次数
+
+
+//查看慢查询
+show status like "slow_queries";
+
+//慢查询时间阀值
+show variables like "%long%"; //默认10秒
+
+//分析sql执行计划
+desc select * from user where name = 'user3';
+*************************** 1. row ***************************
+           id: 1
+  select_type: SIMPLE
+        table: user
+         type: index
+possible_keys: idx_name
+          key: idx_name
+      key_len: 93
+          ref: NULL
+         rows: 8
+        Extra: Using where; Using index
+1 row in set (0.00 sec)
+
+说明：
+select_type: SIMPLE,PRIMARY,UNION,SUBQUERY
+table: 对应的表
+type: 表示表的连接类型。
+	性能由好到差：system,const,eq_ref,ref,ref_or_null,index_merge,unique_subquery,index_subquery,range,index,all
+possible_keys: idx_name,idx_age 表查询时可能使用的索引。
+key: idx_name 表示实际使用的索引
+key_len: 50 索引字段的长度
+ref: NULL
+rows: 8 扫描行的数量
+Extra: Using where; Using index 执行情况的说明和描述
+
+如果name没加索引，查询则扫描全表，添加索引即可。
+
+
+3.2 索引问题
+索引通常可以帮助用户解决大多数的SQL性能问题。
+
+3.2.1 索引的存储分类
+myisam的数据和索引是自动分开的存储的，各自是独立的一个文件；
+innodb的表的数据和索引是存储在同一个表空间里面，但可以有多个文件组成。
+
+3.2.2 mysql如何使用索引
+create index idx_name table_name(colum_name);
+
+普通索引、唯一索引、主键索引
+
+alter table user add index idx_name 
+
+explain select * from user where name like '%3'\G;
+不会使用索引
+
+mysql估计使用索引比全表扫描更慢，则不使用索引。
+
+a) like效率>regexp效率
+b) or左右都要有索引，否则只有一个，整条语句不使用索引
+c) %加在前面用不到索引
+d) name为varchar，搜索时name=203，不使用索引
+
+注意：mysql5.6版本，b)不对。
+
+
+
+3.2.3 查看索引使用情况
+如果索引正在工作，Handler_read_key的值将很高，这个值代表了一个行被
+索引值读的次数。
+
+Handler_read_rnd_next的值高则意味着查询运行低效，并且应该建立索引补救。
+
+mysql> show status like 'Handler_read%';
++-----------------------+-------+
+| Variable_name         | Value |
++-----------------------+-------+
+| Handler_read_first    | 3     |
+| Handler_read_key      | 4     |
+| Handler_read_last     | 0     |
+| Handler_read_next     | 0     |
+| Handler_read_prev     | 0     |
+| Handler_read_rnd      | 0     |
+| Handler_read_rnd_next | 60    |
++-----------------------+-------+
+7 rows in set (0.01 sec)
+
+如果有问题，慢查询->影响行数->是否建立索引
+
+
+3.3 两个简单使用的优化方法
+
+如果一个视图表所关联的源表，可以使用：
+
+//检查表（可以多个）是否有错误
+check table v_user;
+
+//定期优化表，整理碎片和空洞
+optimize
+
+
+3.4 常用sql的优化
+
+唯一索引
+非唯一索引（主键、普通）
+
+//备份表
+mysqldump -uroot -p123 test >/temp/test.sql
+
+//导入
+mysqldump -uroot -p123 test </temp/test.sql
+
+导出的数据中有大量表结构语句等等。
+如何避免这些语句？
+
+3.4.1 大批量导出/导入数据
+
+
+//导出
+select name from user into outfile "/tmp/test.txt";
+
+//导入
+load data infile "/tmp/test.txt" into table user(name);
+
+可查看帮助手册
+? load data
+
+
+when use load command import data, set options can improve import speed.
+for myisam engine, you can import data apace by following statements:
+
+//disabled non-unique index
+alter table tbl_name disabled keys;
+loading the data...
+//enabled non-unique index
+alter table tbl_name enabled keys;
+
+note: 
+a) again, it's useless for innnodb engine.
+b) don't disabled unique index, unless you confirm that the data is not duplicated.
+c) 
+set unique_checks=0; //disabled unique index
+set unique_checks=1; //enabled unique index
+
+
+for innnodb engine
+a) 可以使用infile/outfile
+b) 关闭自动提交可提高导入效率，不然每导入一行都会提交一次
+	set autocommit=0; //关闭自动提交
+	set autocommit=1; //开启自动提交
+
+3.4.2 优化insert语句
+尽量使用多个值表的insert语句，这样可以大大缩短客户
+与数据库的连接、关闭等损耗。
+
+//解锁所有表
+unlock tables;
+
+//使用下面这个，不要单条插入
+insert into user(name) values("user1"),("user2"),("user3");
+
+使用load data比insert快20倍。
+
+
+3.4.3 优化group by语句
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
