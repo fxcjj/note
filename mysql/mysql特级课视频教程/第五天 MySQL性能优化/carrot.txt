@@ -315,33 +315,187 @@ insert into user(name) values("user1"),("user2"),("user3");
 
 
 3.4.3 优化group by语句
+说是会排序，使用order by null避免排序。
+做实验貌似没用
+
+3.4.5 优化嵌套查询
+不要使用in嵌套查询，使用join查询替代。
 
 
 
+如：
+mysql> desc select * from user where id in(select user_id from user_favorite)\G;
+
+*************************** 1. row ***************************
+           id: 1
+  select_type: SIMPLE
+        table: user_favorite
+         type: index
+possible_keys: idx_user_id
+          key: idx_user_id
+      key_len: 5
+          ref: NULL
+         rows: 4
+        Extra: Using where; Using index; LooseScan
+*************************** 2. row ***************************
+           id: 1
+  select_type: SIMPLE
+        table: user
+         type: eq_ref
+possible_keys: PRIMARY
+          key: PRIMARY
+      key_len: 4
+          ref: victor.user_favorite.user_id
+         rows: 1
+        Extra: Using where
+2 rows in set (0.00 sec)
+
+ERROR:
+No query specified
+
+卧槽，竟然各视频不一样！！！
 
 
+再如：
+mysql> desc select u.* from user u, user_favorite uf where u.id = uf.user_id\G;
+*************************** 1. row ***************************
+           id: 1
+  select_type: SIMPLE
+        table: uf
+         type: index
+possible_keys: idx_user_id
+          key: idx_user_id
+      key_len: 5
+          ref: NULL
+         rows: 4
+        Extra: Using where; Using index
+*************************** 2. row ***************************
+           id: 1
+  select_type: SIMPLE
+        table: u
+         type: eq_ref
+possible_keys: PRIMARY
+          key: PRIMARY
+      key_len: 4
+          ref: victor.uf.user_id
+         rows: 1
+        Extra: Using where
+2 rows in set (0.00 sec)
+
+ERROR:
+No query specified
+
+注意：u.*两个索引都用到了，如果是*不会用到idx_user_id索引。
+left join也是一样的。
+desc select u.* from user u left join user_favorite uf on u.id = uf.user_id where uf.user_id is not null\G;
 
 
+4.1 优化表的类型
+myisam,innodb
+
+4.2 通过拆分提高表的访问效率
+分库分表，分区
+
+4.3 使用中间表提高统计查询的速度
+a) 视图的使用（根据条件动态生成）
+b) 中间表
+
+五、mysql服务器优化
+1. myisam读锁定
+2. myisam写锁定
+
+读锁
+//读锁
+lock table tbl_name read;
+
+都可以读，都不可以删除，自己提示错误，其它阻塞。
+//解锁所有表
+unlock tables;
+
+后，其它终端执行。
+mysqldump时有用！！！
 
 
+写锁
+lock table user write;
+
+自己可查、可删。
+别人查、删阻塞直到unlock tables后。
 
 
+六、mysql服务器优化
+6.1 四种字符集问题
+尽量utf-8，尽量统一
+server characterset		uft8
+db characterset			uft8
+client characterset		uft8
+conn. characterset		uft8
+
+//mysql配置文件
+/etc/my.conf
+[client] //控制客户端、连接字符集
+[mysqld] //服务器、db（和表）的字符集
+
+collation-server = uft8_general_ci //主要是排序使用
+
+修改配置文件要重启服务。
+pkill mysqld
+
+//重启mysql
+/mysql/bin/mysqld_safe --user=mysql &
+
+pstree | grep mysqld
+
+!ps
+
+//查看字符集
+show character set;
 
 
+6.2 binary log日志问题
+show variables like "%bin%";
+
+log_bin选项（默认开启）
+
+一般存储路径
+local/mysql/var/
+
+//配置文件名my.cnf，同时开启
+log-bin=mysql-bin
 
 
+6.3 slow log慢查询日志问题
+
+show variables like "%slow%"; //状态
+show variables like "%long%"; //时间
+
+在my.cnf文件中设置
+//开启
+log_slow_queries=slow.log
+//设置时间
+long_query_time=5
 
 
+6.4 soket问题
+my.cnf
+[client]
+port=3306
+socket=/tmp/socket.sock //删除后登录不了
 
+手动连接
+mysql -uroot -p123 --protocol tcp -hlocalhost
 
+mysql重启后，会生成socket.sock文件
 
-
-
-
-
-
-
-
+6.5 root密码丢失
+1. service mysqld stop (或者pkill mysqld)
+2. mysql_safe --skip-grant-tables --user=mysql &
+	跳过授权表mysql.user,mysql.db这些表
+3. mysql -uroot
+4. update mysql.user set password=password("123")
+where user="root" and host="localhost";
+5. 服务重启
+6. 正常登录即可
 
 
 
