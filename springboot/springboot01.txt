@@ -1,0 +1,148 @@
+
+
+更新spring boot中的依赖版本
+在自己pom.xml中声明
+<properties>
+    <commons-beanutils.version>2.3</commons-beanutils.version>
+</properties>
+
+
+继承自己的parent，还要继续保持spring-boot-dependencies
+在自己pom.xml中声明
+<dependencyManagement>
+    <dependencies>
+        <!-- Override Spring Data release train provided by Spring Boot -->
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-releasetrain</artifactId>
+            <version>Fowler-SR2</version>
+            <scope>import</scope>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-dependencies</artifactId>
+            <version>1.5.1.RELEASE</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+
+note: 使用上述类型的parent，前面的<properties>中声明的版本不起作用，要override。
+
+自定义属性
+	@Value
+	@ConfigurationProperties(prefix = "shaver")
+	@EnableConfigurationProperties在入口类，麻烦！
+	@Component //扫描注册bean
+
+参数间引用
+	application.properties
+	book.name=java
+	book.intro=${book.name} is great.
+	
+使用自定义配置文件
+	shaver.properties //src/main/resources
+	@Component //加上此annotation才能找到，@Configuration也可以，使用@EnableConfigurationProperties({Shaver.class})启动时找不到bean
+	@ConfigurationProperties(prefix = "shaver")
+	@PropertySource("classpath:shaver.properties")
+
+随机值配置
+	//#随机字符串
+    @Value("${random.value}")
+    private String secret;
+
+    //随机int值
+    @Value("${random.int}")
+    private String number;
+
+    //随机uuid
+    @Value("${random.uuid}")
+    private String uuid;
+
+    //随机long值
+    @Value("${random.long}")
+    private String bignumber;
+
+    //10以内的数
+    @Value("${random.int(10)}")
+    private String lessThanTen;
+
+    //1-20的随机数
+    @Value("${random.int[1,20]}")
+    private String range;
+
+外部配置-命令行参数配置
+	java -jar xx.jar
+	java -jar xx.jar --server.port=9090
+
+配置文件的优先级
+	application.properties和application.yml文件可以放在以下四个位置
+	src/main/resources/config下application.properties覆盖src/main/resources下application.properties中相同的属性
+
+Profile-多环境配置
+	application-{profile}.properties的格式，其中{profile}对应你的环境标识
+	application-dev.properties：开发环境
+	application-prod.properties：生产环境
+	通过application.properties中使用spring.profiles.active属性设置
+	or
+	@Profile和spring.profiles.active=testdb使用
+	用spring.profiles.include来叠加profile
+		spring.profiles.active: testdb
+		spring.profiles.include: proddb,prodmq
+	//profile使用https://blog.csdn.net/yingxiake/article/details/51263679
+
+SpringBootApplication背后的秘密
+	@Configuration
+	@EnableAutoConfiguration
+	@ComponentScan
+	
+@Configuration
+	表示一个配置类
+	xml与java类对应
+	a.xml
+	<?xml version="1.0" encoding="UTF-8"?>
+	<beans xmlns="http://www.springframework.org/schema/beans"
+		   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
+		   default-lazy-init="true">
+		<!--bean定义-->
+	</beans>
+	对应
+	@Configuration
+	public class MockConfiguration {
+		//bean定义
+	}
+	
+	<bean id="mockService" class="..MockServiceImpl">
+		...
+	</bean>
+	对应
+	@Configuration
+	public class MockConfiguration {
+		@Bean //@Bean的方法，其返回值将作为一个bean定义注册到Spring的IoC容器，方法名将默认成该bean定义的id
+		public MockService mockService(){
+			return new MockServiceImpl();
+		}
+	}
+	
+	
+@EnableAutoConfiguration
+
+@ComponentScan
+	默认Spring框架实现会从声明@ComponentScan所在类的package进行扫描。
+	注：所以SpringBoot的启动类最好是放在root package下，因为默认不指定basePackages。
+
+
+
+
+
+
+
+References
+http://tengj.top/categories/Spring-Boot%E5%B9%B2%E8%B4%A7%E7%B3%BB%E5%88%97/
+https://www.cnblogs.com/wmyskxz/p/9010832.html
+
+
+
