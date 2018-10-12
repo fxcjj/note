@@ -1,0 +1,150 @@
+
+消息中间件需要解决哪些问题？
+
+Publish/Subscribe
+
+Message Priority
+
+Message Order
+
+Message Filter
+	Broker端消息过滤
+	Consumer端消息过滤
+
+Message Persistence
+
+Message Reliablity
+
+At least Once
+
+Exactly Only Once
+
+Low Latency Messaging
+在消息不堆积情况下，消息到达Broker后，能立刻到达Consumer。
+RocketMQ使用长轮询Pull方式，可保证消息非常实时，消息实时性不低于Push。
+
+
+Broker的Buffer满了怎么办？
+
+回溯消费
+
+
+消息堆积
+
+
+分布式事务
+
+定时消息
+消息重试
+
+
+
+
+RocketMQ Overview
+RocketMQ是什么？
+
+RocketMQ物理部署结构
+
+RocketMQ逻辑部署结构
+
+RocketMQ数据存储结构
+
+
+
+
+
+
+//参考地址
+https://www.jianshu.com/p/824066d70da8
+
+一、3分钟快速入门RocketMQ（上）
+
+二、3分钟快速入门RocketMQ（下）
+
+三、必知必会的RocketMQ消息类型
+3.1 普通消息
+
+3.2 有序消息
+	3.2.1 全局有序消息
+	3.2.2 局部有序消息
+	
+3.3 延时消息
+	延时等级1s，5s，10s，30s，1m，2m
+
+四、RocketMQ的消息发送方式(20180121更新)
+4.1 同步发送
+
+4.2 异步发送
+
+4.3 单向发送
+
+4.4 表格
+发送方式	发送TPS		发送结果响应	可靠性
+同步发送	小			有				不丢失
+异步发送	中			有				不丢失
+单向发送	大			没有			可能丢失
+
+
+五、细谈RocketMQ的消费模式(20180126更新)
+5.1 集群消费
+	一个consumer group由多个consumer实例组成，当broker投递topicA+tagA的消息时。
+	只会被consumer group中的一个consumer实例消费。
+	消息进度是存储在broker上，consumer自身是不存储消费进度的。
+	消息进度存储在broker上的好处在于，当你consumer集群是扩大或者缩小时，
+	由于消费进度统一在broker上，消息重复的概率会被大大降低了。
+	
+	注意：在集群消费模式下，并不能保证每一次消息失败重投都投递到同一个 consumer 实例。
+	
+5.2 广播消费
+	every message will be consume once by all consumer instance of consumer cluster.
+	The progress of consumer stored respective instance, it easy cause message repeat.
+	There's another important point, for broadcast consume, it won't resend for message fail.
+	so while consumer consumes logic process, need to more concern about consume fail situation.
+	虽然广播消费能保证集群内每个 consumer 实例都能消费消息，
+	但是消费进度的维护、不具备消息重投的机制大大影响了实际的使用。
+	因此，在实际使用中，更推荐使用集群消费，因为集群消费不仅拥有消费进度存储的可靠性，
+	还具有消息重投的机制。而且，我们通过集群消费也可以达到广播消费的效果。
+
+5.3 使用集群消费模拟广播消费
+	如果业务确定需要广播消费，创建多个consumer实例，每个consumer实例属于不同的consumer group。
+	这些实例订阅同一个topicA。
+
+
+六、使用RocketMQ的小细节（上）(20180205更新)
+6.1 消息过滤
+	tag
+	
+6.2 订阅关系一致性
+在 RocketMQ 中，订阅关系由 Topic和 Tag 组成，因此要保证订阅关系一致性，就必须同时保证这两点：
+	订阅的 Topic 必须一致
+	订阅的 Topic 中的 tag 必须一致
+
+
+七、使用RocketMQ的小细节（下）(20180301更新)
+7.1 消息重试
+默认每条消息最多重试 16 次
+
+死信队列，需要人工补偿处理
+消费失败
+	1. 返回 ConsumeConcurrentlyStatus.RECONSUME_LATER
+	2. 返回 null
+	3. 抛出异常
+
+
+7.2 消息幂等
+处理建议就是通过业务上的唯一标识来作为幂等处理的依据。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

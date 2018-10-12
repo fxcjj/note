@@ -34,13 +34,19 @@ Password:
 [root@localhost Desktop]# java -version
 bash: java: command not found
 
+卸载自带openjdk
+https://blog.csdn.net/jzp630641095/article/details/72743000
+
 
 二、安装jdk
 
 1、下载.gz格式的文件
 jdk-8u144-linux-x64.tar.gz
 
-2、将jdk-8u144-linux-x64.tar.gz解压到/usr/local目录下（所有用户都可使用），名称为jdk1.8.0_144
+2、解压
+tar -zxvf jdk-8u144-linux-x64.tar.gz
+
+到/usr/local目录下（所有用户都可使用），名称为jdk1.8.0_144
 
 3、修改全局配置文件/etc/profile，在末尾添加如下：
 #添加jdk环境变量

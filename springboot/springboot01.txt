@@ -1,7 +1,11 @@
 
 
-更新spring boot中的依赖版本
-在自己pom.xml中声明
+
+
+spring-boot-starter-parent是spring boot项目的父级依赖，提供好多依赖。
+如：commons-beanutils。
+如果想升级spring boot自带的某个依赖版本，可以在自己的pom.xml中声明要
+更新版本的属性，如:
 <properties>
     <commons-beanutils.version>2.3</commons-beanutils.version>
 </properties>
@@ -29,7 +33,9 @@
     </dependencies>
 </dependencyManagement>
 
-note: 使用上述类型的parent，前面的<properties>中声明的版本不起作用，要override。
+note: 使用上面spring boot依赖parent，前面的更新版本声明的<properties>就不起作用了，
+要在spring-boot-dependencies项之前声明依赖。
+
 
 自定义属性
 	@Value
@@ -44,9 +50,9 @@ note: 使用上述类型的parent，前面的<properties>中声明的版本不�
 	
 使用自定义配置文件
 	shaver.properties //src/main/resources
-	@Component //加上此annotation才能找到，@Configuration也可以，使用@EnableConfigurationProperties({Shaver.class})启动时找不到bean
-	@ConfigurationProperties(prefix = "shaver")
-	@PropertySource("classpath:shaver.properties")
+		@Component //加上此annotation才能找到，@Configuration也可以，使用@EnableConfigurationProperties({Shaver.class})启动时找不到bean
+		@ConfigurationProperties(prefix = "shaver")
+		@PropertySource("classpath:shaver.properties")
 
 随机值配置
 	//#随机字符串
