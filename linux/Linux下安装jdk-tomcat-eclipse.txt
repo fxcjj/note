@@ -1,0 +1,135 @@
+目录
+1. 卸载安装jdk
+2. 安装tomcat
+3. 安装eclipse
+4. 创建eclipse的快捷方式
+
+
+1. 卸载安装jdk
+1.1 卸载系统自带的jdk
+#rpm -aq | grep gcj
+
+可能看到如下类似信息
+libgcj-4.1.2-44.el5
+java-1.4.2-gcj-compat-1.4.2.0-40jpp.115 
+
+使用rpm -e --nodeps 命令删除上面查找的内容： 
+#rpm -e –nodeps java-1.4.2-gcj-compat-1.4.2.0-40jpp.115 
+
+1.2 卸载rpm安装的jdk版本
+查看安装的jdk
+#rpm -qa | grep jdk
+
+可能看到如下类似信息
+java-1.7.0-openjdk-1.7.0.45-2.4.3.3.el6.x86_64
+java-1.6.0-openjdk-1.6.0.0-1.66.1.13.0.el6.x86_64
+
+#使用root权限
+[king@localhost Desktop]$ su
+Password: 
+[root@localhost Desktop]# rpm -e --nodeps java-1.7.0-openjdk-1.7.0.45-2.4.3.3.el6.x86_64
+[root@localhost Desktop]# rpm -e --nodeps java-1.6.0-openjdk-1.6.0.0-1.66.1.13.0.el6.x86_64
+[root@localhost Desktop]# rpm -qa | grep jdk
+[root@localhost Desktop]# java -version
+bash: java: command not found
+
+1.3 安装jdk
+
+1.3.1 下载.gz格式的文件
+jdk-8u144-linux-x64.tar.gz
+
+1.3.2 解压
+tar -zxvf jdk-8u144-linux-x64.tar.gz 
+将jdk-8u144-linux-x64.tar.gz上传到/usr/local目录下，然后解压，名称为jdk1.8
+
+
+1.3.3 修改全局配置文件/etc/profile，在末尾添加如下：
+#添加jdk环境变量
+[root@localhost Desktop]# vi /etc/profile
+export JAVA_HOME=/usr/local/jdk1.8
+export PATH=$JAVA_HOME/bin:$PATH
+export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+
+#保存文件
+:wq
+
+#使配置生效
+[root@localhost Desktop]# source /etc/profile
+
+1.3.4 查看是否安装成功
+[root@localhost Desktop]# java -version
+java version "1.8.0_144"
+
+
+2. 安装tomcat
+2.1 官网下载tar.gz包，上传到/usr/local目录下
+
+2.2 进入tomcat/bin目录下，启动
+./startup.sh
+
+
+3. 安装eclipse
+eclipse-jee-neon-3-linux-gtk-x86_64.tar.gz，解压到/usr/local目录下，名称为eclipse
+
+四、双击执行该目录下的eclipse文件
+出现如下异常信息：
+a java runtime environment or java development kit
+must be available in order to run eclipse.
+/usr/local/eclipse/jre/bin/java
+java in your current PATH
+
+解决方法：
+进入eclipse的主目录
+#cd eclipse
+#mkdir jre
+#cd jre
+#ln -s /usr/local/jdk1.8.0_144/bin bin
+
+
+附:ln 使用方法
+
+ln是linux中又一个非常重要命令，它的功能是为某一个文件在另外一个位置建立一个同不的链接，这个命令最常用的参数是-s，具体用法是：ln –s 源文件 目标文件。
+　　当我们需要在不同的目录，用到相同的文件时，我们不需要在每一个需要的目录下都放一个必须相同的文件，我们只要在某个固定的目录，放上该文件，然后在 其它的目录下用ln命令链接（link）它就可以，不必重复的占用磁盘空间。例如：ln –s /bin/less /usr/local/bin/less
+　　-s 是代号（symbolic）的意思。
+　　这里有两点要注意：第一，ln命令会保持每一处链接文件的同步性，也就是说，不论你改动了哪一处，其它的文件都会发生相同的变化；第二，ln的链接又 软链接和硬链接两种，软链接就是ln –s ** **，它只会在你选定的位置上生成一个文件的镜像，不会占用磁盘空间，硬链接ln ** **，没有参数-s， 它会在你选定的位置上生成一个和源文件大小相同的文件，无论是软链接还是硬链接，文件都保持同步变化。
+　　如果你用ls察看一个目录时，发现有的文件后面有一个@的符号，那就是一个用ln命令生成的文件，用ls –l命令去察看，就可以看到显示的link的路径了。
+　　指令详细说明
+　　指令名称 : ln
+　　使用权限 : 所有使用者
+　　使用方式 : ln [options] source dist，其中 option 的格式为 :
+　　[-bdfinsvF] [-S backup-suffix] [-V {numbered,existing,simple}]
+　　[--help] [--version] [--]
+　　说明 : Linux/Unix 档案系统中，有所谓的连结(link)，我们可以将其视为档案的别名，而连结又可分为两种 : 硬连结(hard link)与软连结(symbolic link)，硬连结的意思是一个档案可以有多个名称，而软连结的方式则是产生一个特殊的档案，该档案的内容是指向另一个档案的位置。硬连结是存在同一个档 案系统中，而软连结却可以跨越不同的档案系统。
+　　ln source dist 是产生一个连结(dist)到 source，至于使用硬连结或软链结则由参数决定。
+　　不论是硬连结或软链结都不会将原本的档案复制一份，只会占用非常少量的磁碟空间。
+　　-f : 链结时先将与 dist 同档名的档案删除
+　　-d : 允许系统管理者硬链结自己的目录
+　　-i : 在删除与 dist 同档名的档案时先进行询问
+　　-n : 在进行软连结时，将 dist 视为一般的档案
+　　-s : 进行软链结(symbolic link)
+　　-v : 在连结之前显示其档名
+　　-b : 将在链结时会被覆写或删除的档案进行备份
+　　-S SUFFIX : 将备份的档案都加上 SUFFIX 的字尾
+　　-V METHOD : 指定备份的方式
+　　--help : 显示辅助说明
+　　--version : 显示版本
+　　范例 :
+　　将档案 yy 产生一个 symbolic link : zz
+　　ln -s yy zz
+　　将档案 yy 产生一个 hard link : zz
+　　ln yy xx
+
+4. Linux下创建eclipse的快捷方式
+
+在/usr/share/application/文件夹下，用vim新建一个eclipse.desktop的文件，文件内容如下，具体路径根据自己的实际情况而定：
+[Desktop Entry]
+Type=Application
+Name=eclipse
+Exec=/home/king/eclips/eclipse  //eclipse存放路径
+GenericName=eclipse
+Comment=Java development tools
+Icon=/home/king/eclipse/icon.xpm  //eclipse存放路径
+Categories=Application;Development;
+Terminal=false
+
+这样在/usr/share/application/ 文件夹下就能看到一个eclipse的图标。然后将图标复制到桌面就可以了。

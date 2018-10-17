@@ -40,6 +40,8 @@ git目录
 	$ cd learngit
 	$ git init
 	Initialized empty Git repository in /Users/michael/learngit/.git/
+	
+	note: 如果取消目录的初始化，使用命令rm -rf .git
 
 3 查看库状态
 	//查看仓库当前状态
