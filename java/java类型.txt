@@ -111,14 +111,14 @@ boolean
 2) 在小数后面加上F或f，如22.2F。不加F/f，则表示double类型，后缀为D/d。
 3) 浮点字面值支持科学技术法表示
 4) 例子
-	double d1 = 10；  
+	double d1 = 10;
 	double d2  = 11.4;  
-	double d3 = 1.23E3;  
-	double d4 = 10D;  
-	double d5 = 0.4D;  
-	float f1 = 10;  
-	float f2 = 11.1F;  
-	float f3 = 1.23e-4F;  
+	double d3 = 1.23E3;
+	double d4 = 10D;
+	double d5 = 0.4D;
+	float f1 = 10;
+	float f2 = 11.1F;
+	float f3 = 1.23e-4F;
 	float f4 = 1.23E0F;
 
 字符及字符串字面值

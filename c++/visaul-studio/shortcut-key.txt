@@ -1,0 +1,4 @@
+
+单/多行注释
+注释：先CTRL+K，然后CTRL+C 
+取消注释：先CTRL+K，然后CTRL+U
