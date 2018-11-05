@@ -95,8 +95,14 @@ C -> A, B
 则C使用的是B中的jv1.3，即按照最短路径依赖。
 
 
-当想使用具体的version时而且存在传递依赖时，可以使用exclusions标签排除不需要的依赖。
+当想使用具体的version时而且存在传递依赖时，
+可以使用exclusions标签排除不需要的依赖，即排除此项目依赖的依赖项。
 
+在dependency标签中声明optional标签，表示此依赖不具有传递。
+即只有在本项目中使用，不会传递到引用该项目的项目中。如果要使用，需要单独声明dependency
+
+//exclusuions和optional的使用
+https://www.jianshu.com/p/6eee9191f2ab
 
 
 create a simple project(skip archetype selection)
@@ -224,7 +230,7 @@ profile指的是配置，不止是nexus的配置，包含其它公共配置。
 <mirror>
 	<id>nexusMirror</id>
 	<!-- 
-	当访问nexus,central时，会访问镜像地址，找不到就找不到喽！
+	当访问nexus(私服),central时，会访问镜像地址，找不到就找不到喽！
 	一般推荐使用*，表示所有的reposiory都访问镜像地址
 	-->
 	<mirrorOf>nexus,central</mirrorOf>

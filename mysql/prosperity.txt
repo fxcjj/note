@@ -1,0 +1,11 @@
+[SQL]
+update m_user set age = 18 where id = 1 or id = 2 limit 1;
+受影响的行: 1
+时间: 0.003s
+
+-- 加limit 1只会操作一条，按id排序
+update m_user set age = 18 where id = 2 or id = 1 limit 1;
+
+//好像是什么密码
+()h:Vr>P1>-P
+

@@ -1,0 +1,15 @@
+https://blog.csdn.net/wulitaot/article/details/79542668
+
+一款分布式、队列模型的消息中间件
+
+底层采用netty nio框架进行数据通信内部摒弃了zookeeper，使用更轻量级的
+NameServer进行网络路由。
+
+天然支持集群模型
+支持以及消息堆积能力
+
+业务消峰
+分布式事务
+
+//十分钟入门RocketMQ
+http://jm.taobao.org/2017/01/12/rocketmq-quick-start-in-10-minutes/

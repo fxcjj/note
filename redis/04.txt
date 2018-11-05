@@ -112,7 +112,7 @@ message		id			123
 			name		zhangsan
 
 设置单个字段
-	* hset key field value 
+	* hset key field value
 	* hsetnx key field value
 		* key的filed不存在的情况下执行，key不存在直接创建
 		
