@@ -1,0 +1,122 @@
+
+
+
+1. related concept
+2. select ... lock in share mode
+3. select ... for update
+4. Conclusion
+
+
+1. related concept
+1.1 lock in share mode是加共享锁，允许其它事务读取记录或者同时加共享锁，但不允许修改。
+如果其它事务要修改已加共享锁的行，那么会阻塞直到加锁事务rollback或者commit，或者本事务请求超时。
+
+for update是加排它锁，允许其它事务读取记录，但不允许其它事务加共享锁或排它锁。
+
+官网有句话
+Locking reads are only possible when autocommit is disabled 
+(either by beginning transaction with START TRANSACTION or by setting autocommit to 0. 
+
+意思是说，Locking reads仅在autocommit禁用是可用的
+（使用starttransaction或者autocommit设置为0），也就是说这两种锁必须处于事务或者手动提交（我认为和事务没什么区别）。
+另外还和事务隔离级别有关（mysql默认是repeatable read）。
+
+1.2 行锁有什么用呢？设想下面这种场景
+a) 读取一行数据 
+b) 根据读取到的数据去更新其他数据
+
+假设在a)和b)之间，有个其他的user session刚好修改了你读取的那行数据，那么你下面的更新就有可能会出错！因为关联的数据产生了变化！
+
+行锁就能够保证不会出现上面所说的这种尴尬的场景。
+
+
+创建表结构及数据
+use victor;
+create table tb_test (
+  id int primary key,
+  sub varchar(20)
+) engine = innodb default character set = 'utf8';
+
+insert into tb_test(id, sub) values(1, 'AAA');
+
+
+2. select ... lock in share mode
+
+2.1 使用案例
+session 1:
+set autocommit = 0;
+select * from tb_test where id = 1 lock in share mode;
+
+
+session 2:
+update tb_test set sub = 'BBB' where id = 1;
+
+此时session 2处于blocking状态，直到session 1执行rollback或者commit。
+lock in share mode保证了锁定的行不能被其它事务所修改。
+
+
+2.2 死锁
+使用lock in share mode具有很高的风险，看下面的案例:
+session 1:
+set autocommit = 0;
+select * from tb_test where id = 1 lock in share mode;
+
+session 2:
+set autocommit = 0;
+select * from tb_test where id = 1 lock in share mode;
+
+此时session 1和session 2同时持有id=1这行数据的共享锁，此时在session 1中执行update
+update tb_test set sub = 'AAA' where id = 1;
+
+此时session 1处理blocking状态，必须等到session 2退出事务或者等待直到超时。
+
+锁超时的情况:
+ERROR 1205 (HY000): Lock wait timeout exceeded; try restarting transaction
+
+此时如果在session 2中执行update。
+mysql> update tb_test set sub = 'BBB' where id = 1;
+ERROR 1213 (40001): Deadlock found when trying to get lock; try restarting transaction
+
+此时mysql检测到发生死锁，会中断当前事务该语句的执行，重新开启一个新的事务（应该就是相当于session2先退出事务，然后再开启一个事务吧）。
+此时session 1由blocking状态到正常状态。
+
+上面的例子可以看出使用lock in share mode比较危险，很可能因为其他session同时加了这种锁，导致当前session无法进行更新，进而阻塞住。
+
+
+3. select ... for update
+for update加的是排它锁，所以没有上面lock in sharemode所产生的死锁，因为一个session加了这种锁，
+其他session除了读取操作，其他操作都不能进行，比如更改操作或者加锁（共享锁和排它锁都不可以）。
+
+3.1 使用案例
+session 1:
+set autocommit = 0;
+select * from tb_test where id = 1 for update;
+
+session 2:
+update tb_test set sub = 'BBB' where id = 1;
+
+此时session 2处于blocking状态。
+手动kill掉，按ctrl+c
+然后执行
+set autocommit = 0;
+select * from tb_test where id = 1 for update;
+
+依然是blocking状态，证明其它事务不能对已经加了排它锁的行再加排它锁。
+
+kill掉再来
+set autocommit = 0;
+select * from tb_test where id = 1 lock in share mode;
+
+依然是blocking状态，证明其它事务不能对已经加了排它锁的行再加共享锁。
+
+当然，如果使用for update的时候，如果锁定当前行的事务一直不退出，将会导致其他进行这个行更改操作的session阻塞或者等待超时。
+
+
+4. Conclusion
+因此，无论在使用select lock in share mode 或者 select for update，都应该尽快释放锁。
+
+
+Refferences
+https://dev.mysql.com/doc/refman/5.6/en/innodb-locking-reads.html
+https://blog.csdn.net/d6619309/article/details/52688250
+https://blog.csdn.net/claram/article/details/54023216

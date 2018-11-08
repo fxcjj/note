@@ -1,0 +1,9 @@
+
+
+1.
+File->Setting...->Build, Execution, Deployment->Build Tools->Maven->Runner->JRE
+
+2.
+File->Project Structure->Project Settings->Project
+
+File->Project Structure->Platform Settings->SDKs->+

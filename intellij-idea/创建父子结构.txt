@@ -1,5 +1,7 @@
 
 一般项目结构分为两种结构
+1. 父子层级
+2. 同一层级
 
 1. 父子层级
 exotic-sail //父项目
@@ -54,7 +56,9 @@ springboot //和父子结构不一样，没有pom.xml，各个项目中包含pom.xml
 	->Next->Next->选择maven地址->Next->Finish
 2.4 此时回到Project Structure对话框，依次操作可新建模块
 2.5 右击项目->Open Module Settings，即可打开Project Structure对话框
-
+2.6 导入多个项目到idea中
+	a) File->New->Project...->Empty Project->目录（如sb）
+	b) 点+号import module->import module from external
 
 
 References
