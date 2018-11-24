@@ -1,4 +1,4 @@
-
+﻿
 
 一、下载地址
 https://github.com/apache/incubator-dubbo-ops
@@ -24,8 +24,8 @@ Step 2:
 * dubbo-registry-simple-2.0.0-assembly.tar.gz in incubator-dubbo-ops\dubbo-registry-simple\target directory. Unzip it you will find the shell scripts for starting or stopping registry.
 
 
-二、修改dubbo.properties文件
-路径：src/webapp/WEB-INF/dubbo.properties
+二、edit dubbo.properties
+path：src/webapp/WEB-INF/dubbo.properties
 如果zookeeper是单机，配置：
 dubbo.registry.address=zookeeper://192.168.42.128:2181
 
@@ -115,10 +115,6 @@ pull到本地后，需要install
 注意，当只有一个provider时，禁用是无效的。
 
 
-六、引入monitor-simple
-参考
-\note\zookeeper\安装dubbo-monitor-simple.txt
-
 5.5 遇到的问题
 a) 在dubbo-demo目录下，mvn clean出现错误
 Non-resolvable import POM: Failure to find com.alibaba:dubbo-bom:pom:2.7.0-SNAPSHOT in https://oss.sonatype.org/content/repositories/snapshots was cached in the local repository, resolution will not be reattempted until the update interval of sonatype-nexus-snapshots has elapsed or updates are forced @ line 39, column 25 -> [Help 2]
@@ -126,3 +122,7 @@ Non-resolvable import POM: Failure to find com.alibaba:dubbo-bom:pom:2.7.0-SNAPS
 原因：
 没有install父pom到本地。
 
+
+六、引入monitor-simple
+参考
+\note\zookeeper\安装dubbo-monitor-simple.txt

@@ -1,5 +1,4 @@
-From
-http://blog.csdn.net/a494303877/article/category/6518694
+
 
 JPA
 Java Persistence API，java持久化api。
@@ -35,3 +34,5 @@ JavaEE中的事务类型
             对于第二种情况，被称为声明式的事务管理（Declarative Transaction Management）
 
 
+Refferences
+http://blog.csdn.net/a494303877/article/category/6518694

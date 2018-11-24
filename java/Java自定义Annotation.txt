@@ -6,9 +6,12 @@
 
 一、什么是注解（Annotation）
 Annotation（注解）就是Java提供了一种元程序中的元素关联任何信息和着任何元数据（metadata）的途径和方法。Annotion(注解)是一个接口，程序可以通过反射来获取指定程序元素的Annotion对象，然后通过Annotion对象来获取注解里面的元数据。
-　　Annotation(注解)是JDK5.0及以后版本引入的。它可以用于创建文档，跟踪代码中的依赖性，甚至执行基本编译时检查。从某些方面看，annotation就像修饰符一样被使用，并应用于包、类 型、构造方法、方法、成员变量、参数、本地变量的声明中。这些信息被存储在Annotation的“name=value”结构对中。
-　　Annotation的成员在Annotation类型中以无参数的方法的形式被声明。其方法名和返回值定义了该成员的名字和类型。在此有一个特定的默认语法：允许声明任何Annotation成员的默认值：一个Annotation可以将name=value对作为没有定义默认值的Annotation成员的值，当然也可以使用name=value对来覆盖其它成员默认值。这一点有些近似类的继承特性，父类的构造函数可以作为子类的默认构造函数，但是也可以被子类覆盖。
-　　Annotation能被用来为某个程序元素（类、方法、成员变量等）关联任何的信息。需要注意的是，这里存在着一个基本的规则：Annotation不能影响程序代码的执行，无论增加、删除 Annotation，代码都始终如一的执行。另外，尽管一些annotation通过java的反射api方法在运行时被访问，而java语言解释器在工作时忽略了这些annotation。正是由于java虚拟机忽略了Annotation，导致了annotation类型在代码中是“不起作用”的； 只有通过某种配套的工具才会对annotation类型中的信息进行访问和处理。本文中将涵盖标准的Annotation和meta-annotation类型，陪伴这些annotation类型的工具是java编译器（当然要以某种特殊的方式处理它们）。
+Annotation(注解)是JDK5.0及以后版本引入的。它可以用于创建文档，跟踪代码中的依赖性，甚至执行基本编译时检查。
+从某些方面看，annotation就像修饰符一样被使用，并应用于包、类型、构造方法、方法、成员变量、参数、本地变量的声明中。
+这些信息被存储在Annotation的“name=value”结构对中。
+Annotation的成员在Annotation类型中以无参数的方法的形式被声明。其方法名和返回值定义了该成员的名字和类型。
+在此有一个特定的默认语法：允许声明任何Annotation成员的默认值：一个Annotation可以将name=value对作为没有定义默认值的Annotation成员的值，当然也可以使用name=value对来覆盖其它成员默认值。这一点有些近似类的继承特性，父类的构造函数可以作为子类的默认构造函数，但是也可以被子类覆盖。
+Annotation能被用来为某个程序元素（类、方法、成员变量等）关联任何的信息。需要注意的是，这里存在着一个基本的规则：Annotation不能影响程序代码的执行，无论增加、删除Annotation，代码都始终如一的执行。另外，尽管一些annotation通过java的反射api方法在运行时被访问，而java语言解释器在工作时忽略了这些annotation。正是由于java虚拟机忽略了Annotation，导致了annotation类型在代码中是“不起作用”的； 只有通过某种配套的工具才会对annotation类型中的信息进行访问和处理。本文中将涵盖标准的Annotation和meta-annotation类型，陪伴这些annotation类型的工具是java编译器（当然要以某种特殊的方式处理它们）。
 
 二、元注解(meta-annotation)
 元注解是指注解的注解，只能应用于自定义Annotation上。
@@ -47,7 +50,7 @@ CLASS,
 RUNTIME
 
 Documented
-表示此注解通过javadoc tool可被文档分
+表示此注解通过javadoc tool可被文档化
 
 Inherited
 此元注解为标记注解，当被标注在某个注解上时，表示此注解具有继承性。
@@ -167,7 +170,8 @@ public @interface FruitProvider {
 下面我们依次看看三个内置标准注解的作用和使用场景。
 
 @Override，限定重写父类方法
-@Override 是一个标记注解类型，它被用作标注方法。它说明了被标注的方法重载了父类的方法，起到了断言的作用。如果我们使用了这种Annotation在一个没有覆盖父类方法的方法时，java编译器将以一个编译错误来警示。这个annotaton常常在我们试图覆盖父类方法而确又写错了方法名时发挥威力。使用方法极其简单：在使用此annotation时只要在被修饰的方法前面加上@Override即可。下面的代码是一个使用@Override修饰一个企图重载父类的paoniu()方法，而又存在拼写错误的实例
+@Override是一个标记注解类型，它被用作标注方法。它说明了被标注的方法重载了父类的方法，起到了断言的作用。
+如果我们使用了这种Annotation在一个没有覆盖父类方法的方法时，java编译器将以一个编译错误来警示。这个annotaton常常在我们试图覆盖父类方法而确又写错了方法名时发挥威力。使用方法极其简单：在使用此annotation时只要在被修饰的方法前面加上@Override即可。下面的代码是一个使用@Override修饰一个企图重载父类的paoniu()方法，而又存在拼写错误的实例
 Father.java
 public class Father {
 	public String paoniu() {
@@ -250,17 +254,17 @@ SuppressWarnings注解的常见可参考此文章。
 http://blog.csdn.net/mddy2001/article/details/8291484
 
 五、总结
-1, 四种meta-annotation
+1. 四种meta-annotation
 	@Target: 表示修饰的对象范围
 	@Retention: 表示注解的保留级别
 	@Documented: 可被文档化
 	@Inherited: 表示被标注的注解是否有继承特性
-2, 自定义Annotation
+2. 自定义Annotation
 	a, 使用@interface定义Annotation
 	b, 参数修饰符有public, default
 	c, 参数仅支持基本类型、String, Class, annotation, enumeration及其数组形式
 	d, 参数必须要有默认值
-3, 内置注解
+3. 内置注解
 	@Override: 表示此方法为覆盖父类中的方法
 	@Deprecated: 标记为过期的方法
 	@SuppressWarnings: 抑制编译器警告

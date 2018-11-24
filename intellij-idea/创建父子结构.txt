@@ -14,7 +14,7 @@ exotic-sail //父项目
 	a) File->New->Project...
 	b) 选择左侧菜单Maven->不要勾选Create from archetype->Next->
 	GroupId: com.vic
-	ArtifactId: springboot01
+	ArtifactId: exotic-sail
 	Version: 保持默认就好
 	->Next->
 	Project name: exotic-sail //父目录名称
