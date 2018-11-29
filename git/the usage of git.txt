@@ -537,7 +537,7 @@ bc171b0 you guess
 505d08c create ff
 8kd023b update fuc
 
-比如，你要在create ff这打个tag，看下面。
+比如，你要在"create ff"上打个tag，看下面。
 git tag v0.9 505d08c
 
 //查看tag
@@ -565,7 +565,6 @@ index 0000000..f2ba8f8
 
 //添加带有说明的tag，使用-a指定标签名，-m指定说明信息
 git tag -a v1.0 -m "version 0.1 released" 505d08c
-
 
 //使用-s用私钥签名一个标签
 git tag -s v0.2 -m "test sign" 505d08c

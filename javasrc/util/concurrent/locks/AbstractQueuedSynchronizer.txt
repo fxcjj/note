@@ -1,0 +1,47 @@
+
+
+java.util.concurrent.locks.AbstractQueuedSynchronizer
+
+
+
+/**
+ * Creates and enqueues node for current thread and given mode.
+ *
+ * @param mode Node.EXCLUSIVE for exclusive, Node.SHARED for shared
+ * @return the new node
+ */
+private Node addWaiter(Node mode) {
+	Node node = new Node(Thread.currentThread(), mode);
+	// Try the fast path of enq; backup to full enq on failure
+	Node pred = tail;
+	if (pred != null) {
+		node.prev = pred;
+		if (compareAndSetTail(pred, node)) {
+			pred.next = node;
+			return node;
+		}
+	}
+	enq(node);
+	return node;
+}
+
+/**
+ * Inserts node into queue, initializing if necessary. See picture above.
+ * @param node the node to insert
+ * @return node's predecessor
+ */
+private Node enq(final Node node) {
+	for (;;) {
+		Node t = tail;
+		if (t == null) { // Must initialize
+			if (compareAndSetHead(new Node()))
+				tail = head;
+		} else {
+			node.prev = t;
+			if (compareAndSetTail(t, node)) {
+				t.next = node;
+				return t;
+			}
+		}
+	}
+}

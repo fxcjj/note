@@ -1,0 +1,88 @@
+
+1. 幂等性概念
+2. 幂等性场景
+3. 保证幂等性方案
+	3.1. 唯一索引
+	3.2. 使用insertOrUpdate
+	3.3. 使用唯一Token
+	3.4. 其它流传的方案
+		3.4.1 乐观锁
+		3.4.2 悲观锁
+		3.4.3 去重表
+		3.4.4 分布式锁
+4. 总结
+
+
+1. 幂等性概念
+同一操作执行一次以及后续多次执行，对系统状态的影响是一致的。
+
+2. 幂等性场景
+幂等性主要目的是为了保证接口的安全，防止数据混乱。
+涉及的操作主要有增、删、改、查，其中查询和删除是天然支持幂等操作，所以不需要处理。
+只需要保证新增和更新是幂等即可。
+Note: 更新会涉及到binlog，对于使用binlog的服务会有影响。
+
+3. 保证幂等性方案
+比如: 
+新增一条用户信息
+insert into v_user(id, name, id_number) value(null, " victor", "12345678");
+
+更新某用户的积分
+update v_gather_score set score = score +1, update_time = now() where user_id = #id;
+	
+3.1. 唯一索引
+将表中的某个字段或者多个字段设置为唯一索引，第一次插入可以成功，
+后面的插入操作违反唯一约束抛出异常，可以代码捕获异常重试或者返回结果。
+Note: 新增可以，更新不行。
+
+3.2. 使用insertOrUpdate
+这种方法适用于插入操作并且有唯一索引的情况，比如新增 商品品类关联 表，其中商品ID和品类ID可以构成唯一索引，
+并且在数据表中也增加了唯一索引。这时就可以使用InsertOrUpdate操作。
+执行如下语句：
+insert into v_goods_category(id, goods_id, category_id, create_time, update_time)
+values(#{goodsId}, #{categoryId}, now(), now())
+on duplicate key update update_time = now();
+
+参考
+E:\note\mysql\mysql之on-duplicate-key-update.txt
+
+Note: 新增可以，更新不行
+
+3.2. 使用唯一Token
+分为两个步骤，客户端首先要获取token，我后台生成UUID并保存到Redis中，key和value都是这个，
+并设置过期时间(比如3分钟)。请求时带着这个token，后台获取Redis中的值，如果和前段传过来的token相等，
+表示第一次请求，允许执行并删除Redis中的值，如果Redis中的值为空，表示不是第一次请求，直接返回。
+Note: 新增可以，更新可以。
+
+3.3. 其它流传的方案
+以下方案都是关于高并发时保证数据一致性的方案，使线程串行化执行。和幂等性不是一个概念。
+
+3.3.1 乐观锁
+在表中添加version字段，每次更新前先查询出来version值，执行更新时比较version且将version+1，
+成功返回影响行数为1，失败返回影响行数为0，代码里拿到此值可重试或者放弃。sql语句如下: 
+update v_gather_score set score = score +1, update_time = now(), version = version + 1 
+where user_id = #id and version = # version;
+
+3.3.2 悲观锁
+先查询出要更新的记录，查询时加上锁( for update)，此时，线程独占，其他线程阻塞，执行更新即可。
+
+3.3.3 去重表
+添加一张去重表，里面某个字段声明为唯一索引，插入业务表时，同时插入去重表，两次插入操作为一个事务，
+第一次插入成功后，删除去重表的数据，在并发情况下，后面插入操作失败。
+
+3.3.4 分布式锁
+建设中...
+
+
+4. 总结
+a) 可行方案有唯一索引、使用insertOrUpdate、使用唯一Token
+b) 注意a)中有的方案只适用于不同场景
+c) 其它流传的方案属于混淆视听
+
+
+Refferences
+https://blog.csdn.net/yuhaiyang_1/article/details/81040967
+https://baijiahao.baidu.com/s?id=1570246189966333&wfr=spider&for=pc
+https://baijiahao.baidu.com/s?id=1570246189966333&wfr=spider&for=pcLL
+https://blog.csdn.net/tomcatAndOracle/article/details/80619255
+

@@ -1,0 +1,101 @@
+
+1. 概念
+2. INSERT单行记录
+	2.1 测试重复情况
+	2.2 测试不重复情况
+3. INSERT多行记录
+4. 总结
+
+1. 概念
+在MySQL数据库中，如果在insert语句后面带上ON DUPLICATE KEY UPDATE子句，
+表示当要插入的行与表中现有记录的unique索引（包含联合唯一索引）
+或primary key产生重复值时，则执行update中的语句，否则执行插入新行。
+
+做统计时可能会用到。
+
+2. INSERT单行记录
+有如下表：
+CREATE TABLE `tb_reside` (
+  `a` int(11) NOT NULL AUTO_INCREMENT,
+  `b` int(11) NOT NULL,
+  `c` int(11) NOT NULL,
+  UNIQUE KEY `idx_a` (`a`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+其中a列为唯一索引
+
+初始化数据：
+insert into tb_reside(a, b, c) values (1, 2, 3), (11, 22, 33);
+
+
+2.1 测试重复情况
+执行语句：
+insert into tb_reside(a, b, c) values (1, 2, 3)
+on duplicate key update c = c + 1;
+
+执行信息：
+[SQL] insert into tb_reside(a, b, c) values (1, 2, 3)
+on duplicate key update c = c + 1;
+受影响的行: 2
+时间: 0.081ms
+
+执行结果：
+a	b	c
+1	2	4
+11	22	33
+
+说明：
+因为表中a列定义为unique，插入的数据与a表有重复值，所以执行update后面的语句，
+即直接更新c = c + 1，而不执行c = 3的操作。
+
+
+相当于执行：
+update tb_reside set c = c + 1 where a = 1;
+
+
+2.2 测试不重复情况
+执行语句：
+insert into tb_reside(a, b, c) values (111, 222, 333)
+on duplicate key update c = c + 1;
+
+执行信息：
+[SQL] 
+insert into tb_reside(a, b, c) values (111, 222, 333)
+on duplicate key update c = c + 1;
+受影响的行: 1
+时间: 0.048ms
+
+执行结果：
+a	b	c
+1	2	4
+11	22	33
+111	222	333
+
+说明：
+与表中定义为unique的a列不存在重复值，执行新增操作。
+
+3. INSERT多行记录
+举个粟子
+字段a被定义为UNIQUE，并且原数据库表tb_reside中已存在记录(2, 2, 9)和(3, 2, 1)，
+如果插入记录的a值与原有记录重复，则更新原有记录，否则插入新行。
+
+执行如下语句：
+insert into tb_reside(a, b, c) values
+(1, 2, 3), 
+(2, 5, 7), 
+(3, 3, 6), 
+(4, 8, 2)
+on duplicate key update b = values(b);
+
+以上SQL语句的执行，发现(2, 5, 7)中的a与原有记录(2, 2, 9)发生唯一值冲突，则执行ON DUPLICATE KEY UPDATE，
+将原有记录(2, 2, 9)更新成(2, 5, 9)，将(3, 2, 1)更新成(3, 3, 1)，插入新记录(1, 2, 3)和(4, 8, 2)。
+
+4. 总结
+a) 如果行作为新记录被插入，则受影响行的值为1，如果原有的记录被更新，则受影响行的值为2
+b) value()函数的使用
+c) 包括联合唯一索引
+d) on duplicate key update是mysql的特殊语法，并不是sql标准语法
+
+
+Refferences
+https://www.jb51.net/article/31044.htm
