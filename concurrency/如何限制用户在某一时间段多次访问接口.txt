@@ -1,4 +1,4 @@
-
+﻿
 如何限制用户在某一时间段内访问接口次数
 
 /**
@@ -6,7 +6,6 @@
  * 用于控制方法在某时间段内允许调用的次数。
  * @see FrequencyFilter
  * @author Victor
- * @date 2018年3月13日 下午8:05:43
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
@@ -19,10 +18,10 @@ public @interface Frequency {
 	int time() default 60;
 
 	/**
-	 * 在某时间段内允许访问的次数，默认值MAX_VALUE
+	 * 在某时间段内允许访问的次数，默认值1000
 	 * @return 
 	 */
-	int count() default Integer.MAX_VALUE;
+	int count() default 1000;
 	
 }
 
@@ -36,7 +35,7 @@ public class FrequencyFilter {
 	public void filter() {
 		//1. 获取方法上的注解
 		//2. 如果不存在此注解return
-		//3. 如果存在获取客户端ip
+		//3. 如果存在获取客户端ip或者唯一标示
 		//4. key为frequency_ip，调用RedisUtils.incr(key)
 		//5. 返回访问次数count
 		//6. 如果count==1表示第一次请求，RedisUtils.expire(key, frequency.time())

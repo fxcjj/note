@@ -1,8 +1,9 @@
 
-From
+
+
+进程属于操作系统。
+线程属于进程。
+
+
+References
 https://kb.cnblogs.com/page/531409/
-
-
-
-
-
