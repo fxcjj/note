@@ -1,7 +1,5 @@
 
 
-From
-百度云盘/technology/Maven知识讲解
 
 install maven
 
@@ -674,7 +672,6 @@ catalina.home
 访问地址
 	localhost:8787/hello/hello.do
 
-java 企业设计模式
 
-
-
+Reference
+/technology/Maven知识讲解

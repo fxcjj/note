@@ -1,7 +1,6 @@
+﻿
 
 
-From
-http://m.mamicode.com/info-detail-1248286.html
 
 Spring事务管理
 1 事务
@@ -62,3 +61,6 @@ TransactionStatus
 		http://www.blogjava.net/robbie/archive/2009/04/05/264003.html
 	
 	
+
+References
+http://m.mamicode.com/info-detail-1248286.html

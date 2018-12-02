@@ -1,9 +1,0 @@
-
-
-最常见的五种IO
-1. blocking io
-2. nonblocking io
-3. io multiplexing
-4. signal driven io
-5. asynchronous io
-

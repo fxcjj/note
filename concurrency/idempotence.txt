@@ -1,4 +1,4 @@
-
+﻿
 1. 幂等性概念
 2. 幂等性场景
 3. 保证幂等性方案
@@ -80,7 +80,7 @@ b) 注意a)中有的方案只适用于不同场景
 c) 其它流传的方案属于混淆视听
 
 
-Refferences
+References
 https://blog.csdn.net/yuhaiyang_1/article/details/81040967
 https://baijiahao.baidu.com/s?id=1570246189966333&wfr=spider&for=pc
 https://baijiahao.baidu.com/s?id=1570246189966333&wfr=spider&for=pcLL

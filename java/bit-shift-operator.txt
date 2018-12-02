@@ -389,7 +389,7 @@ a>>31取得a的符号，若a为正数，a>>31等于0，a^0=a，不变；
 =(a^-1)+1 //-1的补码全是1所以起到翻转的作用
 
 
-Refferences
+References
 https://blog.csdn.net/goskalrie/article/details/52796360
 
 Code

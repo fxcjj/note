@@ -1,6 +1,4 @@
 ﻿
-From
-http://blog.csdn.net/bingduanlbd/article/details/27821545
 
 一、为什么要有编码？
 在计算机里所有的数据都是字节的形式存储，处理的。我们需要这些字节来表示计算机里的信息。
@@ -95,4 +93,9 @@ Unicode			UTF-8
 
  
 例如"汉"字的Unicode编码是 6C49。6C49在0800-FFFF之间，所以要用3字节模板：1110xxxx 10xxxxxx 10xxxxxx。将6C49写成二进制是：0110 1100 0100 1001，将这个比特流按三字节模板的分段方法分为0110 110001 001001，依次代替模板中的x，得到：1110-0110 10-110001 10-001001，即E6 B1 89，这就是其UTF8的编码。
+
+
+
+Refferences
+http://blog.csdn.net/bingduanlbd/article/details/27821545
 
