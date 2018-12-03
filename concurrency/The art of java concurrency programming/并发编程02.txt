@@ -1,4 +1,4 @@
-第2章　Java并发机制的底层实现原理
+﻿第2章　Java并发机制的底层实现原理
 
 2.1 volatile的应用
 	2.1.1 volatile的定义与实现原理
@@ -113,4 +113,5 @@ volatile、synchronized和原子操作的实现原理。
 Java中的大部分容器和框架都依赖于本章介绍的volatile和原子操作的实现原理
 
 
-
+References
+http://www.cnblogs.com/dolphin0520/p/3920373.html
