@@ -97,5 +97,5 @@ c) 包括联合唯一索引
 d) on duplicate key update是mysql的特殊语法，并不是sql标准语法
 
 
-Refferences
+References
 https://www.jb51.net/article/31044.htm

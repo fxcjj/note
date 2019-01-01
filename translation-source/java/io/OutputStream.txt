@@ -76,7 +76,7 @@ public void close() throws IOException {}
 
 
 
-victor
+Conclusion
 输出流的老大，表示写入数据到设备。
 常用方法
 write 写数据到destination

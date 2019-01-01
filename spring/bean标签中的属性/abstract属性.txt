@@ -1,0 +1,77 @@
+
+
+1 定义
+2 验证
+3 总结
+
+1 定义
+Attribute : abstract
+Is this bean "abstract", that is, not meant to be instantiated itself 
+but rather just serving as parent for concrete child bean 
+definitions? The default is "false". Specify "true" to tell the bean 
+factory to not try to instantiate that particular bean in any case. 
+Note: This attribute will not be inherited by child bean 
+definitions. Hence, it needs to be specified per abstract bean 
+definition.
+
+Data Type : boolean
+Enumerated Values : 
+	- true
+	- false
+	
+翻译
+属性：abstract
+这个bean是“抽象”的吗？也就是说，它不打算实例化自己，
+而只是作为具体的子bean定义的父bean？
+默认值是false，指定true以告诉bean工厂在任何情况下都不要尝试初始化特定bean。
+注意：这个属性不会被子bean定义继承。
+因此，需要为每个抽象bean定义指定它。
+数据类型：boolean
+枚举值：
+	- true
+	- false
+
+
+2 验证
+java类
+public class AbstractTest {
+	private String money;
+	
+	public String getMoney() {
+		return money;
+	}
+
+	public void setMoney(String money) {
+		this.money = money;
+	}
+}
+
+xml配置（parent-attribute-test.xml）
+<bean id="aa" abstract="true" class="tag.bean.attribute.AbstractTest">
+	<property name="money" value="million" />
+</bean>
+
+测试
+public static void main(String[] args) {
+	ApplicationContext applicationContext = new ClassPathXmlApplicationContext("tag/bean/attribute/parent-attribute-test.xml");
+	
+	AbstractTest bean = (AbstractTest)applicationContext.getBean("aa");
+	System.out.println(bean.getMoney());
+}
+
+当xml文件中声明abstract="true"时，执行main报错：
+信息: Pre-instantiating singletons in org.springframework.beans.factory.support.DefaultListableBeanFactory@64616ca2: defining beans [aa]; root of factory hierarchy
+Exception in thread "main" org.springframework.beans.factory.BeanIsAbstractException: Error creating bean with name 'aa': Bean definition is abstract
+	at org.springframework.beans.factory.support.AbstractBeanFactory.checkMergedBeanDefinition(AbstractBeanFactory.java:1222)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:279)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:194)
+	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1117)
+	at tag.bean.attribute.ParentAttribute.main(ParentAttribute.java:10)
+
+无法被初始化，如果去掉abstract="true"配置，可以执行。
+
+
+3 总结
+a) 当声明一个bean为abstract时，即bean工厂不会实例化该bean
+b) 类可以不用声明abstract，xml配置文件声明也表示此类是abstract类
+c) 当类声明时，自然就是abstract类

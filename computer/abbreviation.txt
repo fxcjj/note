@@ -1,4 +1,7 @@
 
+OSGi 开放服务网关协议
+Open Service Gateway Initiative
+
 JSR Java规范提案
 Java Specification Requests
 

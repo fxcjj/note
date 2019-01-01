@@ -197,7 +197,7 @@ return false;
 }
 
 
-victor
+Conclusion
 输入流的老大，一般提供将数据从disk读到memory。
 常用方法
 read 读取字节

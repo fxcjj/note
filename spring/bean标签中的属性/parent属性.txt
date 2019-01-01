@@ -1,0 +1,28 @@
+
+1 定义
+2 验证
+3 总结
+
+
+1 定义
+Attribute : parent
+The name of the parent bean definition. Will use the bean class of the parent if none is specified, 
+but can also override it. In the latter case, the child bean class must be compatible with the 
+parent, i.e. accept the parent's property values and constructor argument values, if any. A child 
+bean definition will inherit constructor argument values, property values and method overrides 
+from the parent, with the option to add new values. If init method, destroy method, factory bean 
+and/or factory method are specified, they will override the corresponding parent settings. The 
+remaining settings will always be taken from the child definition: depends on, autowire mode, 
+scope, lazy init.
+
+Data Type : string
+
+翻译：
+属性：parent
+父bean定义的名称。
+
+
+
+2 验证
+
+3 总结
