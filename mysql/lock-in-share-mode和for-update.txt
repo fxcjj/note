@@ -1,4 +1,4 @@
-
+﻿
 
 
 1. related concept
@@ -116,7 +116,7 @@ select * from tb_test where id = 1 lock in share mode;
 因此，无论在使用select lock in share mode 或者 select for update，都应该尽快释放锁。
 
 
-Refferences
+References
 https://dev.mysql.com/doc/refman/5.6/en/innodb-locking-reads.html
 https://blog.csdn.net/d6619309/article/details/52688250
 https://blog.csdn.net/claram/article/details/54023216

@@ -1,0 +1,78 @@
+
+
+统一配置
+	
+也是一个服务,需要注册到eureka上
+
+新建时选择
+	discovery
+	config server
+	
+注解
+	@EnableConfigServer
+
+在git上新建一个项目用来存放配置文件
+
+把git地址配置到config项目上
+
+order-b.yml //yml格式
+order-b.properties //key/value格式
+
+config server组件
+	server
+	client
+
+
+配置文件格式
+/{name}-{profiles}.yml
+/{label}/{name}-{profiles}.yml
+
+name 服务名
+profiles 环境
+label 分支
+
+localhost:8080/order-test.yml
+localhost:8080/release/order-test.yml
+
+basedir //配置git拉下来的文件路径,注意安全!生产环境常用!
+
+
+order项目pom配置
+<dependency>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-config-client</artifactId>
+</dependency>
+
+要使用下面这个文件,配置先启动
+bootstrap.yml
+
+config可启动多个实例达到高可用,生产环境部署多个即可
+
+
+order先去eruka拿到config,再去拿到配置文件
+在order的bootstrap.yml中如果未配置eureka地址，则默认找localhost:8761。
+
+//注意，访问order-a.yml会合并order.yml文件！！！！
+order.yml
+order-a.yml
+order-b.yml
+
+
+git修改配置文件，调用配置中心的接口/bus-refresh，spring cloud bus会
+发送消息到MQ中，对应服务订阅，更新本地配置文件。
+
+spring cloud bus依赖
+<dependency>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-starter-bus-amqp</artifactId>
+</dependency>
+
+
+github的webhooks
+natapp工具
+
+basedir有时可以删除
+
+
+
+

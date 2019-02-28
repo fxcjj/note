@@ -1,0 +1,73 @@
+
+
+Nginx+Lua
+性能和稳定性
+
+Kong
+Tyk 轻量级，go语言
+
+Spring Cloud Zuul
+	* 路由+过滤器=zuul
+	* 一系列过滤器
+
+过滤器
+	pre filter
+	routing filter
+	post filter //结果的处理或加工
+	error filter //上面三个发生异常时走过个
+	custom filter //自定义filter
+
+zuul:
+	routes:
+		aaa:
+			path: /myProduct/**
+			serviceId: product
+			sensitiveHeaders: //有cookie
+			#简洁写法
+			#product: /myProduct/**
+	#排除某些路由set
+	ignored-patterns:
+		- /**/product/listForOrder
+management:
+	security:
+		enabled: false
+
+		
+ZuulConfig
+	@ConfigurationProperties("zuul")
+	@RefreshScope
+	public ZuulProperties zuulProperties() {
+		new ZuulProperties();
+	}
+或者放在启动类上
+
+前置Pre
+	* 限流
+	* 鉴权
+	* 参数检验
+后置Post
+	* 统计
+	* 日志
+
+Zuul的高可用
+	* 多个Zuul节点注册到Eureka Server
+	* Nginx和Zuul混搭
+
+全局敏感头
+zuul:
+	#所有服务都可传递cookie
+	sensitive-headers:
+
+CorsConfig
+	@Bean
+	public CorsFilter corsFilter() {
+		final UrlBasedCorsConfigurationSource
+	}
+	
+	
+	
+
+
+
+
+

@@ -1,0 +1,41 @@
+
+//指定提示，不写走默认
+HystrixCommand(fallbackMethod = "fallback")
+
+HystrixCommand(commandProperties = {
+	//超时时间配置（很重要），要看业务时间
+	@HystrixProperty(name="timeoutInMilliseconds", value="3000")
+})
+	* 
+
+
+private String fallback() {
+	return "太拥挤了，请稍后再试~";
+}
+
+//默认的服务降级提示
+@DefaultProperties(defaultFallback = "defaultFallback")
+
+
+feign组件使用feign-hystrix
+ * feign.hystrix.enabled=true
+ * jar包（product-client）
+	@FeignClient(name="product", fallback=ProductClient.Fallback.class)
+	
+	@Component
+	static Fallback implements ProductClient {
+		//服务降级后对应的方法处理逻辑
+	}
+ * 在引入此依赖的项目中要在启动类上扫描
+
+
+
+服务降级
+超时
+服务熔断
+
+
+
+
+
+
