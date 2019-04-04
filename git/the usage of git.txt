@@ -194,6 +194,8 @@ git branch
 * dev
   master
 
+note: -a表示查看所有分支
+
 前面有*的表示当前分支
 
 //在dev分支新建c.txt并提交
