@@ -1,0 +1,74 @@
+
+
+
+1. 表结构
+
+学生表
+id	name 	age
+1	张三	18
+2	李四	19
+
+学生选课表
+student_id	course_id	score
+1			1			59
+1			2			60
+2			1			80
+
+
+课程表
+id	name
+1	语文
+2	数学
+
+
+
+
+2. 超键
+id
+id,name
+id,name,age
+name,age //不是超键
+
+3. 候选码
+能够唯一标识一个元组的属性最小集
+id
+
+4. 主键
+id
+
+
+5. 全码
+表
+name, sex, age //三个属性在一起确定一个元组
+
+全码
+a(name,sex,age)
+
+
+
+6. 外码
+user
+id	name	dept_id
+1	张三	1
+2	李四	1
+
+department
+id	name
+1	技术部
+
+dept_id是外码
+
+
+
+
+
+
+
+
+
+
+
+https://blog.csdn.net/sumaliqinghua/article/details/85872446
+
+
+
