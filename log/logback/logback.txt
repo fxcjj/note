@@ -1,0 +1,14 @@
+
+https://www.cnblogs.com/lixuwu/p/5804793.html
+
+https://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy
+
+github
+/sb/sb04
+
+
+@WebFilter(filterName = "MyFilter",
+//当为/*时，启动时因为自动打开index页面，所以会执行一次
+
+urlPatterns = {"/*"},
+servletNames = {"Servlet4"})

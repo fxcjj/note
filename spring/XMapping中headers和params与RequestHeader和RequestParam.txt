@@ -1,0 +1,93 @@
+
+
+
+案例1
+/*
+
+约束必须传递headers中指定的字段，params中指定的字段
+
+无headers报如下错误：
+{
+	"timestamp": 1555407462938,
+	"status": 404,
+	"error": "Not Found",
+	"message": "No message available",
+	"path": "/demo/t1"
+}
+
+无params报如下错误：
+{
+	"timestamp": 1555407560984,
+	"status": 400,
+	"error": "Bad Request",
+	"exception": "org.springframework.web.bind.UnsatisfiedServletRequestParameterException",
+	"message": "Parameter conditions \"name, age\" not met for actual request parameters: name={victor}",
+	"path": "/demo/t1"
+}
+
+ */
+@GetMapping(value = "t1", headers = {"auth"}, params = {"name", "age"})
+public String test1() {
+	return "hello,SpringBoot!";
+}
+
+
+案例2
+
+@PostMapping("t2")
+public String test2(
+		@RequestHeader("Authorization") String authorization,
+		@RequestParam("name") String name,
+		@RequestParam(value = "password", required = false) String password) {
+
+	return "authorization: " + authorization + ", name:" + name + ", password: " + password;
+}
+
+
+1. @RequestHeader
+对应请求headers
+属性value 表示将请求参数中指定的名称绑定到这个参数
+属性required 表示参数是否必须，默认为true
+
+如果前端不传参数则报如下错误：
+{
+    "timestamp": 1554952634954,
+    "status": 400,
+    "error": "Bad Request",
+    "exception": "org.springframework.web.bind.ServletRequestBindingException",
+    "message": "Missing request header 'Authorization' for method parameter of type String",
+    "path": "/demo/t2"
+}
+
+注：在windows环境下，参数名不区分大小写。
+
+2. @RequestParam
+对应请求参数
+属性value 表示将请求参数中指定的名称绑定到这个参数
+属性required 表示参数是否必须，默认为true
+
+如果前端不传参数则报如下错误：
+{
+    "timestamp": 1555405898423,
+    "status": 400,
+    "error": "Bad Request",
+    "exception": "org.springframework.web.bind.MissingServletRequestParameterException",
+    "message": "Required String parameter 'name' is not present",
+    "path": "/demo/t2"
+}
+
+
+参数(key/value)可以放在Query Params或者Body（x-www-form-urlencoded选中）中，后台都可识别。
+
+如果Query Params和Body存在相同的key，则以Query Params, Body的顺序逗号拼接key对应的值。
+
+如
+http://localhost:8080/demo/t2?name=martin
+
+Body
+{
+	name: sahara
+}
+
+
+注：在windows环境下，参数名区分大小写。
