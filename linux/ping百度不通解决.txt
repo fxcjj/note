@@ -1,0 +1,23 @@
+
+问题
+ping www.baidu.com
+Name or service not known
+
+解决
+修改/etc/sysconfig/network-scripts/ifcfg-ens33文件项。
+
+#网络设备开机启动 
+ONBOOT=yes
+
+
+重启网络服务
+systemctl restart network
+
+再次ping即可
+
+
+
+Reference
+https://www.cnblogs.com/sunylat/p/7214753.html
+
+

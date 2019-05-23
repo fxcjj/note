@@ -1,0 +1,2 @@
+# cat /etc/sysconfig/docker-storage
+DOCKER_STORAGE_OPTIONS="--storage-driver overlay2 "

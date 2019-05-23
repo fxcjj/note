@@ -1,0 +1,22 @@
+
+
+Phenomenon
+安装Docker Desktop之后，启动VMware时，报错：
+
+VMware Workstation 与 Device/Credential Guard 不兼容。
+在禁用 Device/Credential Guard 后，可以运行 VMware Workstation。
+有关更多详细信息，请访问http://www.vmware.com/go/turnoff_CG_DG。
+
+
+Cause
+安装Docker Desktop之后，Hyper-v打开了。
+如果要使用虚拟机，要关闭Hyper-v。使用Docker Desktop则要打开，二选一！
+
+
+Solution
+关闭Hyper-v步骤
+开始->Windows系统->控制面板->程序->启用或关闭windows功能，找到Hyper-v，去掉前面勾即可。
+
+
+Reference
+https://blog.minirplus.com/10268/

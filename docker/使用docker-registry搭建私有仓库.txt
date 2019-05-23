@@ -1,0 +1,185 @@
+
+
+1. 环境准备
+2. 搭建私有仓库
+3. 测试
+4. 配置域名访问
+5. 
+
+环境准备
+os: centos 7
+虚拟机1: 192.168.6.131 资源服务器
+
+2. 搭建私有仓库
+
+2.1 从docker hub上下载registry镜像
+docker pull registry
+
+2.2 通过该镜像启动一个容器
+docker run -d -p 5000:5000 -v /opt/data/registry:/var/lib/registry -v /data/config.yml:/etc/docker/registry/config.yml --name registrya registry
+
+-d 守护进程
+-p 宿主机与docker的端口映射，示例：-p 宿主机port:docker的port
+-v 绑定一个卷（即目录），示例：/opt/data/registry:/var/lib/registry
+--name 指定容器名称
+
+注意：
+/tmp/registry是docker容器默认仓库路径（里面存放镜像），如果容器删除，那个容器中的镜像也会丢失，通常会指定本地一个目录挂载到容器内的/tmp/registry下。
+
+进入容器后发现/tmp目录毛也没有
+docker exec -it containerName/containerId sh
+
+ls /tmp
+
+//查看docker内的存放目录
+find / -name registry
+
+/var/lib/registry
+
+可以看到registry挂载目录是在 /var/lib/registry 下
+
+
+3. 测试
+registrya容器启动之后。
+
+3.1 下载busybox，这个镜像小
+docker pull busybox
+
+3.2 创建tag
+docker tag busybox 192.168.6.131:5000/busybox:v1
+
+3.3 push
+docker push 192.168.6.131:5000/busybox:v1
+The push refers to a repository [192.168.6.131:5000/busybox]
+d1156b98822d: Pushed 
+v1: digest: sha256:4fe8827f51a5e11bb83afa8227cbccb402df840d32c6b633b7ad079bc8144100 size: 527
+
+
+4. 从私服上下载
+//删除本地的镜像
+docker rmi 192.168.6.131:5000/busybox:v1
+
+//从私服pull
+docker pull 192.168.6.131:5000/busybox:v1
+
+//查看本地镜像
+docker images
+
+5. 查看镜像
+
+//查看私有仓库上的镜像
+curl -XGET http://192.168.6.131:5000/v2/_catalog
+curl -XGET http://192.168.6.131:5000/v2/${image_name}/tags/list
+
+如：
+curl -XGET http://192.168.6.131:5000/v2/busybox/tags/list
+
+
+5. 遇到的问题
+6.1 push镜像时
+[root@localhost docker]# docker push 192.168.6.131:5000/busybox:v1
+The push refers to a repository [192.168.6.131:5000/busybox]
+Get https://192.168.6.131:5000/v1/_ping: http: server gave HTTP response to HTTPS client
+
+
+尝试1（不行！）
+vi /etc/sysconfig/docker
+other_args="--exec-driver=lxc --selinux-enabled --insecure-registry 192.168.6.131:5000"
+
+结果
+[root@localhost docker]# docker push 192.168.6.131:5000/busybox:v1
+The push refers to a repository [192.168.6.131:5000/busybox]
+Get https://192.168.6.131:5000/v1/_ping: http: server gave HTTP response to HTTPS client
+
+
+尝试2（可以）
+vi /usr/lib/systemd/system/docker.service
+
+找到ExecStart
+
+ExecStart=/usr/bin/dockerd --insecure-registry 192.168.6.131:5000
+
+结果
+[root@localhost docker]# docker push 192.168.6.131:5000/busybox:v1
+The push refers to a repository [192.168.6.131:5000/busybox]
+d1156b98822d: Retrying in 1 second 
+received unexpected HTTP status: 500 Internal Server Error
+
+
+尝试3（不行！）
+vi /etc/containers/registries.conf
+[registries.insecure]
+registries = ['192.168.6.131:5000']
+
+结果
+[root@localhost docker]# docker push 192.168.6.131:5000/busybox:v1
+The push refers to a repository [192.168.6.131:5000/busybox]
+Get https://192.168.6.131:5000/v1/_ping: http: server gave HTTP response to HTTPS client
+
+
+尝试4（可以）
+vi /etc/docker/daemon.json
+
+{
+"insecure-registries":["192.168.6.131:5000"]
+}
+
+结果
+[root@localhost docker]# docker push 192.168.6.131:5000/busybox:v1
+The push refers to a repository [192.168.6.131:5000/busybox]
+d1156b98822d: Retrying in 1 second 
+received unexpected HTTP status: 500 Internal Server Error
+
+
+总结：
+尝试2(docker.service)和尝试4(daemon.json)是配置正确的，还需要再配置selinux
+
+//查看seliunx状态
+//如果SELinux status参数为enabled即为开启状态，也可以用这个命令检查 getenforce
+/usr/sbin/sestatus -v
+
+//关闭SELinux
+a) 临时关闭（不用重启机器）
+//设置SELinux 成为permissive模式
+setenforce 0
+
+//设置SELinux 成为enforcing模式
+setenforce 1 
+
+b) 修改配置文件（需要重启机器）
+vi /etc/selinux/config
+
+将SELINUX=enforcing改为SELINUX=disabled
+
+修改后重启机器
+
+
+如果不关闭selinux，可以修改docker配置
+在/etc/sysconfig/docker中 
+将OPTIONS=’–selinux-enabled –log-driver=journald –signature-verification=false’ 
+改为OPTIONS=’–selinux-enabled=false –log-driver=journald –signature-verification=false’
+
+
+
+只能识别ip不能识别域名
+https://my.oschina.net/u/3746745/blog/1811571
+
+
+Reference
+https://www.cnblogs.com/Tempted/p/7768694.html
+
+
+
+systemctl daemon-reload
+systemctl start docker
+systemctl stop docker
+
+docker images
+
+docker start registrya
+
+docker pull registry-srv:5000/java:8
+docker push registry-srv:5000/busybox:v1
+
+
+http://registry-srv:5000

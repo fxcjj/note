@@ -1,0 +1,18 @@
+
+
+
+[root@localhost ~]# docker swarm join     --token SWMTKN-1-5km16cizyzp38qjavk9azyzcaq906rtdu9nsxb8vp83rsnaeps-ed9shp7k2j3kldwufq26royhh     192.168.6.128:2377
+Error response from daemon: rpc error: code = 14 desc = grpc: the connection is unavailable
+
+
+原因是未关闭防火墙
+systemctl stop firewalld
+
+
+//ansible免密登录
+ssh -p '22' 'root@192.168.6.128'
+
+
+
+https://www.jianshu.com/p/028b40ca4f2a
+https://www.cnblogs.com/drawnkid/p/8487337.html

@@ -1,0 +1,85 @@
+
+
+1. docker中安装mysql
+2. 相关命令
+3. 遇到的问题
+
+
+1. docker中安装mysql
+a) 查看docker镜像
+docker images
+
+b) 从docker hub拉取mysql
+docker pull mysql:5.6
+
+c) 创建、启动容器
+docker run --name mysql5.6 -p 3307:3306 -e MYSQL_ROOT_PASSWORD=root -d mysql:5.6
+
+d) 进入容器的mysql
+
+docker exec -it mysql5.6 /bin/bash
+
+cd /usr/bin
+
+mysql -u root -p
+
+
+2. 相关命令
+//启动/停止/重新启动服务
+systemclt start docker
+systemclt stop docker
+systemclt restart docker
+//查看docker状态
+systemclt status docker
+
+
+//移除已安装镜像
+docker rmi 镜像名:tag/镜像id
+
+//停止/启动/删除容器
+docker stop 容器别名/容器id
+docker start 容器别名/容器id
+docker rm 容器别名/容器id
+
+//查看容器进程
+docker ps
+
+//查看mysql当前版本
+在mysql里查看 select version();
+在mysql里查看 status;
+
+
+3. 遇到的问题
+a) docker中安装mysql8.0版本后，使用navicat连接报如下错
+Client does not support authentication protocol requested by server; consider upgrading MySQL client
+
+原因是mysql版本过高，删除镜像，重新安装。
+
+参考
+https://blog.csdn.net/hello_world_qwp/article/details/81155136
+
+b) Unit is masked
+使用systemctl start firewalld命令开启防火墙的时候，出现Failed to start firewalld.service: Unit is masked的错误。
+原因是firewalld服务被锁定了，解锁即可。
+
+//取消firewalld的锁定
+systemctl unmask firewalld
+解锁后，就可以再开启firewalld防火墙了。
+
+需要锁定firewalld时执行命令
+systemctl mask firewalld
+
+
+Reference
+//docker安装
+https://www.cnblogs.com/yufeng218/p/8370670.html
+//docker命令
+http://www.docker.org.cn/dockerppt/106.html
+
+//安装mysql
+https://www.jianshu.com/p/d9b6bbc7fd77
+https://blog.csdn.net/qq_22211217/article/details/80414227
+
+
+
+

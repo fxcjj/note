@@ -1,0 +1,16 @@
+
+# 系统级配置文件，镜像地址相关配置
+/etc/containers/registries.conf
+
+# docker守护进程的运行方式
+/etc/sysconfig/docker
+
+# docker存储
+/etc/sysconfig/docker-storage
+
+# docker网络
+/etc/sysconfig/docker-network
+
+
+# docker服务配置
+/usr/lib/systemd/system/docker.service

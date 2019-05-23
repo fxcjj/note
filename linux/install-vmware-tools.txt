@@ -1,0 +1,63 @@
+一、what is VMwareTools?
+when you have been installed vmware tools, you can implemnt file shared between localhost and vm, 
+and support free drag not use ctrl+alt any more, and vm screen can full screen.
+ 
+二、how to install vmware tools?
+不同的系统，安装VMware Tools的方式有点不一样。首先介绍一下windows系统如何安装vmware Tools。
+ 
+注意：如果虚拟机没有安装系统，“VMware Tools”是安装不上的，所以安装VMware Tools之前必须保证你已经安装了虚拟系统，并且不同的系统，VMware Tools都是不一样的。
+ 
+1、把你的VMware开机，正常进入虚拟的windows操作系统中。然后选择虚拟机菜单上的“虚拟机->安装 VMware Tools”菜单
+ 
+2、正常情况下，软件会自动加载windows的VMware Tools的镜像文件（windows.iso），并自动启动安装程序。
+ 
+如果你的虚拟机未能自动加载镜像文件，可以打开“虚拟机”-“设置”-“硬件（CD/DVD）”手动加载windows.iso文件，然后回到虚拟机系统，刷新一下，光驱盘符就会显示已经加载的镜像文件了。
+ 
+双击光驱盘即可启动VMware Tools安装程序（也可以打开光驱盘符，运行里面的setup.exe程序）
+ 
+ 
+三、How to install vmware tools for linux(centos)?
+VMwareTools是VMware虚拟机中很重要的一个工具包，有些时候在虚拟机中安装完操作系统会缺少网卡驱动，不能上网，这时只要安装VMwareTools就可以解决问题，下面以CentOS为例，来说明VMwareTools的安装方法
+ 
+1、打开VMware Workstation虚拟机，开启CentOS系统
+虚拟机-安装VMware Tools
+登录CentOS终端命令行
+ 
+2、mkdir /media/mnt #新建挂载目录，有的是自动挂载
+mount /dev/cdrom    /media/mnt/ #挂载VMware Tools安装盘到/media/mnt/目录
+cd /media/mnt/ #进入安装目录
+ll #查看
+cp VMwareTools-8.8.1-528969.tar.gz /home #复制文件到/home目录
+ 
+3、tar zxvf VMwareTools-9.6.2-1688356.tar.gz #解压到当前目录
+cd vmware-tools-distrib #进入文件目录
+./vmware-install.pl #安装
+ 
+一直按enter即可
+ 
+最后，重启服务器，VMwareTools安装成功
+ 
+Note: you must have root permission!!!
+
+
+四、出现的错误
+bash: ./vmware-install.pl: /usr/bin/perl: bad interpreter: 没有那个文件或目录
+
+解决方法
+yum install perl gcc kernel-devel
+
+yum upgrade kernel kernel-devel
+
+如果出现
+
+‍Searching for a valid kernel header path…
+
+The path “” is not valid.
+
+这是因为 kernel-devel版本和相应的kernel版本不一致，可以用uname-r看一下内核版本，再用rpm -q kernel-devel看一下kernel-devel的版本，
+有可能会出现kernel-devel未找到的错误，这里需要自己安装一下，可以执行 sudo yum install kernel-devel，这个时候会安装最新的kernel-devel版本，重启一下，如果再出现问题，
+那么可以执行sudo yum upgrade kernel kernel-devel，把内核和kernel-devel更新到同一个版本，这样应该就不会有问题了。而GCC和PERL的问题提示比较简单。
+
+建议在安装之前还是执行一下安装GCC和PERL，执行发下命令：yum install perl gcc kernel-devel。
+
+
