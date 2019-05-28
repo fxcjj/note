@@ -1,18 +1,89 @@
 
 
 
+1. 小试一把
+
+
+//初始化集群
+[root@localhost ~]# docker swarm init --advertise-addr 192.168.6.128
+Swarm initialized: current node (cw4qzglfzdjgvqd91xpnn7r53) is now a manager.
+
+To add a worker to this swarm, run the following command:
+
+    docker swarm join --token SWMTKN-1-5km16cizyzp38qjavk9azyzcaq906rtdu9nsxb8vp83rsnaeps-ed9shp7k2j3kldwufq26royhh 192.168.6.128:2377
+
+To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
+
+
+//在manager节点上执行，获取成为manager的token
+[root@nodeg ~]# docker swarm join-token manager
+To add a manager to this swarm, run the following command:
+
+    docker swarm join \
+    --token SWMTKN-1-5km16cizyzp38qjavk9azyzcaq906rtdu9nsxb8vp83rsnaeps-c63j9et8kj79ztwrz9xqyg706 \
+    192.168.6.128:2377
+
+在某节点上执行上面语句，该节点就可以作为manager
+
+
+//在manager节点上执行，获取成为worker的token
+[root@nodeg ~]# docker swarm join-token worker
+To add a worker to this swarm, run the following command:
+
+    docker swarm join \
+    --token SWMTKN-1-5km16cizyzp38qjavk9azyzcaq906rtdu9nsxb8vp83rsnaeps-ed9shp7k2j3kldwufq26royhh \
+    192.168.6.128:2377
+
+在某节点上执行上面语句，该节点就可以作为worker
+
+
+//查看Swarm集群node列表
+docker node ls
+
+2. 删除节点
+a) 排空节点上的集群容器
+docker node update --availability drain 
+
+b) 检查容器迁移情况
+//当<ID|HOSTNAME>节点上的容器都迁移完后，停止docker服务
+docker ps
+
+c) 主动离开集群，让节点处于down状态，才能删除，--force参数表示强制离开
+docker swarm leave
+
+d) 删除指定节点
+docker node rm <ID|HOSTNAME>
+
+
+3. 其它命令
+
+
+遇到的问题
+1. 执行docker node ls命令时，报如下错：
+
+Error response from daemon: rpc error: code = 4 desc = context deadline exceeded
+
+//重新初始化即可
+docker swarm init --force-new-cluster
+
+
+参考
+https://www.jianshu.com/p/0bd8650a798d
+
+
+2. 如下
 [root@localhost ~]# docker swarm join     --token SWMTKN-1-5km16cizyzp38qjavk9azyzcaq906rtdu9nsxb8vp83rsnaeps-ed9shp7k2j3kldwufq26royhh     192.168.6.128:2377
 Error response from daemon: rpc error: code = 14 desc = grpc: the connection is unavailable
-
 
 原因是未关闭防火墙
 systemctl stop firewalld
 
 
-//ansible免密登录
-ssh -p '22' 'root@192.168.6.128'
-
-
-
+References
+//Docker Swarm集群部署实践
 https://www.jianshu.com/p/028b40ca4f2a
 https://www.cnblogs.com/drawnkid/p/8487337.html
+
+
+
+

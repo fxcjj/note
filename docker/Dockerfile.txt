@@ -1,0 +1,69 @@
+
+dockerfile忽略大小写
+
+指令根据作用分两种
+1. 构建指令
+2. 设置指令
+
+
+1. FROM
+MAINTAINER
+RUN
+CMD
+ENTRYPOINT
+USER
+EXPOSE
+ENV
+
+ADD和COPY
+https://www.cnblogs.com/sparkdev/p/9573248.html
+https://www.cnblogs.com/51kata/p/5264894.html
+
+VOLUME
+WORKDIR
+
+
+
+
+
+
+
+Dockerfile文件
+
+# 指定基础image
+FROM registry-srv:5000/java:8
+
+# 创建者信息
+MAINTAINER victor
+
+# 安装软件 ？
+RUN yum install -y xxx
+
+# 设置container启动时执行的操作
+三种格式
+
+CMD ["-l"]
+ENTRYPOINT ["/usr/bin/ls"]
+
+
+
+//docker-compose命令
+https://www.cnblogs.com/moxiaoan/p/9299404.html
+
+//查看所有服务
+docker-compose ps --services
+
+//dockerfile
+https://blog.csdn.net/we_shell/article/details/38445979
+
+
+
+
+
+docker-compose
+https://blog.csdn.net/yjk13703623757/article/details/81900988
+
+
+
+
+

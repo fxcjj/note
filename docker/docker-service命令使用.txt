@@ -1,0 +1,8 @@
+
+
+
+[root@nodeg-128 ~]# docker service create --name redisa redis
+unable to pin image redis to digest: manifest unknown: manifest unknown
+h1c31shh51omsgc4qb164bm6c
+
+

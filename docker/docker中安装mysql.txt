@@ -49,6 +49,18 @@ docker ps
 在mysql里查看 status;
 
 
+//使用docker attach containerId命令会卡住
+使用ctrl+z退出，会停止容器，所以退出时要选择ctrl+p+q退出容器。
+
+一般使用以下命令进入容器
+docker exec -it containerId /bin/bash
+这个方法退出容器，容器是不会停止的。
+
+//查看docker映射宿主机端口
+docker port mysql5.6
+3306/tcp -> 0.0.0.0:3307
+
+
 3. 遇到的问题
 a) docker中安装mysql8.0版本后，使用navicat连接报如下错
 Client does not support authentication protocol requested by server; consider upgrading MySQL client
@@ -79,7 +91,4 @@ http://www.docker.org.cn/dockerppt/106.html
 //安装mysql
 https://www.jianshu.com/p/d9b6bbc7fd77
 https://blog.csdn.net/qq_22211217/article/details/80414227
-
-
-
 

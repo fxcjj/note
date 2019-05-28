@@ -3,12 +3,41 @@
 1. 环境准备
 2. 搭建私有仓库
 3. 测试
-4. 配置域名访问
-5. 
+4. docker pull拉取本地私有仓库镜像
+5. 删除私有仓库上的镜像
+6. 配置客户机域名访问
+7. 遇到的问题
 
-环境准备
-os: centos 7
-虚拟机1: 192.168.6.131 资源服务器
+1. 环境准备
+//Linux版本
+[root@localhost ~]# uname -a
+Linux localhost.localdomain 3.10.0-957.12.2.el7.x86_64 #1 SMP Tue May 14 21:24:32 UTC 2019 x86_64 x86_64 x86_64 GNU/Linux
+[root@localhost ~]# cat /etc/redhat-release
+CentOS Linux release 7.6.1810 (Core)
+
+本机ip: 192.168.6.131 用作资源服务器
+
+//docker版本
+[root@localhost ~]# docker version
+Client:
+ Version:         1.13.1
+ API version:     1.26
+ Package version: docker-1.13.1-96.gitb2f74b2.el7.centos.x86_64
+ Go version:      go1.10.3
+ Git commit:      b2f74b2/1.13.1
+ Built:           Wed May  1 14:55:20 2019
+ OS/Arch:         linux/amd64
+
+Server:
+ Version:         1.13.1
+ API version:     1.26 (minimum version 1.12)
+ Package version: docker-1.13.1-96.gitb2f74b2.el7.centos.x86_64
+ Go version:      go1.10.3
+ Git commit:      b2f74b2/1.13.1
+ Built:           Wed May  1 14:55:20 2019
+ OS/Arch:         linux/amd64
+ Experimental:    false
+
 
 2. 搭建私有仓库
 
@@ -19,11 +48,8 @@ docker pull registry
 docker run -d -p 5000:5000 -v /opt/data/registry:/var/lib/registry -v /data/config.yml:/etc/docker/registry/config.yml --name registrya registry
 
 -d 守护进程
--p 宿主机与docker的端口映射，示例：-p 宿主机port:docker的port
+-p 宿主机端口与docker端口映射，示例：-p 500:500
 -v 绑定一个卷（即目录），示例：/opt/data/registry:/var/lib/registry
---name 指定容器名称
-
-注意：
 /tmp/registry是docker容器默认仓库路径（里面存放镜像），如果容器删除，那个容器中的镜像也会丢失，通常会指定本地一个目录挂载到容器内的/tmp/registry下。
 
 进入容器后发现/tmp目录毛也没有
@@ -36,13 +62,15 @@ find / -name registry
 
 /var/lib/registry
 
-可以看到registry挂载目录是在 /var/lib/registry 下
+可以看到registry是在存放在/var/lib/registry下，将本地目录/opt/data/registry挂载到容器的/var/lib/registry目录下。
+
+--name 指定容器名称
 
 
 3. 测试
 registrya容器启动之后。
 
-3.1 下载busybox，这个镜像小
+3.1 下载busybox，这个镜像小点
 docker pull busybox
 
 3.2 创建tag
@@ -55,31 +83,100 @@ d1156b98822d: Pushed
 v1: digest: sha256:4fe8827f51a5e11bb83afa8227cbccb402df840d32c6b633b7ad079bc8144100 size: 527
 
 
-4. 从私服上下载
+4. docker pull拉取本地私有仓库镜像
 //删除本地的镜像
 docker rmi 192.168.6.131:5000/busybox:v1
 
-//从私服pull
+//从私服pull镜像
 docker pull 192.168.6.131:5000/busybox:v1
 
 //查看本地镜像
 docker images
 
-5. 查看镜像
-
 //查看私有仓库上的镜像
 curl -XGET http://192.168.6.131:5000/v2/_catalog
+
+//查看某个镜像的标签列表
 curl -XGET http://192.168.6.131:5000/v2/${image_name}/tags/list
 
 如：
-curl -XGET http://192.168.6.131:5000/v2/busybox/tags/list
+curl -XGET http://192.168.6.131:5000/v2/hello/busybox/tags/list
 
 
-5. 遇到的问题
-6.1 push镜像时
+5. 删除私有仓库上的镜像
+5.1 删除步骤
+
+a) 获取digest值
+curl --header "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+  -I \
+  -X HEAD http://${registry}/v2/${imageName}/manifests/${tag}
+
+${registry} 私有仓库地址
+${imageName} 镜像名称
+${tag} 镜像tag
+
+b) 删除镜像格式
+DELETE <registry>/v2/<name>/manifests/<reference>
+
+name:镜像名称
+reference: 镜像对应sha256值
+
+5.2 案例
+a) 获取digest值
+[root@nodej-131 ~]# curl --header "Accept: application/vnd.docker.distribution.manifest.v2+json" -I -X HEAD 192.168.6.131:5000/v2/hello/busybox/manifests/v2
+HTTP/1.1 200 OK
+Content-Length: 527
+Content-Type: application/vnd.docker.distribution.manifest.v2+json
+Docker-Content-Digest: sha256:4fe8827f51a5e11bb83afa8227cbccb402df840d32c6b633b7ad079bc8144100
+Docker-Distribution-Api-Version: registry/2.0
+Etag: "sha256:4fe8827f51a5e11bb83afa8227cbccb402df840d32c6b633b7ad079bc8144100"
+X-Content-Type-Options: nosniff
+Date: Mon, 27 May 2019 08:17:59 GMT
+
+b) 删除镜像
+[root@nodej-131 ~]# curl -I -X DELETE 192.168.6.131:5000/v2/hello/busybox/manifests/sha256:4fe8827f51a5e11bb83afa8227cbccb402df840d32c6b633b7ad079bc8144100
+HTTP/1.1 202 Accepted
+Docker-Distribution-Api-Version: registry/2.0
+X-Content-Type-Options: nosniff
+Date: Mon, 27 May 2019 08:19:39 GMT
+Content-Length: 0
+
+上面只是删除了tags，镜像还在，执行如下
+
+TODO 
+
+参考
+https://segmentfault.com/q/1010000006127473
+
+
+6. 配置客户机域名访问
+6.1 修改/etc/hosts
+添加一行
+vi /etc/hosts
+192.168.6.131 registry-srv
+
+6.2 修改/etc/docker/daemon.json
+添加registry-srv:5000，这个地址是私有仓库的地址
+{
+"registry-mirrors": ["http://*******.m.daocloud.io","http://registry-srv:5000"],
+"insecure-registries":["registry-srv:5000"]
+}
+
+6.3 修改/etc/sysconfig/selinux
+修改为
+SELINUX=permissive
+
+
+
+7. 遇到的问题
+7.1 push镜像时
 [root@localhost docker]# docker push 192.168.6.131:5000/busybox:v1
 The push refers to a repository [192.168.6.131:5000/busybox]
 Get https://192.168.6.131:5000/v1/_ping: http: server gave HTTP response to HTTPS client
+
+
+原因
+可能是由于客户端采用https，docker registry未采用https服务所致，所以要修改客户端交互方式为http.
 
 
 尝试1（不行！）
@@ -95,8 +192,7 @@ Get https://192.168.6.131:5000/v1/_ping: http: server gave HTTP response to HTTP
 尝试2（可以）
 vi /usr/lib/systemd/system/docker.service
 
-找到ExecStart
-
+找到ExecStar，在后面添加启动参数
 ExecStart=/usr/bin/dockerd --insecure-registry 192.168.6.131:5000
 
 结果
@@ -117,6 +213,7 @@ The push refers to a repository [192.168.6.131:5000/busybox]
 Get https://192.168.6.131:5000/v1/_ping: http: server gave HTTP response to HTTPS client
 
 
+
 尝试4（可以）
 vi /etc/docker/daemon.json
 
@@ -132,7 +229,8 @@ received unexpected HTTP status: 500 Internal Server Error
 
 
 总结：
-尝试2(docker.service)和尝试4(daemon.json)是配置正确的，还需要再配置selinux
+尝试2(docker.service)和尝试4(daemon.json)是配置正确的，出现500 Internal Server Error这个错误，是因为还需要配置selinux。
+
 
 //查看seliunx状态
 //如果SELinux status参数为enabled即为开启状态，也可以用这个命令检查 getenforce
@@ -160,26 +258,18 @@ vi /etc/selinux/config
 改为OPTIONS=’–selinux-enabled=false –log-driver=journald –signature-verification=false’
 
 
-
-只能识别ip不能识别域名
-https://my.oschina.net/u/3746745/blog/1811571
+Conclusion
+a) docker hub是公有仓库，一般不用，DTR（Docker Trusted Repositoy）
+b) 搭建私有仓库使用registry镜像
+c) docker registry交互默认使用的是http，客户端使用https，所以要配置客户端为http
+d) push镜像到私有仓库
+e) daemon.json和docker.service为docker启动时参数配置文件
+f) 配置客户机域名访问，需要修改hosts,daemon.json,selinux
+g) firewalld需要关闭
 
 
 Reference
+//搭建私有仓库
 https://www.cnblogs.com/Tempted/p/7768694.html
-
-
-
-systemctl daemon-reload
-systemctl start docker
-systemctl stop docker
-
-docker images
-
-docker start registrya
-
-docker pull registry-srv:5000/java:8
-docker push registry-srv:5000/busybox:v1
-
-
-http://registry-srv:5000
+//pull拉取本地私有仓库镜像
+https://my.oschina.net/u/3746745/blog/1811571

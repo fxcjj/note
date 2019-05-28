@@ -1,0 +1,52 @@
+
+
+
+
+
+
+
+
+192.168.6.128
+swarm manager
+docker-compose
+
+192.168.6.129
+swarm worker
+
+192.168.6.130
+swarm worker
+
+
+资源服务器
+192.168.6.131
+ansible
+docker private repository
+container
+	mysql5.6
+
+
+
+
+
+
+
+
+
+
+
+
+201
+/root/docker/service
+
+
+
+
+//ansible免密登录
+ssh -p '22' 'root@192.168.6.128'
+
+
+Reference
+https://www.cnblogs.com/zuxing/articles/9329152.html
+
+//docker搭建gitlab,重置密码
+https://blog.csdn.net/goodlook0123/article/details/82383586

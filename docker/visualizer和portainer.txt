@@ -1,0 +1,20 @@
+
+
+
+
+
+
+//Docker集群图形化显示工具 Visualizer的安装及注意事项
+https://blog.csdn.net/bbwangj/article/details/81080871
+
+
+//搭建Portainer可视化界面
+https://blog.csdn.net/u011781521/article/details/80469804
+
+
+docker run -d -p 9000:9000 --restart=always -v /var/run/docker.sock:/var/run/docker.sock --name portainer-test portainer/portainer
+
+
+
+systemctl daemon-reload
+systemctl restart docker

@@ -1,0 +1,60 @@
+
+
+1. 添加容器启动配置参数
+2. 修改映射端口
+3. 修改挂载卷
+
+
+1. 添加容器启动配置参数
+
+比如
+添加--restart=always
+
+方法1
+Docker命令修改
+docker update --restart=always <CONTAINER NAME>
+
+
+方法2
+修改容器配置文件，先停止容器
+vi /var/lib/docker/containers/<CONTAINER ID>/hostconfig.json
+
+找到
+RestartPolicy
+
+修改为
+"RestartPolicy":{"Name":"always","MaximumRetryCount":0}
+
+保存后，重启docker
+
+
+2. 修改映射端口
+方法1
+删除docker容器
+docker stop <CONTAINER NAME>
+docker rm <CONTAINER NAME>
+
+重新创建
+docker run -d  -p host_port:container_port
+
+
+方法2
+修改容器配置文件，先停止容器
+vi /var/lib/docker/containers/<CONTAINER ID>/hostconfig.json
+
+找到
+"PortBindings":{"22/tcp":[{"HostIp":"","HostPort":"222"}],"443/tcp":[{"HostIp":"","HostPort":"8443"}],"80/tcp":[{"HostIp":"","HostPort":"8090"}]}
+
+保存后，重启docker
+systemctl restart docker
+
+注意：config.v2.json文件的NetworkSettings/Ports要对应起来。
+
+
+3. 修改挂载卷
+vi /var/lib/docker/containers/<CONTAINER ID>/hostconfig.json
+修改Binds项
+
+vi config.v2.json
+修改MountPoints的Source项
+

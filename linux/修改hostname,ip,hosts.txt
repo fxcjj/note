@@ -1,0 +1,40 @@
+
+
+使用VM搭建多节点场景时，需要修改hostname,ip,host文件
+
+1. 修改hostname
+a) 查看hostname
+hostname
+
+b) 修改hostname
+hostnamectl set-hostname <主机名>
+
+c) 重启
+reboot
+
+
+2. 修改ip地址
+a) 查看ip
+ifconfig
+
+b) 修改ip
+vi /etc/sysconfig/network-scripts/ifcfg-ens33
+
+IPADDR=192.168.6.128
+ONBOOT=yes
+
+c) 重启
+reboot
+
+
+3. 修改hosts文件
+a) vi /etc/hosts
+在最后一行加上修改后的IP地址及对应的主机名
+
+比如
+192.168.6.222 node2 
+
+b) 重启
+reboot
+
+以上三个可以修改完成后，一起重启。

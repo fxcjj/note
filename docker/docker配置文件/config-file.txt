@@ -14,3 +14,11 @@
 
 # docker服务配置
 /usr/lib/systemd/system/docker.service
+
+修改此文件需要
+systemctl daemon-reload
+
+
+
+# docker服务配置
+/etc/docker/daemon.json
