@@ -12,6 +12,7 @@ $ cd ~/.ssh
 //生成key，要指定对应的邮箱
 $ ssh-keygen -t rsa -C "youremail@xx.com"
 
+
 //设置密钥对名称
 Enter file in which to save the key (/C:/Users/Victor/.ssh/id_rsa): id_rsa_pica
 
@@ -38,7 +39,7 @@ c) 使用Git GUI生成密钥，密钥会自动被加进ssh-agent中
 Host github.com
 # HostName指定服务器ip地址或机器名
 HostName github.com
-# User连接服务器的用户名
+# User登录名（如gitlab的username）
 User 643117227@qq.com
 # IdentityFile 密钥文件的具体路径
 IdentityFile C:/Users/Victor/.ssh/id_rsa
@@ -48,6 +49,15 @@ Host 60.205.115.132
 HostName 60.205.115.132
 User lihua.luo@picahealth.com
 IdentityFile C:/Users/Victor/.ssh/id_rsa_pica
+
+
+# 配置文件参数
+# Host : Host可以看作是一个你要识别的模式，对识别的模式，进行配置对应的的主机名和ssh文件（可以直接填写ip地址）
+# HostName : 要登录主机的主机名（建议与Host一致）
+# User : 登录名（如gitlab的username）
+# IdentityFile : 指明上面User对应的identityFile路径
+# Port: 端口号（如果不是默认22号端口则需要指定）
+
 
 
 4 添加新密钥到Github
@@ -62,9 +72,10 @@ Hi fxcjj! You've successfully authenticated, but GitHub does not provide shell a
 6 设置用户名和邮箱
 6.1 设置全局用户名和邮箱
 全局配置在~/.gitconfig文件中，可直接修改此文件或者输入命令
-git config --global user.name //用户名
-git config --global user.email //邮箱地址
+git config --global user.name "Your name"
+git config --global user.email your_email@gmail.com
 
+   
 //取消全局配置
 git config --global --unset user.name
 git config --global --unset user.email
@@ -107,3 +118,5 @@ Conclusion
 6 当提交时需要设置库的name和email
 
 
+Reference
+https://blog.csdn.net/u011410529/article/details/78401356

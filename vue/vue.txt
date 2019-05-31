@@ -1,0 +1,212 @@
+
+1. vue.js是什么？
+
+一套构建用户界面的渐进式框架
+
+自底向上增量开发
+
+只关注视图层，易学，易整合现有项目
+单文件组件
+vue生态系统支持的库
+
+
+2. vue.js到底是什么？
+一个用于搭建类似于网页知乎这种表单繁多，且内容需要
+根据用户的操作修改的网页版应用。
+
+
+3. 单页应用程序（SPA）
+一个页面就是应用，一般交互处理非常多，页面内容根据用户操作动态变化。
+
+
+4. 为什么用vue.js而不用jQuery？
+传统html+css+javascript
+
+html表示基本的视图结构
+css起到化妆的作用
+javascript起到交互作用
+
+vue对应css+javascript，即视图层
+
+dom元素组合嵌套，后面改需求，非常麻烦，性能也有影响。
+
+
+5. vue.js为什么能让基于网页的前端应用程序开发起来这么方便？
+声明式
+响应式的数据绑定
+组件化的开发
+使用Virtual DOM？
+
+
+6. 响应式的数据绑定
+自动对页面中某些数据的变化做出响应
+观察以下代码：
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>vue.js测试 - 代码之美专栏</title>
+	<script src="https://unpkg.com/vue/dist/vue.js"></script>
+</head>
+<body>
+	<div id="app">
+		<input type="text" name="" value="" placeholder="在这里输入文字，下面会跟着变化" v-model="message">
+		<hr>
+		<p>{{ message }}</p>
+	</div>
+	<script type="text/javascript">
+		var app = new Vue({
+		  el: '#app',
+		  data: {
+		    message: 'Hello Vue!'
+		  }
+		})
+	</script>
+</body>
+</html>
+
+结合标题来说，vue.js会自动响应数据的变化情况，并且根据用户在代码中预先写好的绑定关系，对所有
+绑定在一起的数据和视图内容都进行修改。而这种绑定关系，在图上是以input标签的v-model属性来声明的，
+因此你在别的地方可能也会看到有人粗略的称vue.js为声明式渲染的模板引擎。
+
+
+7. 组件化开发
+面向对象编程，将各种模块打包成类或把一个大的业务模块拆分成更多更小的几个类。
+vue.js通过组件，把一个单页应用中的各种模块拆分到一个一个单独的组件中，先在父级应用中写好各种组件标签（占坑），
+并且在组件标签中写好要传入组件的参数（就像给函数传入参数一样，这个参数叫做组件的属性），然后再分别写好各种
+组件的实现（填坑），然后整个应用就算做完了。
+
+
+8. vitual dom
+浏览器本身处理dom有性能瓶颈的，频繁操作，不停渲染新的dom树，导致页面看起来非常卡顿。
+
+vitual dom是虚拟dom，预先通过javascript进行各种计算，把最终的dom操作计算出来并优化，
+由于这个dom操作属于预处理操作，并没有真空的操作dom，所以叫做虚拟dom。最后在计算完毕才真正
+将dom操作提交，将dom操作变化反映到dom树上。
+
+褒贬不一
+
+
+9. 到底该怎么用vue.js做单页应用开发？
+
+先看一遍官方文件的基础部分
+https://cn.vuejs.org/v2/guide/index.html
+
+然后学习ECMAScript6, Webpack, NPM以及vue-cli的基本用法，最好对node.js也要有所了解。
+
+各种实战视频、文章、开源代码
+
+
+10. ECMAScript是啥？
+
+ECMAScript是ECMA针对JavaScript规定的标准
+
+不用JavaScript原因有二：
+一是因为Netscape的商标
+二是想体现这门语言的制定者是ECMA，不是Netscape
+
+因此，ECMAScript和JavaScript的关系是，前者是后者的规格，
+后者是前者的一种实现（另外的ECMAScript方言还有JScript和ActionScript）。
+日常场合，这两个词是可以互换的。
+
+ECMAScript6就是新一代的JavaScript语言，简称ES6
+
+
+11. Webpack是啥？
+一个前端打包和构建工具。
+之前是手写html,css,javascript，并且通过link标签将css引入，src属性引入js脚本，会对这个感到陌生。
+
+
+12. 为什么要用Webpack
+一个前端打包和构建工具。
+单页应用中会用到很多素材，如果每一个素材都通过src或者link来引入，那么请求一个页面，
+可能浏览器就要发起十多次请求，而这些资源都是一些脚本或者很小的图片，资源本身很小，下载连1秒都不需要，
+但是由于http是应用层协议，它的下层是tcp这个运输层协议，tcp的握手和挥手过程消耗的时间可能比下载资源
+本身还要长，所以需要把这些小文件全部打包成一个文件，只有一次TCP握手和挥手，就把多个资源下载下来了，
+并且多个资源由于都是共享一个http请求，所以head等部分也是共享的，相当于形成了规模效应，
+让网页展现更快，用户体验更好。
+
+老版本broswer不支持es6，需要webpack的loader自动载入一个转换器将我们写的es6转换成浏览器能支持的老版本javascript语言，
+这个转换器叫做babel，还有sass, less, stylus之类的css预处理器，可在loader中编写特定的规则来实现自动将这些css预处理
+语言转换成普通浏览器能识别的css代码。
+
+单文件组件开发，也是通过webpack将单文件组件中的模板、样式以及js转换到主页面中
+
+webpack不止这点功能，可以通过安装各种插件来扩展，比如说热加载技术，就是解放键盘的F5键。
+当我们修改代码，按ctrl+s保存之后，页面会自动刷新变化，不用手动F5刷新页面。
+还有一些插件自动添加注释，自动给CSS代码加上一些浏览器内核对css3兼容前缀，如webkit-xxx之类的。
+
+
+13. NPM和Node.js是什么？什么关系？
+js局限于浏览器赋予它的权限。
+比如说读写本地系统文件这种操作，一般情况下运行在浏览器中的js代码是没有这个操作权限的。
+如果想使用js写出一些能够运行在操作系统上的，能够具有像PHP，java之类的编程语言具有的功能的程序怎么办？
+Node.js就解决了这个问题。
+Node.js是一个服务端的JavaScript运行环境，通过Node.js可以实现用JavaScript写独立程序。
+webpack就是node.js写的。
+
+npm是一个node.js的包管理器。
+
+引入包，直接使用下面命令
+npm install xxx包名称
+
+如：下载vue及其依赖包
+npm install vue
+
+Webpack可以安装各种插件来扩展功能，其实也是通过这种方式扩展。
+
+npm和Centos下的yum、Ubuntu下的apt-get差不多
+
+
+14. vue-cli又是啥？
+一个脚手架工具。
+说白了就是一个自动帮你生成好项目目录，配置好Webpack，以及各种依赖包的工具，它可以通过
+
+npm install vue-cli -g
+
+的方式安装，后面的-g表示全局安装的意思，意味着你可以打开命令行之后直接通过vue命令调用它。
+
+
+15. 我该不该学vus.js？
+中文资料多
+社区活跃
+
+16. vue.js怎么火起来的？
+vue.js+webpack这个组合开始逐渐稳定下来，有很多资料。
+
+对比它的竞争对手AngularJS，新旧版本项目无法平滑升级，变革太大让用户感觉不安稳。
+
+其它对手
+react
+jsx
+
+17. vuex和vue-route是什么？
+Vuex是vue的一个状态管理器。用于集中管理一个单页应用程序中的各种状态。
+Vue-route是vue的一个前端路由器，这个路由器不是我们上网用的路由器，而是一个管理请求入口和页面映射关系的东西。
+它可以实现对页面局部进行无刷新的替换，让用户感觉就像切换到了网页一样。
+要讲清楚这两个东西，又得花费大量篇幅，所以这里只是简单提一下，先学好vue.js本身才是最重要的。
+
+
+18. vue-resource和axios是什么？
+在传统开发中我们都是通过xmlhttprequest手动操作，或者通过jquery的ajax方法来进行数据的提交获取。
+
+vue.js本身没有ajax操作库，所以我们要通过vue-resource和axios来进行ajax操作，而因为种种原因，
+现在vue.js 2.0已经将axios作为官方推荐的ajax库了。
+
+
+19. 学vue.js2.0还是1.0呢？
+推荐学vue.js 2.0
+
+
+20. 写vue.js用什么开发工具和电脑呢？
+vue.js的组件文件本质上还是普通的代码文件，所以各种编辑器配合一些语法检查插件就足够了。
+
+sublime text 3
+webstorm
+
+
+
+References
+https://blog.csdn.net/liang377122210/article/details/71545459
+

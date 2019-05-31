@@ -1,0 +1,11 @@
+
+
+# 查看系统启动时会被启用的服务列表
+systemctl list-unit-files | grep enabled
+
+# 列出系统所有服务
+systemctl list-units --all --type=service
+
+# 列出正在运行的服务
+systemctl | grep running 
+

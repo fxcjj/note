@@ -2,8 +2,12 @@
 
 
 案例1
-/*
+@GetMapping(value = "t1", headers = {"auth"}, params = {"name", "age"})
+public String test1() {
+	return "hello,SpringBoot!";
+}
 
+说明：
 约束必须传递headers中指定的字段，params中指定的字段
 
 无headers报如下错误：
@@ -25,15 +29,8 @@
 	"path": "/demo/t1"
 }
 
- */
-@GetMapping(value = "t1", headers = {"auth"}, params = {"name", "age"})
-public String test1() {
-	return "hello,SpringBoot!";
-}
-
 
 案例2
-
 @PostMapping("t2")
 public String test2(
 		@RequestHeader("Authorization") String authorization,

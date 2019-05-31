@@ -1,0 +1,20 @@
+<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<div id="app-3">
+  <p v-if="seen">现在你看到我了</p>
+</div>
+
+
+<!--
+<div v-show="false">当v-show为true时，我显示喽</div>
+-->
+<script>
+	var app = new Vue({
+	  el: '#app-3',
+	  data: {
+		seen: false
+	  }
+	  
+	})
+</script>
