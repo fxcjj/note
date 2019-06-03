@@ -1,0 +1,37 @@
+<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<div id="example">
+  <p>message: "{{ message }}"</p>
+  <p>Reversed message: "{{ reversedMessage() }}"</p>
+    <p>Now: "{{ now() }}"</p>
+</div>
+
+<script>
+var vm = new Vue({
+  el: '#example',
+  data: {
+    message: 'Hello'
+  },
+  /*
+  computed: {
+    // 计算属性的 getter
+    reversedMessage: function () {
+      // `this` 指向 vm 实例
+      return this.message.split('').reverse().join('')
+    }
+  }
+  */
+  methods: {
+	reversedMessage: function() {
+		return this.message.split('').reverse().join('')
+	},
+	now: function() {
+		return Date.now()
+	}
+  }
+})
+console.log(vm.reversedMessage) // => 'olleH'
+vm.message = 'Goodbye'
+console.log(vm.reversedMessage) // => 'eybdooG'
+</script>

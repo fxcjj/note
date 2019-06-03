@@ -1,0 +1,40 @@
+
+
+v-once
+执行一次性地插值
+
+原始html
+v-html指令
+
+javascript表达式
+模板表达式都被放在沙盒中，只能访问全局变量的一个白名单，如 Math 和 Date 。
+你不应该在模板表达式中试图访问用户定义的全局变量
+
+
+动态参数
+2.6.0新增
+使用[attributeName]可以动态绑定字符串的值
+如
+v-bind:href
+v-on:focus
+
+空格和引号，回避大小写！
+
+修饰符
+<form v-on:submit.prevent="onSubmit">...</form>
+
+缩写
+v-bind 缩写
+<!-- 完整语法 -->
+<a v-bind:href="url">...</a>
+
+<!-- 缩写 -->
+<a :href="url">...</a>
+
+v-on 缩写
+<!-- 完整语法 -->
+<a v-on:click="doSomething">...</a>
+
+<!-- 缩写 -->
+<a @click="doSomething">...</a>
+

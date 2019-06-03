@@ -1,0 +1,30 @@
+<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+<div id="app">
+    <div v-if="type === 'A'">
+      A
+    </div>
+    <div v-else-if="type === 'B'">
+      B
+    </div>
+    <div v-else-if="type === 'C'">
+      C
+    </div>
+    <div v-else>
+      Not A/B/C
+    </div>
+</div>
+<script>
+var vm = new Vue({
+	el: '#app',
+	data: {
+		type: 'C'
+	}
+})
+</script>
+
+<!--
+也可以使用 v-show 指令来根据条件展示元素
+-->

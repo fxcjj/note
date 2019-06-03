@@ -1,0 +1,30 @@
+<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<div id="app">
+	<button v-on:click="a = 2">Change it</button>
+</div>
+<script>
+
+// 数据对象
+var data = {
+	a: 1
+}
+
+//vue实例
+var vm = new Vue({
+	el: '#app',
+	data: data
+})
+
+//vue的实例属性和方法,区别$
+alert(vm.$data === data) //true
+alert(vm.$el == document.getElementById('app')) //true
+
+//$watch是一个实例方法
+vm.$watch('a', function(newValue, oldValue) {
+	//这个回调将在vm.a改变后调用
+	alert(newValue+", "+ oldValue);
+})
+
+</script>

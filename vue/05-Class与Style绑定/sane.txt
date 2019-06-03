@@ -1,0 +1,66 @@
+
+v-bind:class可以传以下
+1. v-bind:class='{active: isActive}'
+data: {
+	active: true
+}
+
+定义在data中
+data: {
+  classObject: {
+    active: true,
+    'text-danger': false
+  }
+}
+
+2. 计算属性
+<div v-bind:class="classObject"></div>
+data: {
+  isActive: true,
+  error: null
+},
+computed: {
+  classObject: function () {
+    return {
+      active: this.isActive && !this.error,
+      'text-danger': this.error && this.error.type === 'fatal'
+    }
+  }
+}
+
+3. 数组语法
+<div v-bind:class="[activeClass, errorClass]"></div>
+data: {
+  activeClass: 'active',
+  errorClass: 'text-danger'
+}
+
+三元表达式
+在数组语法中也可以使用对象语法
+
+
+用在组件上
+Vue.component('my-component', {
+  template: '<p class="foo bar">Hi</p>'
+})
+
+原有的class不会覆盖，在使用时添加一些class时，将合并在一起
+
+<my-component class="baz boo"></my-component>
+
+HTML 将被渲染为:
+
+<p class="foo bar baz boo">Hi</p>
+对于带数据绑定 class 也同样适用：
+
+<my-component v-bind:class="{ active: isActive }"></my-component>
+当 isActive 为 truthy[1] 时，HTML 将被渲染成为：
+
+<p class="foo bar active">Hi</p>
+
+
+
+
+
+
+

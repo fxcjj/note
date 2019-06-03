@@ -1,0 +1,25 @@
+<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<div id="app">
+	<p>{{ foo }}</p>
+	<!-- 这里的foo不会更新！ -->
+	<button v-on:click="foo = 'baz'">Change it</button>
+</div>
+<script>
+
+// 数据对象
+var obj = {
+	foo: 'bar'
+}
+
+//阻止修改现有的属性
+Object.freeze(obj)
+
+//vue实例
+var vm = new Vue({
+	el: '#app',
+	data: obj
+})
+
+</script>
