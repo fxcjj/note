@@ -1,0 +1,22 @@
+<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+<ul id="v-for-filter" class="de mo">
+  <li v-for="n in even(numbers)">{{ n }}</li>
+</ul>
+<script>
+var vm = new Vue({
+	el: '#v-for-filter',
+	data: {
+	  numbers: [ 1, 2, 3, 4, 5 ]
+	},
+	computed: {
+	  evenNumbers: function () {
+		return this.numbers.filter(function (number) {
+		  return number % 2 === 0
+		})
+	  }
+	}
+})
+</script>

@@ -1,0 +1,29 @@
+<script>
+    var arr = ['b','a','c'];
+    console.log(arr.valueOf());// valueOf 返回3 ['b','a','c']
+
+    console.log(arr.sort());// 排序，按照字符编码 返回 [a,b,c]
+
+    console.log(arr.reverse());//倒序方法  返回 [c,a,b]
+
+    arr.splice(1,0,'newitem')// 插入
+    console.log(arr);  // 返回["c", "newitem", "b", "a"]
+
+    arr.splice(1,1,'olditem')//替换
+    console.log(arr) // 返回 ["c", "olditem", "b", "a"]
+
+    console.log(arr.unshift('haha')) //头部添加‘haha’ 返回长度 5
+
+    console.log(arr.push('heihei'));//尾部添加‘heihei’返回长度 6
+
+    console.log(arr.shift()) //头部删除  返回haha
+
+    console.log(arr.pop()) //尾部删除  返回heihei
+
+    var arr1 = [1,2,3,4]
+    console.log(arr.concat(arr1)) // 数组合并  返回["c", "olditem", "b", "a", 1, 2, 3, 4]
+
+    console.log(arr.slice(1,2)) //数组截取 返回 ["olditem"]
+
+    console.log(arr[0]) //返回 数组的指定位置的元素
+</script>

@@ -1,0 +1,26 @@
+
+由于 JavaScript 的限制，Vue 不能检测以下数组的变动：
+当你利用索引直接设置一个数组项时，例如：vm.items[indexOfItem] = newValue
+当你修改数组的长度时，例如：vm.items.length = newLength
+
+
+Vue.set
+
+vm.$set
+
+
+var vm = new Vue({
+  data: {
+    userProfile: {
+      name: 'Anika'
+    }
+  }
+})
+
+
+//为对象添加属性
+vm.userProfile = Object.assign({}, vm.userProfile, {
+  age: 27,
+  favoriteColor: 'Vue Green'
+})
+

@@ -1,0 +1,40 @@
+<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<div id="ccc">
+	<div :style="{fontSize: postFontSize + 'em'}">
+		<blog-post
+			v-for="post in posts"
+			v-bind:key="post.id"
+			v-bind:post="post"
+			v-on:enlarge-text="postFontSize += 0.1"
+		></blog-post>
+	</div>
+</div>
+
+<script>
+Vue.component('blog-post', {
+	props: ['post'],
+	template: '\
+		<div class="blog-post">\
+			<h3>{{ post.title }}</h3>\
+			<button v-on:click="$emit(\'enlarge-text\')">Enlarge text</button>\
+			<div v-html="post.content"></div>\
+		</div>\
+	'
+})
+
+new Vue({
+	el: '#ccc',
+	data: {
+		posts: [
+			{ id: 1, title: 'title1', content: 'content1' },
+			{ id: 2, title: 'title2', content: 'content2' },
+			{ id: 3, title: 'title3', content: 'content3' }
+		],
+		postFontSize: 1
+	}
+	
+})
+
+</script>

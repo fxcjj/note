@@ -1,0 +1,21 @@
+<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+<ul id="example-2">
+  <li v-for="(item, index) in items">
+    {{ parentMessage }} - {{ index }} - {{ item.message }}
+  </li>
+</ul>
+<script>
+var vm = new Vue({
+	el: '#example-2',
+	data: {
+		parentMessage: 'Parent',
+		items: [
+			{message: 'Foo'},
+			{message: 'Bar'}
+		]
+	}
+})
+</script>

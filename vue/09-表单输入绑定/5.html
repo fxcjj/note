@@ -1,0 +1,21 @@
+<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<div id="example-4">
+<input
+  type="checkbox"
+  v-model="toggle"
+  true-value="yes"
+  false-value="no"
+>
+<span>{{ toggle }}</span>
+</div>
+
+<script>
+new Vue({
+  el: '#example-4',
+  data: {
+    toggle: 'default'
+  }
+})
+</script>

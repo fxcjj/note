@@ -1,0 +1,16 @@
+<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<div id="a">
+<input type="checkbox" id="checkbox" v-model="checked">
+<label for="checkbox">{{ checked }}</label>
+</div>
+
+<script>
+new Vue({
+  el: '#a',
+  data: {
+	checked: false
+  }
+})
+</script>

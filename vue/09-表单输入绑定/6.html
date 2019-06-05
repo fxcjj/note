@@ -1,0 +1,25 @@
+<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<div id="example-4">
+<input
+  type="radio"
+  v-model="pick"
+  v-bind:value="a">
+<span>{{ pick }}</span>
+</div>
+
+<script>
+var vm = new Vue({
+  el: '#example-4',
+  data: {
+    pick: 'default',
+	a: 'v'
+  }
+})
+
+//当选中时，取vm.a的值赋给pick
+//即，vm.pick === vm.a
+
+
+</script>
