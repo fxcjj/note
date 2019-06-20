@@ -1,0 +1,17 @@
+<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<div id="ccc">
+	<tagname01></tagname01>
+</div>
+
+<script>
+Vue.component('tagname01', {
+  template: '<div>I am global component</div>'
+})
+
+new Vue({
+	el: '#ccc'
+})
+
+</script>

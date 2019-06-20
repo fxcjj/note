@@ -1,0 +1,42 @@
+
+组件可以扩展HTML元素，封装可重用的HTML代码，我们可以将组件看作自定义的HTML元素
+
+1. 注册全局组件（所有实例都能使用全局组件）
+Vue.component作用是告诉Vue在处理template时，将替换为相应的组件
+* 它们在注册之后可以用在任何新建的Vue根实例（new Vue）的模板中
+* 在所有子组件中也是如此，也就是说全局注册组件在各自内部也都可以相互使用
+
+Vue.component(tagname, options)
+
+tagname为组件名，options 为配置选项。注册后，我们可以使用以下方式来调用组件：<tagname></tagname>
+
+<div id="app">
+  <tagname01></tagname01>
+</div>
+<script>
+Vue.component('tagname01',{
+  template: '<div>我是全局组件</div>' 
+})
+new Vue({
+    el:'#app'
+})
+</script>
+
+2. 注册局部组件（局部注册的组件在其子组件中不可用）
+全局注册往往是不够理想的。
+比如，如果你使用一个像 webpack 这样的构建系统，全局注册所有的组件意味着即便你已经不再使用一个组件了，
+它仍然会被包含在你最终的构建结果中。这造成了用户下载的 JavaScript 的无谓的增加
+<div id="app">
+    <tagname02></tagname02>
+</div>
+<script>
+var Child = {
+    template: '我是局部组件'
+}
+var app = new Vue({
+    el: '#app',
+    components:{
+        'tagname02': Child  //将tagname02组件注册到Vue实例下
+    }
+})
+</script>

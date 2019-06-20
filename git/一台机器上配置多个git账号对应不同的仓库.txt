@@ -45,9 +45,9 @@ User 643117227@qq.com
 IdentityFile C:/Users/Victor/.ssh/id_rsa
 
 # 公司gitlab配置
-Host 60.205.115.132
-HostName 60.205.115.132
-User lihua.luo@picahealth.com
+Host 61.206.115.152
+HostName 61.206.115.152
+User lihualuo@pica.com
 IdentityFile C:/Users/Victor/.ssh/id_rsa_pica
 
 
@@ -96,7 +96,7 @@ rebase.autosquash=true
 credential.helper=manager
 user.signingkey=
 user.name=lihua.luo
-user.email=lihua.luo@picahealth.com
+user.email=lihualuo@pica.com
 
 当取消全局配置后，user.name,user.email消失。
 
