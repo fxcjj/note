@@ -76,7 +76,7 @@ d) 代码块同步是使用monitorenter和monitorexit指令实现的，而方法
 一起来聊一聊在Intel处理器和Java里是如何实现原子操作的。
 
 2.3.1 术语定义
-缓存行			Cache lin
+缓存行			Cache line
 比较并交换		Compare and swap
 CPU流水线		CPU pipeline
 内存顺序冲突	Memory order violation

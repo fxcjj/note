@@ -1,4 +1,20 @@
 
+
+IEC 国际电工委员会
+International Electro technical Commission
+
+LF 换行
+Line Feed
+
+CR 回车
+Carriage Return
+
+FF 换页
+Form Feed
+
+ANSI 美国国家标准学会
+American National Standard Institute
+
 OSGi 开放服务网关协议
 Open Service Gateway Initiative
 
@@ -243,7 +259,20 @@ Code Generation Library
 ALU 算术逻辑单元/运算器
 Arithmetic Logical Unit
 
+JMX
+Java Management Extensions
 
+PKCS 公钥密码标准
+Public Key Cryptography Standards
 
+URI 统一资源标识符
+Universal/Uniform Resource Identifier
 
+URL 统一资源定位符
+Universal/Uniform Resource Locator
 
+MD5 信息-摘要算法5
+Message-Digest Algorithm 5
+
+PEM
+Privacy-Enhanced Mail
