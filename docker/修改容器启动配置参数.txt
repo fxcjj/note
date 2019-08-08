@@ -1,4 +1,4 @@
-
+﻿
 
 1. 添加容器启动配置参数
 2. 修改映射端口
@@ -13,7 +13,6 @@
 方法1
 Docker命令修改
 docker update --restart=always <CONTAINER NAME>
-
 
 方法2
 修改容器配置文件，先停止容器

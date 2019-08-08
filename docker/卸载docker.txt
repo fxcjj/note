@@ -1,0 +1,48 @@
+
+
+卸载方式1
+1. 查看已安装的docker
+方式1
+[root@nodeh-129 ~]# rpm -qa | grep docker
+docker-1.13.1-96.gitb2f74b2.el7.centos.x86_64
+docker-common-1.13.1-96.gitb2f74b2.el7.centos.x86_64
+docker-client-1.13.1-96.gitb2f74b2.el7.centos.x86_64
+
+方式2
+[root@nodeh-129 ~]# yum list installed|grep docker
+Repodata is over 2 weeks old. Install yum-cron? Or run: yum makecache fast
+containerd.io.x86_64                 1.2.5-3.1.el7                     @docker-ce-stable
+docker.x86_64                        2:1.13.1-96.gitb2f74b2.el7.centos @extras  
+docker-client.x86_64                 2:1.13.1-96.gitb2f74b2.el7.centos @extras  
+docker-common.x86_64                 2:1.13.1-96.gitb2f74b2.el7.centos @extras  
+
+2. 卸载
+yum –y remove ${package_name}
+
+3. 删除
+//including images, containers, volumes, and networks, are preserved
+rm -rf /var/lib/docker
+
+
+卸载方式2
+yum remove docker \
+	docker-client \
+	docker-client-latest \
+	docker-common \
+	docker-latest \
+	docker-latest-logrotate \
+	docker-logrotate \
+	docker-selinux \
+	docker-engine-selinux \
+	docker-engine
+
+rm -rf /etc/systemd/system/docker.service.d
+rm -rf /var/lib/docker
+rm -rf /var/run/docker
+
+
+
+
+Conclusion
+a) 第一种方式卸载没成功
+b) 第二种方式官方提供，要删除文件

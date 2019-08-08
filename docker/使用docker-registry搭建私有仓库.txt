@@ -4,9 +4,8 @@
 2. 搭建私有仓库
 3. 测试
 4. docker pull拉取本地私有仓库镜像
-5. 删除私有仓库上的镜像
-6. 配置客户机域名访问
-7. 遇到的问题
+5. 配置客户机域名访问
+6. 遇到的问题
 
 1. 环境准备
 //Linux版本
@@ -45,15 +44,24 @@ Server:
 docker pull registry
 
 2.2 通过该镜像启动一个容器
-docker run -d -p 5000:5000 -v /opt/data/registry:/var/lib/registry -v /data/config.yml:/etc/docker/registry/config.yml --name registrya registry
+docker run -d \
+-p 5000:5000 \
+-v /var/registry/repo:/var/lib/registry \
+-v /etc/registry/config.yml:/etc/registry/config.yml \
+--name registrya \
+-e REGISTRY_STORAGE_DELETE_ENABLED="true" \
+registry
 
 -d 守护进程
 -p 宿主机端口与docker端口映射，示例：-p 500:500
--v 绑定一个卷（即目录），示例：/opt/data/registry:/var/lib/registry
-/tmp/registry是docker容器默认仓库路径（里面存放镜像），如果容器删除，那个容器中的镜像也会丢失，通常会指定本地一个目录挂载到容器内的/tmp/registry下。
+-v /var/registry/repo:/var/lib/registry # 绑定卷（即目录），将宿主机目录（仓库）映射到docker容器中的某个目录
+	/tmp/registry是docker容器默认仓库路径（里面存放镜像），如果容器删除，容器中的镜像也会丢失，
+	通常会指定本地一个目录挂载到容器内的/tmp/registry下。
+-v /etc/registry/config.yml:/etc/registry/config.yml # 配置文件映射（修改宿主机配置文件，重启容器后同步文件）
+--name registrya # 指定容器名称
 
 进入容器后发现/tmp目录毛也没有
-docker exec -it containerName/containerId sh
+docker exec -it ${containerName}/${containerId} sh
 
 ls /tmp
 
@@ -62,10 +70,30 @@ find / -name registry
 
 /var/lib/registry
 
-可以看到registry是在存放在/var/lib/registry下，将本地目录/opt/data/registry挂载到容器的/var/lib/registry目录下。
+可以看到registry是存放在/var/lib/registry下，将本地目录/var/registry/repo挂载到容器的/var/lib/registry目录下。
 
---name 指定容器名称
 
+config.yml文件
+version: 0.1
+log:
+  fields:
+    service: registry
+storage:
+  delete:
+    enabled: true
+  cache:
+    blobdescriptor: inmemory
+  filesystem:
+    rootdirectory: /var/lib/registry
+http:
+  addr: :5000
+  headers:
+    X-Content-Type-Options: [nosniff]
+health:
+  storagedriver:
+    enabled: true
+    interval: 10s
+    threshold: 3
 
 3. 测试
 registrya容器启动之后。
@@ -77,10 +105,10 @@ docker pull busybox
 docker tag busybox 192.168.6.131:5000/busybox:v1
 
 3.3 push
-docker push 192.168.6.131:5000/busybox:v1
-The push refers to a repository [192.168.6.131:5000/busybox]
-d1156b98822d: Pushed 
-v1: digest: sha256:4fe8827f51a5e11bb83afa8227cbccb402df840d32c6b633b7ad079bc8144100 size: 527
+[root@nodej-131 registry]# docker push 192.168.6.131:5000/busybox:v1
+The push refers to repository [192.168.6.131:5000/busybox]
+0d315111b484: Pushed 
+v1: digest: sha256:895ab622e92e18d6b461d671081757af7dbaa3b00e3e28e12505af7817f73649 size: 527
 
 
 4. docker pull拉取本地私有仓库镜像
@@ -93,80 +121,30 @@ docker pull 192.168.6.131:5000/busybox:v1
 //查看本地镜像
 docker images
 
-//查看私有仓库上的镜像
-curl -XGET http://192.168.6.131:5000/v2/_catalog
 
-//查看某个镜像的标签列表
-curl -XGET http://192.168.6.131:5000/v2/${image_name}/tags/list
-
-如：
-curl -XGET http://192.168.6.131:5000/v2/hello/busybox/tags/list
-
-
-5. 删除私有仓库上的镜像
-5.1 删除步骤
-
-a) 获取digest值
-curl --header "Accept: application/vnd.docker.distribution.manifest.v2+json" \
-  -I \
-  -X HEAD http://${registry}/v2/${imageName}/manifests/${tag}
-
-${registry} 私有仓库地址
-${imageName} 镜像名称
-${tag} 镜像tag
-
-b) 删除镜像格式
-DELETE <registry>/v2/<name>/manifests/<reference>
-
-name:镜像名称
-reference: 镜像对应sha256值
-
-5.2 案例
-a) 获取digest值
-[root@nodej-131 ~]# curl --header "Accept: application/vnd.docker.distribution.manifest.v2+json" -I -X HEAD 192.168.6.131:5000/v2/hello/busybox/manifests/v2
-HTTP/1.1 200 OK
-Content-Length: 527
-Content-Type: application/vnd.docker.distribution.manifest.v2+json
-Docker-Content-Digest: sha256:4fe8827f51a5e11bb83afa8227cbccb402df840d32c6b633b7ad079bc8144100
-Docker-Distribution-Api-Version: registry/2.0
-Etag: "sha256:4fe8827f51a5e11bb83afa8227cbccb402df840d32c6b633b7ad079bc8144100"
-X-Content-Type-Options: nosniff
-Date: Mon, 27 May 2019 08:17:59 GMT
-
-b) 删除镜像
-[root@nodej-131 ~]# curl -I -X DELETE 192.168.6.131:5000/v2/hello/busybox/manifests/sha256:4fe8827f51a5e11bb83afa8227cbccb402df840d32c6b633b7ad079bc8144100
-HTTP/1.1 202 Accepted
-Docker-Distribution-Api-Version: registry/2.0
-X-Content-Type-Options: nosniff
-Date: Mon, 27 May 2019 08:19:39 GMT
-Content-Length: 0
-
-上面只是删除了tags，镜像还在，执行如下
-
-TODO 
-
-参考
-https://segmentfault.com/q/1010000006127473
-
-
-6. 配置客户机域名访问
-6.1 修改/etc/hosts
+5. 配置客户机域名访问
+5.1 修改/etc/hosts
 添加一行
 vi /etc/hosts
 192.168.6.131 registry-srv
 
-6.2 修改/etc/docker/daemon.json
+5.2 修改/etc/docker/daemon.json
 添加registry-srv:5000，这个地址是私有仓库的地址
 {
-"registry-mirrors": ["http://*******.m.daocloud.io","http://registry-srv:5000"],
-"insecure-registries":["registry-srv:5000"]
+  "registry-mirrors": ["http://hub-mirror.c.163.com","http://registry-srv:5000"],
+  "insecure-registries":["registry-srv:5000"]
 }
 
-6.3 修改/etc/sysconfig/selinux
+5.3 修改/usr/lib/systemd/system/docker.service，载入配置文件
+在配置文件中添加（ExecReload=/bin/kill）一行：EnvironmentFile=-/etc/docker/daemon.json
+
+systemctl daemon-reload
+systemctl restart docker
+
+
+5.3 修改/etc/sysconfig/selinux
 修改为
 SELINUX=permissive
-
-
 
 7. 遇到的问题
 7.1 push镜像时
@@ -176,7 +154,7 @@ Get https://192.168.6.131:5000/v1/_ping: http: server gave HTTP response to HTTP
 
 
 原因
-可能是由于客户端采用https，docker registry未采用https服务所致，所以要修改客户端交互方式为http.
+由于客户端采用https，docker registry未采用https服务所致，所以要修改客户端交互方式为http.
 
 
 尝试1（不行！）
@@ -263,7 +241,8 @@ a) docker hub是公有仓库，一般不用，DTR（Docker Trusted Repositoy）
 b) 搭建私有仓库使用registry镜像
 c) docker registry交互默认使用的是http，客户端使用https，所以要配置客户端为http
 d) push镜像到私有仓库
-e) daemon.json和docker.service为docker启动时参数配置文件
+e) /etc/docker/daemon.json和/usr/lib/systemd/system/docker.service为docker启动时参数配置文件
+	在docker.service文件中添加EnvironmentFile=-/etc/docker/daemon.json
 f) 配置客户机域名访问，需要修改hosts,daemon.json,selinux
 g) firewalld需要关闭
 
@@ -273,3 +252,5 @@ Reference
 https://www.cnblogs.com/Tempted/p/7768694.html
 //pull拉取本地私有仓库镜像
 https://my.oschina.net/u/3746745/blog/1811571
+//搭建私有仓库
+https://www.linuxidc.com/Linux/2018-03/151308.htm

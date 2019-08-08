@@ -1,0 +1,51 @@
+
+
+// 搜索redis
+docker search redis
+
+// 下载最新的redis
+docker pull redis:latest
+
+// 下载redis配置文件
+wget https://raw.githubusercontent.com/antirez/redis/5.0/redis.conf -O /etc/redis/conf/redis.conf
+
+// 启动redis
+docker run \
+-p 6379:6379 \ # 端口映射 宿主机:容器
+-v /var/redis/data:/var/redis/data:rw \ # # 映射数据目录 rw 为读写
+-v /etc/redis/conf/redis.conf:/etc/redis/conf/redis.conf \ # 挂载配置文件
+--privileged=true \ # 给予一些权限
+--name redisa \ # 指定容器别名
+-d redis redis-server /etc/redis/conf/redis.conf # deamon运行服务使用指定的配置文件
+
+// 查看活跃容器
+docker ps
+
+// 如果没有redisa，查看日志
+docker logs redisa
+
+// ip查看
+docker inspect 73a7e9d72f3a|grep -i add
+
+//在当前节点使用redis-cli连接redis
+docker exec -it 73a7e9d72f3a redis-cli
+docker exec -it redisa redis-cli
+
+// 远程访问redis容器服务（端口默认6379）
+docker exec -it 283d168f0941fd1 redis-cli  -h 192.168.6.131 -p 6379
+
+// 进入容器
+docker exec -it redisa /bin/bash
+
+
+使用redis desktop manager连接docker中的redis
+修改/etc/redis/conf/redis/redis.conf
+注释
+bind 127.0.0.1
+protected-mode 修改为 no
+
+
+
+Reference
+https://www.jianshu.com/p/40f8e9ffe398
+https://blog.51cto.com/4925054/2137069

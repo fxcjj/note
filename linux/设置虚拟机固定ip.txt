@@ -1,0 +1,62 @@
+1. 设置网络连接方式NAT
+选中虚拟机->虚拟机->网络适配器->勾选NAT模式
+
+2. 配置虚拟机的NAT模式具体地址参数
+编辑->虚拟网络编辑器...->VMnet8->更改配置->VMnet8->
+取消勾选【使用本地DHCP服务将IP地址分配给虚拟机(D)】
+子网IP(I): 192.168.6.0
+选择NAT设置...
+网关ip：192.168.6.1，这里不要跟你要设置的虚拟机IP一样就可以了。
+
+3. 配置宿主机VMnet8网卡
+更改适配器选项->右击VMnet8->属性->Internet协议版本4（TCP/IPv4）->属性
+IP地址（I）: 192.168.6.2
+子网掩码（U）: 255.255.255.0
+默认网关（D）: 192.168.6.1，这里和网关ip设置一致
+
+4. 修改虚拟机配置文件
+[root@nodeg-128 ~]# cat /etc/sysconfig/network-scripts/ifcfg-ens33 
+TYPE=Ethernet
+PROXY_METHOD=none
+BROWSER_ONLY=no
+# BOOTPROTO=dhcp
+# 此处修改为static
+BOOTPROTO=static
+DEFROUTE=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=yes
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_FAILURE_FATAL=no
+IPV6_ADDR_GEN_MODE=stable-privacy
+NAME=ens33
+UUID=4880d2a7-5c0f-42a7-910c-6d692b435076
+DEVICE=ens33
+# network device start when computer start
+ONBOOT=yes
+# 设置静态ip
+IPADDR=192.168.6.128
+# 和2中的网关ip一致
+GATEWAY=192.168.6.1
+NETMASK=255.255.255.0
+
+# 域名
+DNS1=114.114.114.114
+
+5. 重启网络配置
+service network restart
+
+6. 检验配置是否成功
+ifconfig
+或者
+ip addr
+
+7. 测试是否可以连接外网
+ping www.baidu.com
+
+
+Reference
+https://blog.csdn.net/java_zyq/article/details/78280904
+
+
+

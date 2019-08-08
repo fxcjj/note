@@ -1,0 +1,53 @@
+
+1. Uninstall old versions
+2. SET UP THE REPOSITORY
+3. INSTALL DOCKER ENGINE - COMMUNITY
+4. Enable Romote Client Access
+
+1. Uninstall old versions
+参考卸载docker.txt
+
+2. SET UP THE REPOSITORY
+2.1 Install required packages. yum-utils provides the yum-config-manager utility, and device-mapper-persistent-data and lvm2 are required by the devicemapper storage driver.
+
+$ sudo yum install -y yum-utils \
+  device-mapper-persistent-data \
+  lvm2
+2.2 Use the following command to set up the stable repository.
+
+$ sudo yum-config-manager \
+    --add-repo \
+    https://download.docker.com/linux/centos/docker-ce.repo
+
+
+注意：这里可以设置阿里云镜像
+sudo yum-config-manager \
+    --add-repo \
+	http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+	
+3. INSTALL DOCKER ENGINE - COMMUNITY
+Install the latest version of Docker Engine - Community and containerd, or go to the next step to install a specific version:
+
+sudo yum install docker-ce docker-ce-cli containerd.io
+
+注意：这里包含docker, client, containerd
+
+
+4. Enable Romote Client Access
+默认配置下，Docker Daemon 只能响应来自本地 Host 的客户端请求。
+如果要允许远程客户端请求，需要在配置文件中打开 TCP 监听。
+4.1 编辑配置文件/etc/systemd/system/multi-user.target.wants/docker.service，
+在环境变量 ExecStart 后面添加 -H tcp://0.0.0.0，允许来自任意 IP 的客户端连接
+
+4.2 重启 Docker Daemon
+systemctl daemon-reload
+systemctl restart docker.service
+
+4.3 我们通过以下命令即可实现与远程服务器通信
+docker -H 服务器IP地址 info
+
+-H 是用来指定服务器主机，info 子命令用于查看 Docker 服务器的信息。
+
+
+Reference
+http://dockone.io/article/8350

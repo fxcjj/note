@@ -1,0 +1,45 @@
+
+//查看帮助
+docker -h
+
+//启动/停止/重新启动docker服务
+systemctl start docker
+systemctl stop docker
+systemctl restart docker
+
+//查看docker状态
+systemctl status docker
+
+//移除已安装镜像
+docker rmi 镜像名:tag/镜像id
+
+//停止/启动/删除容器
+docker stop 容器别名/容器id
+docker start 容器别名/容器id
+docker rm 容器别名/容器id
+
+//查看容器进程
+docker ps
+
+//查看容器映射端口
+docker port mysql5.6
+
+使用docker attach containerId命令会卡住
+使用ctrl+z退出，会停止容器，所以退出时要选择ctrl+p+q退出容器。
+
+一般使用以下命令进入容器
+docker exec -it containerId /bin/bash
+这个方法退出容器，容器是不会停止的。
+
+
+//查看镜像版本
+docker image inspect redis | grep -i version
+docker image inspect registry:latest | grep -i version
+
+//已有容器，添加运行参数
+docker container update --restart always mysql5.6a
+
+
+Reference
+//docker命令
+http://www.docker.org.cn/dockerppt/106.html

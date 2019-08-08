@@ -20,14 +20,6 @@ container
 
 
 
-
-
-
-
-
-
-
-
 201
 /root/docker/service
 

@@ -4,7 +4,7 @@
 1. 小试一把
 
 
-//初始化集群
+//初始化集群，当前节点为管理者
 [root@localhost ~]# docker swarm init --advertise-addr 192.168.6.128
 Swarm initialized: current node (cw4qzglfzdjgvqd91xpnn7r53) is now a manager.
 
@@ -40,9 +40,9 @@ To add a worker to this swarm, run the following command:
 //查看Swarm集群node列表
 docker node ls
 
-2. 删除节点
+2. 删除节点步骤
 a) 排空节点上的集群容器
-docker node update --availability drain 
+docker node update --availability drain
 
 b) 检查容器迁移情况
 //当<ID|HOSTNAME>节点上的容器都迁移完后，停止docker服务

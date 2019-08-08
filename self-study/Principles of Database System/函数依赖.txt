@@ -1,4 +1,4 @@
-
+﻿
 
 1. 函数依赖？
 设R(U)为任一给定关系，X和Y为属性集U上的子集，若对于X上的每个值都有Y上的唯一值与之对应，
@@ -51,20 +51,6 @@
 References
 https://blog.csdn.net/tigaobansongjiahuan8/article/details/81807359
 https://www.cnblogs.com/Stephen-Jixing/p/9888725.html
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

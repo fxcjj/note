@@ -13,7 +13,7 @@ git目录
 11 创建与合并分支
 12 解决冲突
 13 分支管理策略
-14 Bug分支
+14 stash命令使用
 15 Feature分支
 16 多人协作
 17 创建标签
@@ -420,7 +420,7 @@ git stash
 //2.切换到正确的分支
 git checkout <branch>
 
-//3.从stash中取出暂存的代码，并删除stash
+//3.从stash中取出暂存的代码并删除stash
 git stash pop
 
 //4.添加所有修改文件到stage区
