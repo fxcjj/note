@@ -90,6 +90,14 @@ bin/registry garbage-collect /etc/registry/config.yml
 删除容器，在docker run中指定环境变量
 -e REGISTRY_STORAGE_DELETE_ENABLED="true" \
 
+3.2 删除镜像后
+执行命令：
+[root@nodej-131 ~]# curl -XGET http://registry-srv:5000/v2/busybox/tags/list
+{"name":"busybox","tags":null}
+
+问：此时tags已删除，如何删除busybox？
+
+
 
 
 

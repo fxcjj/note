@@ -14,8 +14,11 @@ https://blog.csdn.net/xun573017588/article/details/77099535
 //windows x64下安装RabbitMQ
 https://blog.csdn.net/u014308482/article/details/53994401
 
-//RocketMQ 实战
-https://www.jianshu.com/p/824066d70da8
+
+
+
+
+
 
 
 

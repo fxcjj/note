@@ -1,0 +1,49 @@
+# 0501审核管理
+version: "3"
+
+services:
+ media-modules-check:
+    image: "registry-srv:5000/media-test/media-modules-check:latest"
+    hostname: media-modules-check
+    depends_on:
+    - base-eureka
+    - base-config
+    environment:
+    - TZ=Asia/Shanghai
+    - /usr/share/media/logs:/Users/admin/logs
+    - eureka.host=base-eureka
+    - eureka.port=29090
+    - config.host=base-config
+    - config.port=29091
+    - config.active=test
+    - zipkin.host=base-zipkin
+    - zipkin.port=9411
+    ports:
+    - "29101:29101"
+    - "39101:39101"
+    networks:
+      media-network:
+        aliases:
+        - media-modules-check
+    volumes:
+    - /root/docker/jacoco:/Users/admin/jacoco
+#    logging:
+#      driver: syslog
+#      options:
+#        syslog-address: 'tcp://10.0.0.17:35000'
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+        reservations:
+          cpus: '0.10'
+          memory: 64M
+      replicas: 1
+      restart_policy:
+        condition: any
+
+        
+networks:
+  media-network:
+    external: true

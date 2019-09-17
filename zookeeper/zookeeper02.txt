@@ -125,14 +125,6 @@ service iptables status
 service iptables stop
 
 
-
- 
-
-
-
-
-
-
 centosa是源
 centosa-1是centosa的链接克隆
 centosb是centosa的完整克隆

@@ -19,6 +19,14 @@ ADD和COPY
 https://www.cnblogs.com/sparkdev/p/9573248.html
 https://www.cnblogs.com/51kata/p/5264894.html
 
+copy命令
+	a) multistage场景
+	b) 简单copy
+add命令
+	a) 自动解压缩
+	b) 从url拷贝文件到镜像中
+
+
 VOLUME
 WORKDIR
 
@@ -36,7 +44,7 @@ FROM registry-srv:5000/java:8
 # 创建者信息
 MAINTAINER victor
 
-# 安装软件 ？
+# 容器内安装软件
 RUN yum install -y xxx
 
 # 设置container启动时执行的操作
@@ -46,7 +54,7 @@ CMD ["-l"]
 ENTRYPOINT ["/usr/bin/ls"]
 
 
-
+ 
 //docker-compose命令
 https://www.cnblogs.com/moxiaoan/p/9299404.html
 

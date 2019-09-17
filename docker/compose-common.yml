@@ -1,0 +1,48 @@
+version: '2'
+services:
+  registry-srv:
+    image: registry:latest
+    ports:
+      - 5000:5000
+    volumes:
+      - /ext/docker/registry/:/var/lib/registry/
+      - /ext/docker/config/:/etc/docker/registry/
+    restart: always
+  registry-web:
+    image: hyper/docker-registry-web
+    ports:
+      - 8080:8080
+    restart: always
+    depends_on:
+      - registry-srv
+    environment:
+      - REGISTRY_URL=http://registry-srv:5000/v2
+      - REGISTRY_NAME=registry-srv:5000
+#  drone-server:
+#    image: drone/drone:0.8
+#    ports:
+#      - 8000:8000
+#      - 9000:9000
+#    volumes:
+#      - /var/lib/drone/:/var/lib/drone/
+#    restart: always
+#    environment:
+#      - DRONE_OPEN=true
+#      - DRONE_ADMIN=drone,mritd
+#      - DRONE_GITLAB=true
+#      - DRONE_GITLAB_PRIVATE_MODE=true
+#      - DRONE_GITLAB_CLIENT=af5734b3356fd0d154937e645434ce838bcd00c72e3b41cfccdb4d99adb60ab4
+#      - DRONE_GITLAB_SECRET=48571dac2d95728a304cb272b357cd18d9bf72b5509bf010a2e4d1c33924ac64
+#      - DRONE_GITLAB_URL=http://106.14.36.118:8877
+#      - DRONE_HOST=http://47.101.169.150:8000
+#      - DRONE_SECRET=cazpfp1qY3fqPxCQJOpR4w
+#  drone-agent:
+#    image: drone/agent:0.8
+#    restart: always
+#    depends_on:
+#      - drone-server
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock
+#    environment:
+#      - DRONE_SERVER=47.101.169.150:9000
+#      - DRONE_SECRET=cazpfp1qY3fqPxCQJOpR4w

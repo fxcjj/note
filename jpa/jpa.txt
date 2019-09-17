@@ -1,0 +1,67 @@
+
+jpa是规范
+hibernate是实现
+spring-data-jpa是对jpa规范的再次封装抽象，底层还是使用了hibernate的jpa技术实现。
+
+
+方法名和对应生成的sql
+
+
+分页或排序
+	Pageable
+	Sort
+
+//实现Sort的三种方式
+https://blog.csdn.net/blueheart20/article/details/80355899
+
+//实体之外的字段排序
+JpaSort.unsafe(Sort.Direction.ASC, "LENGTH(lastName)")
+
+
+
+
+NamedQueries 命名查询
+	在实体类上使用
+Query
+	nativeQuery为true
+	书写sql
+使用命名化参数
+	@Param("xx")
+
+
+创建查询的顺序
+query-lookup-strategy属性取值：
+	1) create-if-not-found
+	2) create
+	3) use-declared-query
+
+
+限制查询
+	User findFirstByOrderByLastnameAsc();
+	User findTopByOrderByAgeDesc();
+	Page<User> queryFirst10ByLastname(String lastname, Pageable pageable);
+	List<User> findFirst10ByLastname(String lastname, Sort sort);
+	List<User> findTop10ByLastname(String lastname, Pageable pageable);
+
+
+多表查询
+1) hibernate的级联查询
+
+2) 创建一个结果集的接口来接收连表查询后的结果
+
+
+jpa更新
+	@Modifying
+	@Query
+	返回影响行数
+	必须加事务，没有事务不能正常执行
+
+jpa删除
+	@Modifying
+	@Query
+
+
+https://blog.csdn.net/fly910905/article/details/78557110
+https://my.oschina.net/u/3080373/blog/1828589
+
+

@@ -11,10 +11,10 @@ vic_common
 公共服务
 
 vic_order
-订单项目，即是provider也是consumer
+订单项目，既是provider也是consumer
 
 vic_user
-用户项目，即是provider也是consumer
+用户项目，既是provider也是consumer
 
 二、导入dubbo,zookeeper,spring包
 见vic_parent
