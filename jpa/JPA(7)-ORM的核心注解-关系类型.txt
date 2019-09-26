@@ -30,9 +30,9 @@
    public class Husband {
        private String id;
        private String name;
-        @OneToOne
-        @JoinColumn(name="wife_id")
-        private Wife wife; 
+		@OneToOne
+		@JoinColumn(name="wife_id")
+		private Wife wife; 
    }
 
    @Entity
@@ -104,4 +104,4 @@
         @ManyToMany(mappedBy="projects")
         private Collection<Employee> employees;
     }
-    注：mappedBy的使用！！！
+    注意：mappedBy的使用！！！
