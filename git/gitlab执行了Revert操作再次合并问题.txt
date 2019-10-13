@@ -1,0 +1,40 @@
+
+
+第一种情况 勾选复选框（由此更改 新建合并请求）
+1) v1合并到master分支后，点击Revert（恢复），【还原分支】选择master分支、勾选复选框（由此更改 新建合并请求）
+2) master分支恢复，v1分支不变，并多出一个分支revert-b5bc568c，和master内容相同
+5) 此时出现
+撤销 "合并分支 'v1' 到 'master'"
+这将还原合并请求 !5 (merged)
+
+请求合并 revert-32cdc776  入 master
+
+点击Merge
+6) 此时再次合并v1到master，提示WIP:V1（中文版，创建合并请求，没有v1。英文版有v1，提示WIP:V1）
+Merge requests are a place to propose changes you have made to a project and discuss those changes with others.
+Interested parties can even contribute by pushing commits if they want to.
+Currently there are no changes in this merge request's source branch. Please push new commits or use a different branch.
+
+
+第二种情况 不勾选复选框（由此更改 新建合并请求）
+1) v2合并到master分支后，点击Revert（恢复），【还原分支】选择master分支、不勾选复选框（由此更改 新建合并请求）
+2) master分支恢复，v2分支不变
+3) 再次创建合并请求，找不到v2
+4) v2分支创建新文件，可以将新文件合并上去
+5) 要想将老文件合并上去，两种方法
+方法1：找到commit，执行Revert，可以将之前的文件合并上去，新的文件也在！
+方法2：修改老文件，执行合并，存在冲突，手动处理，步骤如下：
+Step 1. 获取并检出此合并请求的分支
+
+git fetch origin
+git checkout -b v1 origin/v1
+Step 2. 本地审查变更
+
+Step 3. 合并分支并修复出现的任何冲突
+
+git checkout master
+git merge --no-ff v2
+Step 4. 推送合并的结果到 GitLab
+
+git push origin master
+提示： 您可以 参考这个说明 将合并请求检出到本地。
