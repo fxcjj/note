@@ -1,40 +1,47 @@
 
 
+情景
+
 第一种情况 勾选复选框（由此更改 新建合并请求）
-1) v1合并到master分支后，点击Revert（恢复），【还原分支】选择master分支、勾选复选框（由此更改 新建合并请求）
-2) master分支恢复，v1分支不变，并多出一个分支revert-b5bc568c，和master内容相同
-5) 此时出现
-撤销 "合并分支 'v1' 到 'master'"
-这将还原合并请求 !5 (merged)
+1) v1分支合并到master分支后，点击Revert（恢复）按钮，[还原分支]选择master分支、勾选复选框（由此更改 新建合并请求）
+2) 点Start按钮后，多出一个分支revert-b5bc568c，出现[New Merge Request]页面。
+此页面表示创建一个新的分支请求（与master分支内容相同）合并到master分支，目的是记录commit操作。
+点击[Submit merge request]按钮、点击[Merge]按钮后，master分支恢复到合并v1分支之前的内容，v1分支不变。
+3) 此时再次合并v1到master，提示WIP:V1表示无法合并。
+标题以 WIP: 开头将合并请求标识为 正在处理中 表示其还未准备好可以接受合并。
 
-请求合并 revert-32cdc776  入 master
-
-点击Merge
-6) 此时再次合并v1到master，提示WIP:V1（中文版，创建合并请求，没有v1。英文版有v1，提示WIP:V1）
+点击[Submit merge request]，出现如下内容：
 Merge requests are a place to propose changes you have made to a project and discuss those changes with others.
 Interested parties can even contribute by pushing commits if they want to.
 Currently there are no changes in this merge request's source branch. Please push new commits or use a different branch.
 
 
 第二种情况 不勾选复选框（由此更改 新建合并请求）
-1) v2合并到master分支后，点击Revert（恢复），【还原分支】选择master分支、不勾选复选框（由此更改 新建合并请求）
+1) v2分支合并到master分支后，点击Revert（恢复）按钮，[还原分支]选择master分支、不勾选复选框（由此更改 新建合并请求）
 2) master分支恢复，v2分支不变
-3) 再次创建合并请求，找不到v2
-4) v2分支创建新文件，可以将新文件合并上去
-5) 要想将老文件合并上去，两种方法
-方法1：找到commit，执行Revert，可以将之前的文件合并上去，新的文件也在！
-方法2：修改老文件，执行合并，存在冲突，手动处理，步骤如下：
-Step 1. 获取并检出此合并请求的分支
+3) 此时再次合并v2到master，提示WIP:V2表示无法合并。
 
-git fetch origin
-git checkout -b v1 origin/v1
-Step 2. 本地审查变更
+4) 修改（新增或修改原有文件）v2分支，执行合并操作，出现如下：
+----------------------------------------------------------------
+Request to merge v2  into master (2 commits behind) //一个修改，一个新增
+ 
+There are merge conflicts [Merge Locally]
+You can merge this merge request manually using the command line //通过命令行处理冲突
+----------------------------------------------------------------
 
-Step 3. 合并分支并修复出现的任何冲突
+5) 点击[Merge Locally]按钮，出现处理步骤：
+a) git fetch origin //在v2分支执行
+b) git checkout master //切换到master
+c) git merge --no-ff v2 //在master分支执行，将v2合并到master
+d) git add . //添加所有修改
+e) git commit -m 'fix conflicts'
+f) git push //结束
 
-git checkout master
-git merge --no-ff v2
-Step 4. 推送合并的结果到 GitLab
+6) 此时刷新页面，提示Merged by  victor 5 minutes ago，表示合并成功。
 
-git push origin master
-提示： 您可以 参考这个说明 将合并请求检出到本地。
+
+总结
+当出现WIP:X时，处理方法有两种
+方法1：找到commit记录，在options中执行Revert，点击start按钮，将之前revert的分支合并到master之后，再次执行合并操作即可！
+方法2：修改（新增或修改）文件，执行合并，存在冲突，手动处理，参考第二种情况的5)
+
