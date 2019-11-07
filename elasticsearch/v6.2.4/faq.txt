@@ -1,0 +1,97 @@
+
+1. 执行命令时
+[root@nodej-131 bin]# ./elasticsearch
+[2019-11-06T03:31:51,087][WARN ][o.e.b.ElasticsearchUncaughtExceptionHandler] [] uncaught exception in thread [main]
+org.elasticsearch.bootstrap.StartupException: java.lang.RuntimeException: can not run elasticsearch as root
+	at org.elasticsearch.bootstrap.Elasticsearch.init(Elasticsearch.java:125) ~[elasticsearch-6.2.4.jar:6.2.4]
+	at org.elasticsearch.bootstrap.Elasticsearch.execute(Elasticsearch.java:112) ~[elasticsearch-6.2.4.jar:6.2.4]
+	at org.elasticsearch.cli.EnvironmentAwareCommand.execute(EnvironmentAwareCommand.java:86) ~[elasticsearch-6.2.4.jar:6.2.4]
+	at org.elasticsearch.cli.Command.mainWithoutErrorHandling(Command.java:124) ~[elasticsearch-cli-6.2.4.jar:6.2.4]
+	at org.elasticsearch.cli.Command.main(Command.java:90) ~[elasticsearch-cli-6.2.4.jar:6.2.4]
+	at org.elasticsearch.bootstrap.Elasticsearch.main(Elasticsearch.java:92) ~[elasticsearch-6.2.4.jar:6.2.4]
+	at org.elasticsearch.bootstrap.Elasticsearch.main(Elasticsearch.java:85) ~[elasticsearch-6.2.4.jar:6.2.4]
+Caused by: java.lang.RuntimeException: can not run elasticsearch as root
+	at org.elasticsearch.bootstrap.Bootstrap.initializeNatives(Bootstrap.java:105) ~[elasticsearch-6.2.4.jar:6.2.4]
+	at org.elasticsearch.bootstrap.Bootstrap.setup(Bootstrap.java:172) ~[elasticsearch-6.2.4.jar:6.2.4]
+	at org.elasticsearch.bootstrap.Bootstrap.init(Bootstrap.java:323) ~[elasticsearch-6.2.4.jar:6.2.4]
+	at org.elasticsearch.bootstrap.Elasticsearch.init(Elasticsearch.java:121) ~[elasticsearch-6.2.4.jar:6.2.4]
+	... 6 more
+	
+原因：es不能以root用户运行
+
+解决：创建新用户和组
+# 创建组
+groupadd es-normal
+# 创建新用户并加入到es-normal组中，用户密码为123456
+useradd puppet -g es-normal -p 123456
+# 进入es所在目录，执行chown命令
+chown -R puppet:es-normal elasticsearch-6.2.4
+# 切换puppet到用户
+su puppet
+cd elasticsearch-6.2.4/bin
+# 启动
+./elasticsearch
+
+# 修改用户密码
+passwd puppet
+
+2. kibana在线安装x-pack报错
+[puppet@nodej-131 bin]$ ./kibana-plugin install x-pack
+Attempting to transfer from x-pack
+Attempting to transfer from https://artifacts.elastic.co/downloads/kibana-plugins/x-pack/x-pack-6.2.4.zip
+Transferring 264988487 bytes
+Transfer complete
+Retrieving metadata from plugin archive
+Error: end of central directory record signature not found
+    at /usr/local/kibana-6.2.4/node_modules/yauzl/index.js:179:14
+    at /usr/local/kibana-6.2.4/node_modules/yauzl/index.js:539:5
+    at /usr/local/kibana-6.2.4/node_modules/fd-slicer/index.js:32:7
+    at FSReqWrap.wrapper [as oncomplete] (fs.js:683:17)
+Plugin installation was unsuccessful due to error "Error retrieving metadata from plugin archive"
+
+原因：网络等其它原因
+解决：使用离线安装
+a) 下载安装包
+curl -L -O https://artifacts.elastic.co/downloads/packs/x-pack/x-pack-6.2.4.zip
+b) 上传到指定目录并安装
+cd kibana-6.2.4/bin/
+# 提前上传到usr/local目录
+./kibana-plugin install file:///usr/local/x-pack-6.2.4.zip
+
+3. max file descriptors [4096] for elasticsearch process is too low, increase to at least [65536]
+
+问题翻译过来就是：elasticsearch用户拥有的可创建文件描述的权限太低，至少需要65536；
+
+解决办法：
+
+# 切换到root用户修改
+vi /etc/security/limits.conf
+ 
+# 在最后面追加下面内容，puppet表示启动ES的用户
+puppet hard nofile 65536
+puppet soft nofile 65536
+ 
+4. max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]
+问题翻译过来就是：elasticsearch用户拥有的内存权限太小，至少需要262144；
+
+解决：
+
+# 切换到root用户执行命令：
+sysctl -w vm.max_map_count=262144
+
+查看结果：
+sysctl -a|grep vm.max_map_count
+
+显示：
+vm.max_map_count = 262144
+
+
+上述方法修改之后，如果重启虚拟机将失效，所以：
+
+解决办法：
+
+在/etc/sysctl.conf文件最后添加一行
+
+vm.max_map_count=262144
+
+即可永久修改

@@ -1,0 +1,118 @@
+1 安装jdk
+2 下载安装es和kibana
+	2.1 下载es和kibana
+	2.2 设置环境变量
+3 安装x-pack到es和kibana
+4 启动es和kibana
+5 集成Ikanalyzer
+6 总结
+7 参考
+
+1 安装jdk
+参考note/java
+
+2 下载安装es和kibana
+2.1 下载es和kibana
+# 切换到opt目录
+cd /opt
+
+# 下载Elastic 和 Kibana 并重命名，然后解压( O 是大写的)
+wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.2.4.tar.gz
+wget -O kibana-6.2.4.tar.gz https://artifacts.elastic.co/downloads/kibana/kibana-6.2.4-linux-x86_64.tar.gz
+
+# 解压
+tar -xzf elasticsearch-6.2.4.tar.gz 
+tar -xzf kibana-6.2.4.tar.gz
+
+2.2 设置环境变量
+# 切换到 root 用户
+su root
+# 打开 profile 文件
+vi /etc/profile
+
+# 新增环境变量
+export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.201.b09-2.el7_6.x86_64
+export CLASS_PATH=$JAVA_HOME/lib/*.*
+export PATH=$JAVA_HOME/bin:/opt/elasticsearch-6.2.4/bin:/opt/kibana-6.2.4/bin:$PATH 
+
+# 保存并退出，并刷新环境变量
+wq
+source /etc/profile
+
+3 安装x-pack到es和kibana
+# 进入 ES 的 bin 目录
+cd /opt/elasticsearch-6.2.4/bin
+
+# 安装 x-pack 插件到es
+./elasticsearch-plugin install x-pack
+
+# 给普通用户puppet赋权限
+chown -R puppet:es-normal elasticsearch-6.2.4
+
+# 启动ES
+./elasticsearch
+
+# 进入 x-pack 目录
+cd /opt/elasticsearch-6.2.4/bin/x-pack
+
+# 设置用户名和密码，这里设置了同时设置了es默认账号(elastic)、kibana默认账号(kibana)、logstash(logstash_system)默认账号的密码
+./setup-passwords 123456
+
+# 安装 x-pack 插件到kibana，有可能失败，可以使用离线安装参考同目录下的faq.txt
+./kibana-plugin install x-pack
+
+# 进入 Kibana 的 config 目录
+cd ../config/
+
+# 打开 kibana 配置文件
+vi kibana.yml
+
+# 修改 ES 的登录账号和密码
+elasticsearch.username: "elastic" //es默认账号
+elasticsearch.password: "elastic" //这里修改了密码，之前设置的密码是123456
+
+# 因为是在本机，所以不必设置 ES 的主机地址，否则也要修改主机地址，0.0.0.0 为任何主机皆可访问
+server.host: "0.0.0.0"
+
+# 保存并退出
+wq
+
+4 启动es和kibana
+
+启动 Elastic 和 Kibana 服务
+
+方式一、传统nohup启动方式
+
+nohup sh elasticsearch &
+nohup sh kibana &
+
+方式二、推荐方式
+
+sh /opt/elasticsearch-6.2.4/bin/elasticsearch -d
+sh /opt/kibana-6.2.4/bin/kibana -l /data/kibana/logs/kibana.log &
+（这里建议使用绝对路径启动，方便在ps -ef的时候可以通过kibana关键字定位进程）
+
+停止 ES 和 Kibana 的服务
+
+找到进程ID，通过“kill -9 进程ID”来结束进程
+
+ps -ef | grep elasticsearch
+ps -ef | grep kibana
+
+直接使用nohup ./kibana &启动时，可能进程里面找不到kibana对应的进程，
+可以使用ps -ef|grep node来查找，这大概是因为kibana是由node来写的，如果有多个node进程，
+此时带有 node 不一定就是 kibana的 进程，我们知道 kibana 是 5601 对外的tcp端口，
+所以使用 netstat -tunlp|grep 5601 就可以查到进程id
+
+通过浏览器访问 Kibana ，默认端口是 5601，登录 Kibana 后就可以操作 ES 了
+
+5 集成Ikanalyzer
+
+6 总结
+a) 先安装jdk8, es,kibana,x-pack版本要一致
+b) es不允许root用户执行
+c) 赋权限 chown -R puppet:es-normal elasticsearch-6.2.4
+d) kibana.yml中配置的密码和之前配置的要一致
+
+7 参考
+https://blog.csdn.net/muzizongheng/article/details/85257087
