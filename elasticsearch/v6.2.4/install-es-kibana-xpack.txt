@@ -107,6 +107,11 @@ ps -ef | grep kibana
 通过浏览器访问 Kibana ，默认端口是 5601，登录 Kibana 后就可以操作 ES 了
 
 5 集成Ikanalyzer
+下载ik
+https://github.com/medcl/elasticsearch-analysis-ik/releases/
+解压重命名为analysis-ik放到elasticsearch-6.2.4/plugins目录下
+其中IKAnalyzer.cfg.xml是配置文件
+
 
 6 总结
 a) 先安装jdk8, es,kibana,x-pack版本要一致
