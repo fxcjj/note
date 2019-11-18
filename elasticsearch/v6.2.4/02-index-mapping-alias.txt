@@ -1,0 +1,55 @@
+
+集群健康状况
+http://localhost:9200/_cat
+
+查看创建状况,v表示返回表头
+http://localhost:9200/_cat/health?v
+
+status值说明
+Green - everything is good (cluster is fully functional)，即最佳状态
+Yellow - all data is available but some replicas are not yet allocated (cluster is fully functional)，即数据和集群可用，但是集群的备份有的是坏的
+Red - some data is not available for whatever reason (cluster is partially functional)，即数据和集群都不可用
+
+查看集群的节点
+http://localhost:9200/_cat/nodes?v
+
+查看所有索引
+http://localhost:9200/_cat/indeces?v
+
+创建索引customer
+索引一个文档到customer索引中
+从customer索引中获取指定id的文档
+查看所有文档
+
+索引管理
+	索引管理
+	索引监控
+	状态管理
+
+索引管理
+	创建索引
+	查看、删除索引
+	修改索引settings
+	索引模板
+	open/close index api
+	shrink index
+	split index
+	rollover index
+
+映射详解
+	映射（mapping）是什么
+	mapping type废除说明
+	字段类型介绍
+	字段定义属性介绍
+	multi fields多重字段
+	元字段介绍
+	动态映射
+	
+别名
+	别名的用途
+	新建索引时指定别名
+	创建、删除别名
+	多索引别名
+	带过滤器的别名
+	带routing的别名
+	查年别名信息

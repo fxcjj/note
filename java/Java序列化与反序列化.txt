@@ -42,28 +42,28 @@ java.io.ObjectInputStream代表对象输入流，它的readObject()方法从一�
 package cn.rumor.serial;
 import java.io.Serializable;
 public class Cat implements Serializable {
-private String name;
-private String gender;
-public Cat(String name, String gender) {
-this.name = name;
-this.gender = gender;
-}
-public String getName() {
-return name;
-}
-public void setName(String name) {
-this.name = name;
-}
-public String getGender() {
-return gender;
-}
-public void setGender(String gender) {
-this.gender = gender;
-}
-@Override
-public String toString() {
-return "Cat [name=" + name + ", gender=" + gender + "]";
-}
+	private String name;
+	private String gender;
+	public Cat(String name, String gender) {
+	this.name = name;
+		this.gender = gender;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getGender() {
+		return gender;
+	}
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+	@Override
+	public String toString() {
+		return "Cat [name=" + name + ", gender=" + gender + "]";
+	}
 }
 
 清单2 使用Junit进行测试
@@ -74,35 +74,35 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import org.junit.Test;
 public class CatSerTest {
-//序列化
-@Test
-public void testSerial() {
-try {
-Cat cat = new Cat("rat", "m");
-//创建输出流对象
-FileOutputStream fos = new FileOutputStream("E:/cat.ser");
-ObjectOutputStream oos = new ObjectOutputStream(fos);
-oos.writeObject(cat);
-oos.close();
-} catch (Exception e) {
-e.printStackTrace();
-}
-}
+	//序列化
+	@Test
+	public void testSerial() {
+		try {
+			Cat cat = new Cat("rat", "m");
+			//创建输出流对象
+			FileOutputStream fos = new FileOutputStream("E:/cat.ser");
+			ObjectOutputStream oos = new ObjectOutputStream(fos);
+			oos.writeObject(cat);
+			oos.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-//反序列化
-@Test
-public void testDeSerial() {
-try {
-//创建输入流对象
-FileInputStream fis = new FileInputStream("E:/cat.ser");
-ObjectInputStream ois = new ObjectInputStream(fis);
-Cat cat2 = (Cat)ois.readObject();
-ois.close();
-System.out.println(cat2);
-} catch (Exception e) {
-e.printStackTrace();
-}
-} 
+	//反序列化
+	@Test
+	public void testDeSerial() {
+		try {
+			//创建输入流对象
+			FileInputStream fis = new FileInputStream("E:/cat.ser");
+			ObjectInputStream ois = new ObjectInputStream(fis);
+			Cat cat2 = (Cat)ois.readObject();
+			ois.close();
+			System.out.println(cat2);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	} 
 }
 依次执行之后，在E盘生成一个cat.ser文件
 控制台打印输入：Cat [name=rat, gender=m]

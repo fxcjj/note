@@ -88,8 +88,8 @@ nohup sh kibana &
 
 方式二、推荐方式
 
-sh /opt/elasticsearch-6.2.4/bin/elasticsearch -d
-sh /opt/kibana-6.2.4/bin/kibana -l /data/kibana/logs/kibana.log &
+sh /usr/local/elasticsearch-6.2.4/bin/elasticsearch -d
+sh /usr/local/kibana-6.2.4/bin/kibana -l /data/kibana/logs/kibana.log &
 （这里建议使用绝对路径启动，方便在ps -ef的时候可以通过kibana关键字定位进程）
 
 停止 ES 和 Kibana 的服务

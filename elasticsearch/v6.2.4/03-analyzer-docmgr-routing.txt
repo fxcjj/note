@@ -1,0 +1,89 @@
+
+一、分词器
+1 认证分词器
+1.1 Analyzer分析器
+一个Analyzer由正面三种组件组合而成
+character filter: 字符过滤器，对文本进行字符过滤处理，如处理文本中的html标签字符。
+处理完后再交给tokenizer进行分词。一个analyzer中可包含0个或多个字符过滤器，多个按配置顺序依次进行处理。
+tokenizer：分词器，对文本进行分词。一个analyzer必需且只可包含一个tokenizer。
+token filter：词项过滤器，对tokenizer分出的词进行过滤处理。
+如转小写、停用词处理、同义词处理。一个analyzer可包含0个或多个词项过滤器，按配置顺序进行过滤。
+
+1.2 如何测试分词器
+POST _analyze
+{
+  "analyzer": "whitespace",
+  "text":     "The quick brown fox."
+}
+
+POST _analyze
+{
+  "tokenizer": "standard",
+  "filter":  [ "lowercase", "asciifolding" ],
+  "text":      "Is this déja vu?"
+}
+
+
+2 内建的character filter
+HTML Strip Character Filter
+Mapping Character Filter
+Pattern Replace Character Filter
+
+3 内建的Tokenizer
+Standard Tokenizer
+Letter Tokenizer
+Lowercase Tokenizer
+Whitespace Tokenizer
+UAX URL Email Tokenizer
+Classic Tokenizer
+Thai Tokenizer
+NGram Tokenizer
+Edge NGram Tokenizer
+Keyword Tokenizer
+Pattern Tokenizer
+Simple Pattern Tokenizer
+Simple Pattern Split Tokenizer
+Path Hierarchy Tokenizer
+集成的中文分词器Ikanalyzer中提供的tokenizer：ik_smart 、 ik_max_word
+
+4 内建的Token Filter
+Lowercase Token Filter: lowercase 转小写
+Stop Token Filter: stop 停用词过滤器
+Synonym Token Filter: synonym 同义词过滤器
+说明：中文分词器Ikanalyzer中自带有停用词过滤功能。
+
+5 内建的Analyzer
+Standard Analyzer
+Simple Analyzer
+Whitespace Analyzer
+Stop Analyzer
+Keyword Analyzer
+Pattern Analyzer
+Language Analyzers
+Fingerprint Analyzer
+集成的中文分词器Ikanalyzer中提供的Analyzer：ik_smart 、 ik_max_word
+内建的和集成的analyzer可以直接使用。如果它们不能满足我们的需要，则我们可自己组合字符过滤器、分词器、词项过滤器来定义自定义的analyzer
+
+5.1 自定义 Analyzer
+|-----------------------|-----------------------------------|
+|tokenizer				| required							|
+|-----------------------|-----------------------------------|
+|char_filter			| 字符过滤器数组				|
+|-----------------------|-----------------------------------|
+|filter					| 词项过滤器数组					|
+|-----------------------|-----------------------------------|
+|position_increment_gap	| 多值间的词项position增长间隔，默认|
+|						| 是100。这个是用来解决多值字段的短 |
+|						| 语查询不准确问题的。				|
+|-----------------------|-----------------------------------|
+
+5.2 为字段指定分词器
+
+5.3 为索引定义个default分词器
+
+6 Analyzer的使用顺序
+
+二、文档管理
+
+
+https://www.cnblogs.com/leeSmall/p/9195782.html
