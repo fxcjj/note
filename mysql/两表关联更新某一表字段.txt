@@ -1,0 +1,19 @@
+
+
+-- 更新用户表中的订单id
+update v_user u, v_order o
+set u.order_id = o.id
+where u.id = o.user_id
+
+-- 更新三方id
+UPDATE loan_credit_way_third_link AS a
+INNER JOIN (
+	SELECT 
+	thd.id,
+	thd.code
+	FROM
+	loan_credit_third thd
+	where thd.dflag = 1
+) AS b ON a.third_code = b.code
+SET a.third_id = b.id;
+

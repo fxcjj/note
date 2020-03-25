@@ -1,0 +1,38 @@
+1 运行jar包的三种方式
+2 关闭jar包运行，重新运行jar包
+
+
+1 运行jar包的三种方式
+1.1 java -jar xxxxx.jar  
+当前ssh窗口被锁定，可按CTRL + C打断程序运行，或直接关闭窗口，程序退出
+
+1.2 java -jar xxxxx.jar &
+当前ssh窗口不被锁定，但是当窗口关闭时，程序中止运行。
+
+1.3 nohup java -jar xxxxxx.jar &
+意思是不挂断运行命令,当账户退出或终端关闭时,程序仍然运行
+
+第一、二种方式就是ssh窗口开着才运行，第三种方式是窗口关闭依然运行！
+
+1.4 运行jar包的步骤如下
+
+a) 上传jar包到Linux系统（假设jar包放在根目录下）
+b) 打开控制台ssh窗口，输入cd ..回车进入根目录
+c) 输入 nohup java -jar 包名.jar &
+d) 输入 tail -f nohup.out 查看运行情况
+
+补充：nohup java -jar xxxxxx.jar >aa.log & 表示指定输出日志文件，意思是不挂断运行命令,当账户退出或终端关闭时,程序仍然运行
+
+2 关闭jar包运行，重新运行jar包
+#8090为jar包运行的端口
+[root@iZuf6h5yubj77gkfpkfycaZ ~]# netstat -lnp|grep 7000
+tcp        0      0 0.0.0.0:7000            0.0.0.0:*               LISTEN      12621/java
+   
+#杀掉12621进程
+kill -9 12621
+
+此时，jar包就被停止了，重新运行步骤如下：
+
+输入 cd ..
+输入 nohup Java -jar 包名.jar &
+输入 tail -f nohup.out #查看运行情况

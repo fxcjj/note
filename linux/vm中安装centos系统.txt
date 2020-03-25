@@ -4,6 +4,7 @@
 1. vaware10安装centos6
 2. vmware14安装centos7
 3. 安装之后
+4. 如何使Hyper-V和VMware共存
 
 
 1. vaware10安装centos6
@@ -26,3 +27,6 @@ https://blog.csdn.net/u010270403/article/details/51444677
 3. 安装之后
 //配置网络等
 https://www.cnblogs.com/trunkslisa/p/9493938.html
+
+4. 如何使Hyper-V和VMware共存
+https://blog.csdn.net/baidu_34045013/article/details/60870519

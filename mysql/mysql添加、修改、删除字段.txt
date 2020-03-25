@@ -1,0 +1,48 @@
+
+1 添加字段
+2 修改字段
+3 删除字段
+
+
+1 添加字段
+
+语法：alter table <表名> add <列名> <字段类型>;
+
+示例：alter table v_user add name varchar(200);
+
+改进：
+1.1 增加默认值：
+alter table v_user add name varchar(200) default null;
+
+1.2 增加备注：
+alter table v_user add name varchar(200) default null comment '名称';
+
+1.3 指定在某字段之后
+-- 添加age字段在name字段之后
+alter table v_user add age int(11) DEFAULT 0 COMMENT '年龄' AFTER name;
+ 
+
+2 修改字段
+
+语法：alter table <表名> change <老字段> <新字段> <新字段类型>;
+
+示例：alter table v_user change nm name varchar(20);
+
+改进：alter table v_user change nm name varchar(20) not null default '0';
+
+修改字段位置
+ALTER TABLE 表名 MODIFY 字段名1 数据类型 FIRST|AFTER 字段名2 
+参数说明
+FIRST：可选参数，将字段1，修改为表的第一个字段。
+AFTER 字段名2，将字段1，插入到字段2的后面。
+
+例子：
+将“字段1”字段移到“字段2”字段后面：
+ALTER TABLE 表名 MODIFY 字段1  字段1数据类型  AFTER 字段2;
+
+
+3 删除字段
+
+语法：alter table 表名 drop 列名;
+
+示例：alter table v_user drop age;

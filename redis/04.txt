@@ -114,7 +114,7 @@ message		id			123
 设置单个字段
 	* hset key field value
 	* hsetnx key field value
-		* key的filed不存在的情况下执行，key不存在直接创建
+		* key的filed不存在的情况下才执行，key不存在直接创建
 		
 such as:
 hset victor qq 110
