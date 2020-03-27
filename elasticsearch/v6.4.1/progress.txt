@@ -1,0 +1,449 @@
+1 Getting Started
+	1.1 Basic Concepts
+	1.2 Installation
+	1.3 Exploring Your Cluster
+		1.3.1 Cluster Health
+		1.3.2 List All Indices
+		1.3.3 Create an Index
+		1.3.4 Index and Query a Document
+		1.3.5 Delete an Index
+	1.4 Modifying Your Data
+		1.4.1 Updating Documents
+		1.4.2 Deleting Documents
+		1.4.3 Batch Processing
+	1.5 Exploring Your Data
+		1.5.1 The Search API
+		1.5.2 Introducing the Query Language
+		1.5.3 Executing Searches
+		1.5.4 Executing Filters
+		1.5.5 Executing Aggregations
+	1.6 Conclusion
+2 Set up Elasticsearch
+3 Upgrade Elasticsearch
+4 API Conventions
+5 Document APIs
+6 Search APIs
+7 Aggregations
+8 Indices APIs
+9 cat APIs
+10 Cluster APIs
+11 Query DSL
+12 Mapping
+13 Analysis
+14 Modules
+15 Index Modules
+16 Ingest Node
+17 SQL Access
+18 Monitor a cluster
+19 Rolling up historical data
+20 Secure a cluster
+21 Alerting on Cluster and Index Events
+22 X-Pack APIs
+23 Command line tools
+24 How To
+25 Testing
+26 Glossary of terms
+27 Release Highlights
+28 Breaking changes
+29 Release Notes
+
+
+
+1 Getting Started
+a) search product
+b) collect log or tx
+c) price alerting platform
+d) analytics/business-intelligence
+	1.1 Basic Concepts
+	a) Near Realtime(NRT) 近实时
+	b) Cluster
+	c) Node
+	d) Index 相当于mysql中的表
+	e) Type Deprecated in 6.0.0
+	f) Document (resides in an index)
+	g) Shards & Replicas
+		1) Sharding is important for two primary reasons: 
+			* horizontally split/scale your content volume.
+			* distribute and parallelize operations across shards(potentially on multiple nodes)thus increasing performance/throughput.
+		2) eash elasticsearch shard is lucene index, there is maxmimum number of documents you can have in a single Lucne index. 
+		The limit is 2,147,483,519 (= Integer.MAX_VALUE - 128) documents
+		3) Replication is important for two primary reasons: 
+			* high availability.
+			* scale out search volume/throughput since searches can be executed on all replicas in parallel.
+	
+	1.2 Installation
+	a) download
+	b) step by step according to doc.
+	
+	1.3 Exploring Your Cluster
+	a) Now that we have our node (and cluster) up and running, the next step is to understand how to comunicate with it.
+	Fortunately, Elasticsearch provides a very comprehensive and powerful REST API that you can use to interact with your cluster.
+	Among the few things that can be done with the API are as follows:
+		1) check your cluster, node, and index health, status, and statistics.
+		2) administer your cluster, node, and index data and metadata.
+		3) CRUD against your indexs.
+		4) execute advanced search operations such as paging, sorting, filtering, scripting, aggregations, and many others.
+		
+		1.3.1 Cluster Health
+		a) check cluster health
+			GET /_cat/health?v
+			Green - everything is good (cluster is fully functional)
+			Yellow - all data is available but some replicas are not yet allocated (cluster is fully functional)
+			Red - some data is not available for whatever reason (cluster is partially functional)
+		b) get a list of nodes in our cluster
+			GET /_cat/node?v
+			
+		1.3.2 List All Indices
+		a) GET /_cat/indices?v
+		
+		1.3.3 Create an Index
+		a) PUT /customer?pretty
+		b) GET /_cat/indices?v
+		
+		1.3.4 Index and Query a Document
+		a) index document
+		PUT /customer/_doc/1?pretty
+		{
+		  "name": "John Doe"
+		}
+		b) query document
+		GET /customer/_doc/1?pretty
+		
+		1.3.5 Delete an Index
+		DELETE /customer?pretty
+		GET /_cat/indices?v
+
+	1.4 Modifying Your Data
+		1.4.1 Updating Documents
+		a) 更新名字
+		POST /customer/_doc/1/_update?pretty
+		{
+		  "doc": { "name": "sofie" }
+		}
+		b) 更新文档、添加字段age
+		POST /customer/_doc/1/_update?pretty
+		{
+		  "doc": {
+			"name": "diana",
+			"age": 15
+		  }
+		}
+		c) 使用脚本
+		POST /customer/_doc/1/_update?pretty
+		{
+		  "script": "ctx._source.age += 5"
+		}
+		
+		1.4.2 Deleting Documents
+		a) 删除id为2的文档
+		DELETE /customer/_doc/2?pretty
+		
+		1.4.3 Batch Processing
+		
+		a) 更新或者插入
+		POST /customer/_doc/_bulk?pretty
+		{"index":{"_id":"1"}} 
+		{"name": "John Doe" }
+		{"index":{"_id":"2"}}
+		{"name": "Jane Doe" }
+
+		b) 更新、删除
+		POST /customer/_doc/_bulk?pretty
+		{"update": {"_id":"1"}}
+		{"doc":{"name":"JJ"}}
+		{"delete":{"_id":"2"}}
+	
+	1.5 Exploring Your Data
+		1.5.1 The Search API
+		a) REST Request URI
+		b) REST request body
+		
+		1.5.2 Introducing the Query Language
+		a) 从索引10，查询2个文档
+		GET /bank/_search
+		{
+		  "query": {"match_all": {}},
+		  "size": 2,
+		  "from": 10
+		}
+		b) 按balance降序，查询前10条文档
+		GET /bank/_search
+		{
+		  "query": {"match_all": {}},
+		  "sort": {"balance": {"order": "desc"}}
+		}
+
+		1.5.3 Executing Searches
+		# 查询所有、_source中指定要返回的字段
+		GET /bank/_search
+		{
+		  "query": {"match_all": {}},
+		  "_source": ["account_number", "balance"]
+		}
+
+		# 查询accout_number为20的文档
+		GET /bank/_search
+		{
+		  "query": 
+		  {
+			"match": {
+			  "account_number": "20"
+			}
+		  }
+		}
+
+		# 匹配address中包含mill的文档
+		GET /bank/_search
+		{
+		  "query": 
+		  {
+			"match": {
+			  "address": "mill"
+			}
+		  }
+		}
+
+		# 匹配address中包含mill或者lane的文档
+		GET /bank/_search
+		{
+		  "query": 
+		  {
+			"match": {
+			  "address": "mill lane"
+			}
+		  }
+		}
+
+		# 查询包含mill lane的文档
+		GET /bank/_search
+		{
+		  "query": 
+		  {
+			"match_phrase": {
+			  "address": "mill lane"
+			}
+		  }
+		}
+
+		# bool语句，查询包含mill lane的文档，和match_phrase一样
+		GET /bank/_search
+		{
+		  "query": {
+			"bool": {
+			  "must": [
+				{
+				  "match": {
+					"address": "mill"
+				  }
+				},
+				{
+				  "match": {
+					"address": "lane"
+				  }
+				}
+			  ]
+			}
+		  }
+		}
+
+		# 匹配address中包含mill或者lane的文档，和match一样
+		GET /bank/_search
+		{
+		  "query": {
+			"bool": {
+			  "should": [
+				{
+				  "match": {
+					"address": "mill"
+				  }
+				},
+				{
+				  "match": {
+					"address": "lane"
+				  }
+				}
+			  ]
+			}
+		  }
+		}
+
+		# 查询即不包含mill也不包含lane的文档
+		GET /bank/_search
+		{
+		  "query": {
+			"bool": {
+			  "must_not": [
+				{
+				  "match": {
+					"address": "mill"
+				  }
+				},
+				{
+				  "match": {
+					"address": "lane"
+				  }
+				}
+			  ]
+			}
+		  }
+		}
+
+		# 查询40岁且不住在ID的文档
+		GET /bank/_search
+		{
+		  "query": {
+			"bool": {
+			  "must": [
+				{
+				  "match": {
+					"age": "40"
+				  }
+				}
+			  ],
+			  "must_not": [
+				{
+				  "match": {
+					"state": "ID"
+				  }
+				}
+			  ]
+			}
+		  }
+		}
+		
+		1.5.4 Executing Filters
+		a) filter->range, numeric or date filtering.
+		b) range query
+		# 查询balance大于等于20000且小于等于30000
+		GET /bank/_search
+		{
+		  "query": {
+			"bool": {
+			  "must": [
+				{ "match_all": {} }
+			  ], 
+			  "filter": {
+				"range": {
+				  "balance": {
+					"gte": 20000,
+					"lte": 30000
+				  }
+				}
+			  }
+			}
+		  }
+}
+
+		
+		1.5.5 Executing Aggregations
+	
+	1.6 Conclusion
+2 Set up Elasticsearch
+
+3 Upgrade Elasticsearch
+
+4 API Conventions
+
+5 Document APIs
+
+6 Search APIs
+
+7 Aggregations
+
+8 Indices APIs
+
+9 cat APIs
+
+10 Cluster APIs
+
+11 Query DSL
+
+12 Mapping
+
+13 Analysis
+
+14 Modules
+
+15 Index Modules
+
+16 Ingest Node
+
+17 SQL Access
+
+18 Monitor a cluster
+
+19 Rolling up historical data
+
+20 Secure a cluster
+
+21 Alerting on Cluster and Index Events
+
+22 X-Pack APIs
+
+23 Command line tools
+
+24 How To
+
+25 Testing
+
+26 Glossary of terms
+
+27 Release Highlights
+
+28 Breaking changes
+
+29 Release Notes
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

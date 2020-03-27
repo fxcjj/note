@@ -1,0 +1,14 @@
+
+
+启动kibana时报如下错误：
+{"type":"log","@timestamp":"2020-01-02T07:47:08Z","tags":["status","plugin:reporting@6.4.1","error"],"pid":19995,"state":"red","message":"Status changed from red to red - [data] Elasticsearch cluster did 
+not respond with license information.","prevState":"red","prevMsg":"Service Unavailable"}
+
+
+elasticsearch日志报错：
+org.elasticsearch.cluster.block.ClusterBlockException: blocked by: [SERVICE_UNAVAILABLE/1/state not recovered / initialized];
+
+
+原因：
+elasticsearch.yml中配置了集群节点，注释掉即可！
+

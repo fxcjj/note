@@ -13,53 +13,38 @@
 
 2 下载安装es和kibana
 2.1 下载es和kibana
-# 切换到opt目录
-cd /opt
+# 切换到安装目录
+cd /usr/local/
 
 # 下载Elastic 和 Kibana 并重命名，然后解压( O 是大写的)
-wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.2.4.tar.gz
-wget -O kibana-6.2.4.tar.gz https://artifacts.elastic.co/downloads/kibana/kibana-6.2.4-linux-x86_64.tar.gz
+wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.4.1.tar.gz
+wget -O kibana-6.4.1-linux-x86_64.tar.gz https://artifacts.elastic.co/downloads/kibana/kibana-6.4.1-linux-x86_64-linux-x86_64.tar.gz
 
 # 解压
-tar -xzf elasticsearch-6.2.4.tar.gz 
-tar -xzf kibana-6.2.4.tar.gz
+tar -xzf elasticsearch-6.4.1.tar.gz 
+tar -xzf kibana-6.4.1-linux-x86_64.tar.gz
 
 2.2 设置环境变量
 # 切换到 root 用户
 su root
+
 # 打开 profile 文件
 vi /etc/profile
 
-# 新增环境变量
+# 配置环境变量
 export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.201.b09-2.el7_6.x86_64
 export CLASS_PATH=$JAVA_HOME/lib/*.*
-export PATH=$JAVA_HOME/bin:/opt/elasticsearch-6.2.4/bin:/opt/kibana-6.2.4/bin:$PATH 
+export PATH=$JAVA_HOME/bin:/usr/local/elasticsearch-6.4.1/bin:/usr/local/kibana-6.4.1-linux-x86_64/bin:$PATH 
 
 # 保存并退出，并刷新环境变量
 wq
 source /etc/profile
 
 3 安装x-pack到es和kibana
-# 进入 ES 的 bin 目录
-cd /opt/elasticsearch-6.2.4/bin
-
-# 安装 x-pack 插件到es
-./elasticsearch-plugin install x-pack
-
-# 给普通用户puppet赋权限
-chown -R puppet:es-normal elasticsearch-6.2.4
-
-# 启动ES
-./elasticsearch
-
-# 进入 x-pack 目录
-cd /opt/elasticsearch-6.2.4/bin/x-pack
+此版本的es和kibana已自带x-pack，无需安装
 
 # 设置用户名和密码，这里设置了同时设置了es默认账号(elastic)、kibana默认账号(kibana)、logstash(logstash_system)默认账号的密码
-./setup-passwords 123456
-
-# 安装 x-pack 插件到kibana，有可能失败，可以使用离线安装参考同目录下的faq.txt
-./kibana-plugin install x-pack
+sh /usr/local/elasticsearch-6.4.1/bin/elasticsearch-setup-passwords 123456
 
 # 进入 Kibana 的 config 目录
 cd ../config/
@@ -79,6 +64,14 @@ wq
 
 4 启动es和kibana
 
+4.1 es和kibana要使用普通用户启动
+新建普通用户: majority
+
+4.2 给普通用户赋权限
+chown -R majority:es-normal /usr/local/elasticsearch-6.4.1
+chown -R majority:es-normal /usr/local/kibana-6.4.1-linux-x86_64/
+chown -R majority:es-normal /opt
+
 启动 Elastic 和 Kibana 服务
 
 方式一、传统nohup启动方式
@@ -88,8 +81,8 @@ nohup sh kibana &
 
 方式二、推荐方式
 
-sh /usr/local/elasticsearch-6.2.4/bin/elasticsearch -d
-sh /usr/local/kibana-6.2.4/bin/kibana -l /data/kibana/logs/kibana.log &
+sh /usr/local/elasticsearch-6.4.1/bin/elasticsearch -d
+sh /usr/local/kibana-6.4.1-linux-x86_64/bin/kibana -l /opt/kibana/logs/kibana.log &
 （这里建议使用绝对路径启动，方便在ps -ef的时候可以通过kibana关键字定位进程）
 
 停止 ES 和 Kibana 的服务
@@ -97,7 +90,7 @@ sh /usr/local/kibana-6.2.4/bin/kibana -l /data/kibana/logs/kibana.log &
 找到进程ID，通过“kill -9 进程ID”来结束进程
 
 ps -ef | grep elasticsearch
-ps -ef | grep kibana
+ps -ef | grep kibana 或者 ps -ef | grep node 或者 netstat -tunlp | grep 5601
 
 直接使用nohup ./kibana &启动时，可能进程里面找不到kibana对应的进程，
 可以使用ps -ef|grep node来查找，这大概是因为kibana是由node来写的，如果有多个node进程，
@@ -110,18 +103,27 @@ ps -ef | grep kibana
 ./elasticsearch -d -Epath.data=/opt/elasticsearch/data/data2 -Epath.logs=/opt/elasticsearch/logs/log2
 ./elasticsearch -d -Epath.data=/opt/elasticsearch/data/data3 -Epath.logs=/opt/elasticsearch/logs/log3
 
+Note: 上面添加两个节点，默认cluster名为elasticsearch, 如果cluster是自定义的，需要指定cluster名。
+如：./elasticsearch -Ecluster.name=my_cluster_name -Enode.name=my_node_name
+./elasticsearch -d -Ecluster.name=my-application -Enode.name=node2 -Epath.data=/opt/elasticsearch/data/data2 -Epath.logs=/opt/elasticsearch/logs/log2
+./elasticsearch -d -Ecluster.name=my-application -Enode.name=node3 -Epath.data=/opt/elasticsearch/data/data3 -Epath.logs=/opt/elasticsearch/logs/log3
+
+
 5 集成Ikanalyzer
 下载ik
 https://github.com/medcl/elasticsearch-analysis-ik/releases/
-解压重命名为analysis-ik放到elasticsearch-6.2.4/plugins目录下
+解压重命名为analysis-ik放到elasticsearch-6.4.1/plugins目录下
 其中IKAnalyzer.cfg.xml是配置文件
+
+下载zip
+wget https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v6.4.1/elasticsearch-analysis-ik-6.4.1.zip
 
 
 6 总结
 a) 先安装jdk8, es,kibana,x-pack版本要一致
 b) es不允许root用户执行
-c) 赋权限 chown -R puppet:es-normal elasticsearch-6.2.4
-puppet是用户名
+c) 赋权限 chown -R majority:es-normal elasticsearch-6.4.1
+majority是用户名
 es-normal是所属用户组
 d) kibana.yml中配置的密码和之前配置的要一致
 

@@ -1,4 +1,58 @@
 
+//创建索引和mapping_type(表结构)
+PUT my_index //Create an index called my_index
+{
+	"mappings": {
+		"my_mapping_type": { //Add a mapping type called my_mapping_type
+			"properties": { //Specify fields or properties
+				"title": { "type": "text" }, //Specify that the title field contains text values.
+				"name": { "type": "text" }, //Specify that the name field contains text values.
+				"age": { "type": "integer" }, //Specify that the age field contains integer values.
+				"created": { //Specify that the created field contains date values in two possible formats.
+					"type": "date",
+					"format": "strict_date_optional_time||epoch_millis"
+				}
+			}
+		}
+	}
+}
+
+//获取指定名称的mapping_type(即表结构)
+GET my_index/_mapping/my_mapping_type
+
+
+//添加新字段
+// PUT customer/_mapping/_doc 这样也行？
+PUT customer/_doc/_mapping
+{
+	"properties": {
+		"newfield1":{
+			"type": "text",
+			"fields": {
+				"keyword": {
+					"type": "keyword"
+				}
+			}
+		}
+	}
+}
+
+// 查看表结构
+GET customer/_doc/_mapping
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 集群健康状况
 http://localhost:9200/_cat
 

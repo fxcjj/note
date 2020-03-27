@@ -1,0 +1,102 @@
+
+
+D:\github\rumor\src\main\java\com\vic\base>javac -g IPlusByteCodeTest.java
+D:\github\rumor\src\main\java\com\vic\base>javap -v IPlusByteCodeTest.class
+Classfile /D:/github/rumor/src/main/java/com/vic/base/IPlusByteCodeTest.class
+  Last modified 2019-12-23; size 522 bytes
+  MD5 checksum 70238b7fab6bbe0e21eab1d03f896bc3
+  Compiled from "IPlusByteCodeTest.java"
+public class com.vic.base.IPlusByteCodeTest
+  minor version: 0
+  major version: 52
+  flags: ACC_PUBLIC, ACC_SUPER
+Constant pool:
+   #1 = Methodref          #3.#18         // java/lang/Object."<init>":()V
+   #2 = Class              #19            // com/vic/base/IPlusByteCodeTest
+   #3 = Class              #20            // java/lang/Object
+   #4 = Utf8               <init>
+   #5 = Utf8               ()V
+   #6 = Utf8               Code
+   #7 = Utf8               LineNumberTable
+   #8 = Utf8               LocalVariableTable
+   #9 = Utf8               this
+  #10 = Utf8               Lcom/vic/base/IPlusByteCodeTest;
+  #11 = Utf8               testIPlus
+  #12 = Utf8               i
+  #13 = Utf8               I
+  #14 = Utf8               j
+  #15 = Utf8               testPlusI
+  #16 = Utf8               SourceFile
+  #17 = Utf8               IPlusByteCodeTest.java
+  #18 = NameAndType        #4:#5          // "<init>":()V
+  #19 = Utf8               com/vic/base/IPlusByteCodeTest
+  #20 = Utf8               java/lang/Object
+{
+  public com.vic.base.IPlusByteCodeTest();
+    descriptor: ()V
+    flags: ACC_PUBLIC
+    Code:
+      stack=1, locals=1, args_size=1
+         0: aload_0
+         1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+         4: return
+      LineNumberTable:
+        line 7: 0
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0       5     0  this   Lcom/vic/base/IPlusByteCodeTest;
+
+  public void testIPlus();
+    descriptor: ()V
+    flags: ACC_PUBLIC
+    Code:
+      stack=1, locals=3, args_size=1
+         0: iconst_0
+         1: istore_1
+         2: iload_1
+         3: iinc          1, 1
+         6: istore_2
+         7: return
+      LineNumberTable:
+        line 10: 0
+        line 11: 2
+        line 12: 7
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0       8     0  this   Lcom/vic/base/IPlusByteCodeTest;
+            2       6     1     i   I
+            7       1     2     j   I
+
+  public void testPlusI();
+    descriptor: ()V
+    flags: ACC_PUBLIC
+    Code:
+      stack=1, locals=3, args_size=1
+         0: iconst_0
+         1: istore_1
+         2: iinc          1, 1
+         5: iload_1
+         6: istore_2
+         7: return
+      LineNumberTable:
+        line 15: 0
+        line 16: 2
+        line 17: 7
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0       8     0  this   Lcom/vic/base/IPlusByteCodeTest;
+            2       6     1     i   I
+            7       1     2     j   I
+}
+SourceFile: "IPlusByteCodeTest.java"
+
+执行编译命令：
+javac -g IPlusByteCodeTest.java
+
+执行反编译生成汇编代码：
+javap -v IPlusByteCodeTest.class
+
+
+
+
+
