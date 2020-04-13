@@ -58,21 +58,21 @@ Note: 新增可以，更新可以。
 以下方案都是关于高并发时保证数据一致性的方案，使线程串行化执行。和幂等性不是一个概念。
 
 3.3.1 乐观锁
-在表中添加version字段，每次更新前先查询出来version值，执行更新时比较version且将version+1，
+在表中添加version字段，默认为1，每次更新前先查询出来version值，执行更新时比较version且将version+1，
 成功返回影响行数为1，失败返回影响行数为0，代码里拿到此值可重试或者放弃。sql语句如下: 
 update v_gather_score set score = score +1, update_time = now(), version = version + 1 
 where user_id = #id and version = # version;
 
 3.3.2 悲观锁
-先查询出要更新的记录，查询时加上锁( for update)，此时，线程独占，其他线程阻塞，执行更新即可。
+先查询出要更新的记录，查询时加上锁( for update)，此时，线程独占，其他线程（读写）阻塞，执行更新即可。
+Note: for update时，条件必须为id或者唯一索引，不然锁表！！！
 
 3.3.3 去重表
 添加一张去重表，里面某个字段声明为唯一索引，插入业务表时，同时插入去重表，两次插入操作为一个事务，
 第一次插入成功后，删除去重表的数据，在并发情况下，后面插入操作失败。
 
 3.3.4 分布式锁
-建设中...
-
+参考 sb\sb24 项目
 
 4. 总结
 a) 可行方案有唯一索引、使用insertOrUpdate、使用唯一Token
@@ -81,8 +81,8 @@ c) 其它流传的方案属于混淆视听
 
 
 References
+//乐观锁实现
+https://www.iteye.com/blog/chenzhou123520-1863407
 https://blog.csdn.net/yuhaiyang_1/article/details/81040967
-https://baijiahao.baidu.com/s?id=1570246189966333&wfr=spider&for=pc
-https://baijiahao.baidu.com/s?id=1570246189966333&wfr=spider&for=pcLL
 https://blog.csdn.net/tomcatAndOracle/article/details/80619255
 

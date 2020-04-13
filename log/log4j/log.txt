@@ -1,8 +1,4 @@
 
-From
-https://mp.weixin.qq.com/s/XiCky-Z8-n4vqItJVHjDIg
-
-
 输出目的地
 	控制台
 	文件
@@ -46,8 +42,25 @@ SLF4J是日志顶层抽象
 logback是直接实现slf4j的
 而log4j, java.util.logging, tinylog需要适配器
 
+log4j需要引入的依赖
+slf4j-api 
+slf4j-log4j12 转换器
+log4j
+
+具体使用日志类的API：
+1. log4j：
+import org.apache.log4j.Logger;
+Logger logger= Logger.getLogger(xx.class);
+ 
+2. slf4j+log4j：（推荐）
+import  org.slf4j.Logger;
+import  org.slf4j.LoggerFactory;
+Logger logger = LoggerFactory.getLogger(xx.class);
 
 
+参考
+https://www.cnblogs.com/lujiango/p/8573411.html
+https://mp.weixin.qq.com/s/XiCky-Z8-n4vqItJVHjDIg
 	
 	
 	

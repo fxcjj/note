@@ -1,0 +1,4 @@
+//software url
+technology/develop_tools/idea/idea-2019.3.4
+
+
