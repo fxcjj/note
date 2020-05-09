@@ -59,3 +59,10 @@ delete from t_repeat where id not in (
 		select max(id) as maxid from t_repeat GROUP BY name, code
 	) b
 )
+
+
+
+
+https://mp.weixin.qq.com/s/dfiexh7NUEQV1xSDB7Ftxg
+
+
