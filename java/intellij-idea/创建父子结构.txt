@@ -1,0 +1,65 @@
+
+一般项目结构分为两种结构
+1. 父子层级
+2. 同一层级
+
+1. 父子层级
+exotic-sail //父项目
+	|--sail-api //公共接口
+	|--sail-common //公共模块
+	|--sail-order //订单模块
+	|--pom.xml //父pom文件
+
+1.1 创建父项目exotic-sail
+	a) File->New->Project...
+	b) 选择左侧菜单Maven->不要勾选Create from archetype->Next->
+	GroupId: com.vic
+	ArtifactId: exotic-sail
+	Version: 保持默认就好
+	->Next->
+	Project name: exotic-sail //父目录名称
+	Project location: 存储位置
+	->Next->New Window。多余的packege可以删除
+1.2 创建子项目sail-api
+	a) 右击项目或者File->New->Module->选择Maven->勾选Create from archetype->
+		org.apache.maven.archetypes:maven-archetype-quickstart //普通java项目-
+		org.apache.maven.archetypes:maven-archetype-webapp //web项目
+		->Next->观察此界面->填写artifactId为sail-api->选择maven配置->Next->输入Module name为sail-api->Finish.
+	b) 查看sail-api项目的pom.xml会发现有如下内容
+		<parent>
+			<artifactId>exotic-sail</artifactId>
+			<groupId>com.vic</groupId>
+			<version>1.0-SNAPSHOT</version>
+		</parent>
+		说明父项目是exotic-sail
+
+
+
+2. 同一层级
+springboot //和父子结构不一样，没有pom.xml，各个项目中包含pom.xml
+	springboot01 //与springboot02同级，有自己的pom.xml
+	springboot02
+
+2.1 File->New->Project...
+2.2 选择左侧菜单Empty Project->Next->
+	Project name: springboot //目录名称
+	Project location: 存储位置
+	->Finish->New Window
+2.3 此时出现Project Structure对话框
+	选择Module->+->New Module->在出现的对话框中可以选择Maven项目、Spring Initializr
+	此处选择Maven->选择jdk->Create from archetype->
+	org.apache.maven.archetypes:maven-archetype-quickstart //普通java项目
+	org.apache.maven.archetypes:maven-archetype-webapp //web项目
+	->Next->
+	GroupId: com.vic
+	ArtifactId: springboot01
+	->Next->Next->选择maven地址->Next->Finish
+2.4 此时回到Project Structure对话框，依次操作可新建模块
+2.5 右击项目->Open Module Settings，即可打开Project Structure对话框
+2.6 导入多个项目到idea中
+	a) File->New->Project...->Empty Project->目录（如sb）
+	b) 点+号import module->import module from external
+
+
+References
+https://blog.csdn.net/gdsgdh308227363/article/details/79722491

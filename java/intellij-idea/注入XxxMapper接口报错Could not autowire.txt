@@ -1,0 +1,8 @@
+Intellij Idea开发工具在@Autowired或者@Resource注入XxxMapper接口时报如下错误：
+
+Could not autowire. No beans of ‘XxxMapper’ type found. less… (Ctrl+F1)Checks autowiring problems in a bean class.
+
+解决方法如下，在 Intellij Idea中设置一下：
+
+Settings - Editor - Inspections - Spring - Spring Core - Code - Autowiring for Bean Class - disable（idea2017好像是把√去掉）
+
