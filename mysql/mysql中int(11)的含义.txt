@@ -28,4 +28,5 @@ id	a			b			c			d			e
 
 参考
 https://segmentfault.com/a/1190000012479448?utm_source=tag-newest
+项目sb/sb08,路径 com.vic.sb08.Sb08ApplicationTests#testInsert
 
