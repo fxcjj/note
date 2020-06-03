@@ -38,8 +38,10 @@ AFTER 字段名2，将字段1，插入到字段2的后面。
 
 例子：
 将“字段1”字段移到“字段2”字段后面：
-ALTER TABLE 表名 MODIFY 字段1  字段1数据类型  AFTER 字段2;
+ALTER TABLE 表名 MODIFY 字段1 字段1数据类型 AFTER 字段2;
 
+// 将姓名调整到手机号字段后面
+alter table v_user modify name varchar(200) COMMENT '姓名' after phone;
 
 3 删除字段
 

@@ -1,3 +1,5 @@
+not ok
+
 //连接字符
 mysql> select concat('a', 'b', 'c');
 +-----------------------+
