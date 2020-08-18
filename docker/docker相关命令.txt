@@ -17,6 +17,8 @@ docker rmi 镜像名:tag/镜像id
 docker stop 容器别名/容器id
 docker start 容器别名/容器id
 docker rm 容器别名/容器id
+//查询容器信息
+docker inspect 容器别名/容器id
 
 //查看容器进程
 docker ps

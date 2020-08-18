@@ -5,7 +5,7 @@
 4. Enable Romote Client Access
 
 1. Uninstall old versions
-参考卸载docker.txt
+参考<卸载docker.txt>
 
 2. SET UP THE REPOSITORY
 2.1 Install required packages. yum-utils provides the yum-config-manager utility, and device-mapper-persistent-data and lvm2 are required by the devicemapper storage driver.
