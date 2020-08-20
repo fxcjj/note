@@ -1,0 +1,33 @@
+
+Docker是什么？
+Docker 属于 Linux 容器的一种封装，提供简单易用的容器使用接口。它是目前最流行的 Linux 容器解决方案。
+而 Linux 容器是 Linux 发展出的另一种虚拟化技术，简单来讲， Linux 容器不是模拟一个完整的操作系统，而是对进程进行隔离，相当于是在正常进程的外面套了一个保护层。
+对于容器里面的进程来说，它接触到的各种资源都是虚拟的，从而实现与底层系统的隔离。
+
+
+Docker的优势
+
+Docker的三个基本概念
+1) Image
+镜像有多种生成方法
+* 从无到有开始创建镜像
+* 下载并使用别人创建好的现成的镜像
+* 在现在镜像上创建新的镜像
+
+2) Container
+
+
+3) Repository
+
+Docker的核心组件
+	Docker Client
+	Docker Daemon
+	Docker Image
+	Docker Registry
+	Docker Container
+
+Docker Daemon
+	Docker Server
+	Engine
+	Job
+

@@ -10,6 +10,8 @@ systemctl restart docker
 //查看docker状态
 systemctl status docker
 
+// 查看所有镜像
+docker images
 //移除已安装镜像
 docker rmi 镜像名:tag/镜像id
 
@@ -26,12 +28,12 @@ docker ps
 //查看容器映射端口
 docker port mysql5.6
 
-使用docker attach containerId命令会卡住
-使用ctrl+z退出，会停止容器，所以退出时要选择ctrl+p+q退出容器。
+使用docker attach containerId命令会卡住无法退出。
+想看到容器的STDOUT和STDERR，并不需要attach到容器上，docker logs命令完全可以满足需求。
 
 一般使用以下命令进入容器
 docker exec -it containerId /bin/bash
-这个方法退出容器，容器是不会停止的。
+这个方法退出容器后，容器不会停止。
 
 
 //查看镜像版本

@@ -1,4 +1,8 @@
 
+镜像的内容和创建步骤描述在一个文本文件中，这个文件被称作 Dockerfile，
+通过执行 docker build <docker-file>命令可以构建出 Docker 镜像
+
+
 dockerfile忽略大小写
 
 指令根据作用分两种

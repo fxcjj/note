@@ -32,6 +32,10 @@ sudo yum install docker-ce docker-ce-cli containerd.io
 
 注意：这里包含docker, client, containerd
 
+查看是否安装成功
+docker version
+或者
+docker info
 
 4. Enable Romote Client Access
 默认配置下，Docker Daemon 只能响应来自本地 Host 的客户端请求。
