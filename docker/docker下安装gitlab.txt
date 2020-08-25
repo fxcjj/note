@@ -35,3 +35,7 @@ https://www.cnblogs.com/zuxing/articles/9329152.html
 
 //docker搭建gitlab,重置密码
 https://blog.csdn.net/goodlook0123/article/details/82383586
+
+
+
+
