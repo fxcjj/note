@@ -1,0 +1,31 @@
+1. 创建Dockerfile文件
+mkdir static_web
+cd static_web
+touch Dockerfile
+
+Dockerfile文件内容如下：
+FROM nginx
+MAINTAINER victor <123@qq.com>
+RUN echo '<h1>Hello, Docker!</h1>' > /usr/share/nginx/html/index.html
+
+2. 通过Dockerfile文件构建镜像
+在Dockerfile文件目录下执行
+docker build -t victor/nginx_web:v1 .
+
+参数说明：
+-t 是为新镜像设置仓库和名称
+victor 为仓库名
+nginx_web 为镜像名
+：v1 为标签（不添加则默认latest）
+. 当前目录下找Dockerfile
+
+3. 创建、启动容器
+docker run --name nginx_web -d -p 8080:80 victor/nginx_web:v1
+docker run --name nginx_web -d -P victor/nginx_web:v1
+
+这条命令会用Nginx镜像启动一个容器，命名为nginx_web，并且映射了8080端口。
+
+这样我们可以用浏览器去访问这个 Nginx 服务器
+http://IP:8080
+页面返回信息：
+Hello, Docker!

@@ -40,8 +40,10 @@ IPADDR=192.168.6.128
 GATEWAY=192.168.6.1
 NETMASK=255.255.255.0
 
-# 域名
+# 域名配置，可添加DNS2
 DNS1=114.114.114.114
+DNS2=8.8.8.8
+DNS3=8.8.4.4
 
 5. 重启网络配置
 service network restart

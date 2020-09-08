@@ -1,0 +1,107 @@
+
+1 Dockerfile是什么？
+2 Dockerfile的书写规则
+3 指令使用方法
+
+
+
+
+镜像的内容和创建步骤描述在一个文本文件中，这个文件被称作 Dockerfile，
+通过执行 docker build <docker-file>命令可以构建出 Docker 镜像。
+
+dockerfile忽略大小写
+
+指令根据作用分两种
+1. 构建指令
+	构建指令用于构建image，其指定的操作不会在运行image的容器上执行
+2. 设置指令
+	设置指令用于设置image的属性，其指定的操作将在运行image的容器中执行
+
+1. FROM
+MAINTAINER
+RUN
+CMD
+EXPOSE
+ENV
+ADD
+COPY
+ENTRYPOINT
+USER
+
+
+
+ADD和COPY
+https://www.cnblogs.com/sparkdev/p/9573248.html
+https://www.cnblogs.com/51kata/p/5264894.html
+
+copy命令
+	a) multistage场景
+	b) 简单copy
+add命令
+	a) 自动解压缩
+	b) 从url拷贝文件到镜像中
+
+
+VOLUME
+
+
+
+WORKDIR
+
+
+
+
+Dockerfile文件
+
+# 指定基础image
+FROM registry-srv:5000/java:8
+
+# 创建者信息
+MAINTAINER victor
+
+# 容器内安装软件
+RUN yum install -y xxx
+
+（4）CMD（设置container启动时执行的操作）
+设置指令，用于container启动时指定的操作。该操作可以是执行自定义脚本，也可以是执行系统命令。
+该指令只能在文件中存在一次，如果有多个，则只执行最后一条。
+
+该指令有三种格式：
+1. CMD ["executable","param1","param2"] //like an exec, this is the preferred form
+2. CMD command param1 param2 //as a shell
+3. CMD ["param1","param2"] //as default parameters to ENTRYPOINT
+当Dockerfile中指定了ENTRYPOINT，那么使用此格式。
+ENTRYPOINT指定的是一个可执行的脚本或者程序的路径，该指定的脚本或者程序将会以param1和param2作为参数执行。
+所以如果CMD指令使用上面的形式，那么Dockerfile中必须要有配套的ENTRYPOINT。
+
+（5）ENTRYPOINT（设置container启动时执行的操作）
+设置指令，指定容器启动时执行的命令，可以多次设置，但是只有最后一个有效。
+该指令有两种格式:
+1. ENTRYPOINT ["executable", "param1", "param2"] //like an exec, the preferred form
+2. ENTRYPOINT command param1 param2 //as a shell
+
+该指令的使用分为两种情况，一种是独自使用，另一种和CMD指令配合使用。
+当独自使用时，如果你还使用了CMD命令且CMD是一个完整的可执行的命令，那么CMD指令和ENTRYPOINT会互相覆盖只有最后一个CMD或者ENTRYPOINT有效。
+如：
+# CMD指令将不会被执行，只有ENTRYPOINT指令被执行
+CMD echo “Hello, World!”
+ENTRYPOINT ls -l
+
+另一种用法和CMD指令配合使用来指定ENTRYPOINT的默认参数，这时CMD指令不是一个完整的可执行命令，仅仅是参数部分；
+ENTRYPOINT指令只能使用JSON方式指定执行命令，而不能指定参数。
+如：
+FROM ubuntu
+CMD ["-l"]
+ENTRYPOINT ["/usr/bin/ls"]
+
+
+
+
+//dockerfile
+https://blog.csdn.net/we_shell/article/details/38445979
+https://docs.docker.com/engine/reference/builder/#cmd
+https://www.simapple.com/355.html
+
+
+
+

@@ -1,0 +1,36 @@
+
+1. 定义Dockerfile文件
+参考sb08/Dockerfile
+
+2. 定义docker-compose.yml文件
+参考sb08/docker-compose.yml
+
+3. 准备好项目sb08
+参考sb08/sb08-0.0.1-SNAPSHOT.jar
+
+4. 上传sb08目录到/usr/share/my-docker-compose目录下
+
+5. 执行如下命令
+# 进入sb08目录
+cd sb08
+# 在 docker-compose.yml 文件所有目录下执行
+docker-compose up --build // build镜像、启动、运行容器
+或者
+docker-compose up
+或者
+docker-compose up -d  // 后台启动并运行容器
+
+6. 访问 http://localhost:9000/hello 即可访问微服务接口
+
+
+
+//查看运行服务
+docker-compose ps
+//查看所有服务
+docker-compose ps --services
+
+使用docker ps也可查看到
+
+https://www.jianshu.com/p/658911a8cff3
+//docker-compose命令
+https://www.cnblogs.com/moxiaoan/p/9299404.html

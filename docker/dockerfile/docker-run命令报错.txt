@@ -1,0 +1,20 @@
+错误1
+场景描述：当执行以下命令时
+docker run --name nginx_web -d -p 8080:80 victor/nginx_web:v1
+
+报错信息：
+WARNING: IPv4 forwarding is disabled. Networking will not work
+
+解决方案
+[root@localhost ~]# vi /usr/lib/sysctl.d/00-system.conf
+
+添加如下代码：
+net.ipv4.ip_forward=1
+
+重启network服务
+# systemctl restart network
+  
+解决完成以后删除掉做错的容器，再次创建就可以了
+docker rm -f ea73dcb26ff5
+
+-f 表示强制删除

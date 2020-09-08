@@ -1,0 +1,28 @@
+
+
+root@nodej-131 ~]# docker pull openjdk
+Using default tag: latest
+Error response from daemon: Get https://registry-1.docker.io/v2/: dial tcp: lookup registry-1.dock
+[root@nodej-131 ~]# cd /etc/docker/
+[root@nodej-131 docker]# ls
+daemon.json  daemon.json.bak  daemon.json.rpmsave  key.json
+[root@nodej-131 docker]# vi daemon.json
+# 修改为以下
+[root@nodej-131 docker]# cat daemon.json
+{
+  "registry-mirrors": ["https://registry.docker-cn.com","http://hub-mirror.c.163.com","http://registry-srv:5000"],
+  "insecure-registries":["registry-srv:5000"]
+}
+
+#重启docker服务
+[root@nodej-131 docker]# systemctl restart docker.service
+
+Docker国内源说明：
+Docker 官方中国区：https://registry.docker-cn.com
+网易：http://hub-mirror.c.163.com
+中国科技大学：https://docker.mirrors.ustc.edu.cn
+阿里云：https://pee6w651.mirror.aliyuncs.com
+
+
+Reference
+https://www.cnblogs.com/morgan363/p/12011404.html

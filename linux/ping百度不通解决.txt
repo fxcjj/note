@@ -15,7 +15,8 @@ systemctl restart network
 
 再次ping即可
 
-
+另外注意下 /etc/ssh/sshd_config 文件。
+如果UseDNS no，需要改成yes或者注释掉此行
 
 Reference
 https://www.cnblogs.com/sunylat/p/7214753.html

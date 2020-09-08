@@ -55,3 +55,4 @@ docker -H 服务器IP地址 info
 
 Reference
 http://dockone.io/article/8350
+https://docs.docker.com/engine/install/centos/

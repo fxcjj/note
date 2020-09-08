@@ -1,0 +1,10 @@
+
+
+
+docker run --name wordpressa -e WORDPRESS_DB_HOST=192.168.6.131:3306 -e WORDPRESS_DB_USER=root -e WORDPRESS_DB_PASSWORD=root --link mysql5.6a -p 8080:80 -d wordpress
+
+
+
+
+https://www.cnblogs.com/shenjianping/p/12257642.html
+

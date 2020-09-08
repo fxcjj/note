@@ -22,7 +22,7 @@ docker run \
 docker ps
 
 // 如果没有redisa，查看日志
-docker logs redisa
+docker logs redisa -f
 
 // ip查看
 docker inspect 73a7e9d72f3a|grep -i add

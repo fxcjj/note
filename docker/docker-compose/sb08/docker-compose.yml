@@ -1,0 +1,10 @@
+# 指明Compose file Format的版本
+version: '3.8'
+services:
+  # 指定服务名称 
+  sb08: 
+    # 指定Dockerfile所在目录，.表示当前目录
+    build: .
+    # 暴露端口信息  - "宿主机端口:容器暴露端口"
+    ports: 
+    - "9000:1908"

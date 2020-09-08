@@ -1,5 +1,8 @@
 
 
+CLI 命令行接口
+Command Line Interface
+
 IEC 国际电工委员会
 International Electro technical Commission
 

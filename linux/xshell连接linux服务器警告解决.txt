@@ -1,0 +1,18 @@
+xshell出现WARNING!The remote SSH server rejected X11 forwarding request.
+
+方法1（实验不行）
+vi /etc/ssh/sshd_config  在X11这行改为X11Forwarding yes,
+然后再将UseLogin参数为no，可能这一行最开始是被注释，去掉注释，保存之后重启sshd服务，重新连接即可
+
+重启ssh服务
+systemctl restart sshd
+
+如果还不行检查 xorg-x11-xauth 的rpm包是否安装，未安装则进行下面操作
+yum install xorg-x11-xauth
+
+方法2（实验不行）
+在xshell界面中，选择文件 -> 默认会话属性 -> 连接 -> SSH -> 隧道 -> X11转移 -> 勾选去掉即可
+
+
+Reference
+https://blog.csdn.net/wugenqiang/article/details/86554753

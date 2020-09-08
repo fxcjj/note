@@ -43,7 +43,7 @@ exit
 在mysql里查看 status;
 
 //查看docker映射宿主机端口
-docker port mysql5.6
+docker port mysql5.6a
 3306/tcp -> 0.0.0.0:3307
 
 3. 遇到的问题

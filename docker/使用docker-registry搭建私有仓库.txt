@@ -111,7 +111,7 @@ The push refers to repository [192.168.6.131:5000/busybox]
 v1: digest: sha256:895ab622e92e18d6b461d671081757af7dbaa3b00e3e28e12505af7817f73649 size: 527
 
 
-4. docker pull拉取本地私有仓库镜像
+4. docker pull拉取私有仓库镜像到本地
 //删除本地的镜像
 docker rmi 192.168.6.131:5000/busybox:v1
 
@@ -120,6 +120,8 @@ docker pull 192.168.6.131:5000/busybox:v1
 
 //查看本地镜像
 docker images
+
+Note: 可以使用另外一台机器pull镜像
 
 
 5. 配置客户机域名访问
