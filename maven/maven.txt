@@ -35,7 +35,8 @@ mvnrepository.com
 
 //local repository, the default local repository, 
 you can change the default repository by update conf/settings.xml(localRepository).
-such as: d:\repo
+such as: 
+<localRepository>D:\stock</localRepository>
 C:\Users\Victor\.m2
 
 
@@ -66,6 +67,9 @@ maven内置隐式变量
 	
 	runtime
 	编译、测试无效，打包时用到，如：mysql-connector.jar
+	
+	import
+	导入的范围，它只在使用dependencyManagement中，表示从其他pom中导入dependecy的配置。
 	
 依赖传递
 	scope为test是不会传递的。

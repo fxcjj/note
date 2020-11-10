@@ -48,3 +48,7 @@ alter table v_user modify name varchar(200) COMMENT '姓名' after phone;
 语法：alter table 表名 drop 列名;
 
 示例：alter table v_user drop age;
+
+
+参考
+https://programskills.blog.csdn.net/article/details/79354136?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-5.channel_param&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-5.channel_param
