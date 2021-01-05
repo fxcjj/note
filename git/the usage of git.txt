@@ -8,7 +8,7 @@ git目录
 6 管理修改
 7 撤销修改
 8 删除文件
-9 远程仓库
+9 关联远程仓库
 10 从远程库克隆
 11 创建与合并分支
 12 解决冲突
@@ -206,16 +206,18 @@ git commit --amend
 		nothing to commit, working directory clean
 		
 
-9 远程仓库
+9 关联远程仓库
 	1)在clairvoyant repo目录下使用git init初始化repo
 	2)在github上新建远程库，记得要把pubkey加到github上
 	3)关联一个远程库，在自己的clairvoyant库下面使用命令git remote add origin git@github.com:fxcjj/clairvoyant.git
-	4)关联后，使用命令git push -u origin master 第一次推送master分支的所有内容.
+	4)执行命令：git add .
+	5)执行命令：git commit -m '备注'
+	6)关联后，使用命令git push -u origin master 第一次推送master分支的所有内容.
 		把本地库的内容推送到远程，用git push命令，实际上是把当前分支master推送到远程。
 		由于远程库是空的，我们第一次推送master分支时，加上了-u参数，Git不但会把本地的master分支内容推送的远程新的master分支，
 		还会把本地的master分支和远程的master分支关联起来，在以后的推送或者拉取时就可以简化命令。
-	5)此后，使用命令git push origin master推送即可。
-	6)重新关联另一个远程仓库，需要先删除本地git配置。
+	7)此后，使用命令git push（或者git push origin master）推送即可。
+	8)需要重新关联另一个远程仓库时，需要先删除仓库的本地git配置。
 		执行rm -rf .git，然后执行上面步骤即可。
 
 10 从远程库克隆

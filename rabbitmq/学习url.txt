@@ -11,8 +11,7 @@ https://www.cnblogs.com/libra0920/p/6230421.html
 //RabbitMQ与spring集成,配置完整的生产者和消费者
 https://blog.csdn.net/xun573017588/article/details/77099535
 
-//windows x64下安装RabbitMQ
-https://blog.csdn.net/u014308482/article/details/53994401
+
 
 
 

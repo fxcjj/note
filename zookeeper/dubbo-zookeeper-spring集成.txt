@@ -153,4 +153,4 @@ public class UserController extends AbstractBaseController {
 \note\zookeeper\安装dubbo-monitor-simple.txt
 
 七、Github地址
-https://github.com/fxcjj?tab=repositories
+https://github.com/fxcjj/exotic-sail
