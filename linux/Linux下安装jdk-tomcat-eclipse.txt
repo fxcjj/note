@@ -38,10 +38,12 @@ bash: java: command not found
 1.3.1 下载.gz格式的文件
 jdk-8u144-linux-x64.tar.gz
 
-1.3.2 解压
+1.3.2 上传至服务器并解压
+将jdk-8u144-linux-x64.tar.gz上传到/usr/local目录下，
+# 解压
 tar -zxvf jdk-8u144-linux-x64.tar.gz
-将jdk-8u144-linux-x64.tar.gz上传到/usr/local目录下，然后解压，名称为jdk1.8
-
+# 重命名
+mv jdk1.8.0_144 jdk1.8
 
 1.3.3 修改全局配置文件/etc/profile，在末尾添加如下：
 #添加jdk环境变量

@@ -3,6 +3,11 @@
 ping www.baidu.com
 Name or service not known
 
+1) 可能原因-网络连接模式不正确
+检查虚拟机 -> 设置 -> 网络适配器 -> NAT模式，是否为NAT模式
+
+
+
 解决
 修改/etc/sysconfig/network-scripts/ifcfg-ens33文件项。
 
