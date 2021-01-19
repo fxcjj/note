@@ -37,6 +37,8 @@ docker exec -it 283d168f0941fd1 redis-cli  -h 192.168.6.131 -p 6379
 // 进入容器
 docker exec -it redisa /bin/bash
 
+// 使用redis-cli连接redis
+输入：redis-cli
 
 使用redis desktop manager连接docker中的redis
 修改/etc/redis/conf/redis/redis.conf
