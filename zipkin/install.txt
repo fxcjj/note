@@ -1,6 +1,0 @@
-
-// docker方式安装
-docker run --name my-zipkin -d -p 9411:9411 openzipkin/zipkin
-
-
-
