@@ -1,5 +1,0 @@
-
-
-
-# 10行展示，按space键下一个10行，按enter展示下一行
-ifconfig | more -10
