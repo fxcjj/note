@@ -1,7 +1,0 @@
-http://mathworld.wolfram.com/Rogers-RamanujanIdentities.html
-http://mathworld.wolfram.com/RamanujansIdentity.html
-http://mathworld.wolfram.com/Dougall-RamanujanIdentity.html
-http://mathworld.wolfram.com/RamanujansSumIdentity.html
-http://mathworld.wolfram.com/Ramanujan6-10-8Identity.html
-http://mathworld.wolfram.com/RamanujanCosCoshIdentity.html
-http://mathworld.wolfram.com/RamanujansHypergeometricIdentity.html
