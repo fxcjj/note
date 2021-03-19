@@ -1,0 +1,1 @@
+String、Number、Boolean、Array、Date、RegExp、Math、Error、Object、Function、Global

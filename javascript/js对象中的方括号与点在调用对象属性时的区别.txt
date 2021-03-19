@@ -1,0 +1,34 @@
+一、调用属性
+一般来说一个对象的属性的调用都是用一个 . 来调用,就像下面这个例子一样
+
+var obj={
+    test:'wtf'
+}
+console.log(obj.test)
+输出了wtf
+
+但js还有另一个操作符调用对象的属性就是[ ]，例子如下
+var obj={
+    test:'wtf'
+}
+var index='test'
+console.log(obj[index])
+
+同样输出了wtf
+两者在调用属性方面的区别是
+.是直接.属性的名字，[]里的索引存放的与属性名字相同的字符串
+
+二、属性名称
+一个对象的属性名可以是数字，但如果你用.操作符来调用的话，就会报错，例子如下
+var obj={
+    66:'china is no.1'
+}
+console.log(obj.66)
+这时候改用[]来进行属性调用
+
+var obj={
+    66:'china is no.1'
+}
+console.log(obj[66])
+成功输出了china is no.1
+[]可以调用属性名为数字的属性，而.不行

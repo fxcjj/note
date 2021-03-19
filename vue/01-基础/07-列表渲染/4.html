@@ -1,10 +1,30 @@
 <!-- 开发环境版本，包含了有帮助的命令行警告 -->
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 
-
-<ul id="v-for-filter" class="de mo">
-  <li v-for="n in even(numbers)">{{ n }}</li>
+<!-- 
+1
+<ul id="v-for-object" class="demo">
+  <li v-for="value in object">
+    {{ value }}
+  </li>
 </ul>
+-->
+
+<!-- 
+2
+ <ul id="v-for-object" class="demo">
+  <li v-for="(value, name) in object">
+    {{ name }} : {{ value }}
+  </li>
+</ul>
+ -->
+ 
+
+ <ul id="v-for-filter" class="demo">
+  <li v-for="n in evenNumbers">{{ n }}</li>
+</ul> <!-- 
+3
+ -->
 <script>
 var vm = new Vue({
 	el: '#v-for-filter',
@@ -20,3 +40,7 @@ var vm = new Vue({
 	}
 })
 </script>
+
+<!--
+过滤出偶数
+-->

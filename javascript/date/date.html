@@ -1,0 +1,73 @@
+<script>
+    //var now = new Date();
+	// 加1天
+	//now.setDate(now.getDate() + 1);
+   // console.log(now); // Sat Feb 27 2021 14:45:15 GMT+0800 (中国标准时间)
+	
+	var now = new Date();
+// 加五天.
+//var newDate = DateAdd("d", 5, now);
+//console.log(newDate.toLocaleDateString());
+// 加3个月.
+var newDate = DateAdd("m", 3, now);
+console.log(newDate);
+// 加6个月.
+//newDate = DateAdd("m", 7, now);
+//console.log(newDate.toLocaleDateString());
+// 加一年
+//newDate = DateAdd("y", 1, now);
+//console.log(newDate.toLocaleDateString());
+
+
+
+function DateAdd(interval, number, date) {
+    switch (interval) {
+    case "y": {
+        date.setFullYear(date.getFullYear() + number);
+        return date;
+        break;
+    }
+    case "q": {
+        date.setMonth(date.getMonth() + number * 3);
+        return date;
+        break;
+    }
+    case "m": {
+        date.setMonth(date.getMonth() + number);
+        return date;
+        break;
+    }
+    case "w": {
+        date.setDate(date.getDate() + number * 7);
+        return date;
+        break;
+    }
+    case "d": {
+        date.setDate(date.getDate() + number);
+        return date;
+        break;
+    }
+    case "h": {
+        date.setHours(date.getHours() + number);
+        return date;
+        break;
+    }
+    case "m": {
+        date.setMinutes(date.getMinutes() + number);
+        return date;
+        break;
+    }
+    case "s": {
+        date.setSeconds(date.getSeconds() + number);
+        return date;
+        break;
+    }
+    default: {
+        date.setDate(d.getDate() + number);
+        return date;
+        break;
+    }
+    }
+}
+
+</script>

@@ -1,0 +1,53 @@
+
+js中typeof判断数据类型
+js变量能够保存多种数据类型：数值、字符串值、布尔值、数组、对象等等；
+
+eg：
+var length=7;
+var lastName="Gates";
+var x=true;
+var y=false;
+var cars=["NISSAN","白色","日产"];
+var x={firstName:"Bill",lastName:"Gates",age:"18"};
+
+
+typeof运算符
+您可使用js的typeof来确定js变量的类型：
+
+typeof运算符返回变量或表达式的类型：
+
+typeof  0  //返回"number"
+
+typeof  " "   //返回"string"
+
+typeof  "Bill"  //返回"string"
+
+typeof true   //返回"boolean"
+
+typeof false  //返回"boolean"
+
+typeof  x   //返回““undefined（假如x没有值）”
+
+ 
+
+特殊情况：
+typeof 运算符对数组返回“object”，因为在js中数组属于对象。
+
+1、在js中，没有值的变量，其值是undefined。typeof也返回undefined。
+
+eg：
+var car;
+typeof car;   //返回"undefined"
+
+
+2.空值与undefined不一样。
+
+空的字符串既有值也有类型。
+
+eg：
+var car=" ";
+typeof car;  //返回"string"
+
+
+3.var person=null;  //返回object
+typeof运算符把对象、数组或null，返回object。

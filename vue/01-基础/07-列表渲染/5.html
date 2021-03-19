@@ -1,0 +1,27 @@
+<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<div id="v-for-filter">
+	<ul v-for="set in sets">
+	  <li v-for="n in even(set)">{{ n }}</li>
+	</ul>
+</div>
+<script>
+var vm = new Vue({
+	el: '#v-for-filter',
+	data: {
+	  sets: [[ 1, 2, 3, 4, 5 ], [6, 7, 8, 9, 10]]
+	},
+	methods: {
+		even: function (numbers) {
+			return numbers.filter(function (number) {
+				return number % 2 === 0
+			})
+		}
+	}
+})
+</script>
+
+<!--
+在计算属性不适用的情况下 (例如，在嵌套 v-for 循环中) 你可以使用一个方法：
+-->

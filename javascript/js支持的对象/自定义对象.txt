@@ -1,0 +1,31 @@
+JavaScript自定义对象：
+
+通过JavaScript，您能够定义并创建自己的对象。
+
+创建新对象有两种不同的方法：
+
+定义并创建对象的实例
+
+使用函数来定义对象，然后创建新的对象实例
+
+创建一个自定义对象：
+
+<!DOCTYPE html>
+<html>
+	<head>
+	<meta charset="utf-8">
+	<title>HTML中文网/title>
+	</head>
+	<body>
+
+	<script>
+		var person=new Object();
+		person.firstname="John";
+		person.lastname="Doe";
+		person.age=50;
+		person.eyecolor="blue"; 
+		document.write(person.firstname + " is " + person.age + " years old.");
+	</script>
+
+	</body>
+</html>

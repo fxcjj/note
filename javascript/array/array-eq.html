@@ -1,0 +1,69 @@
+<script>
+	/**判断数组中 某个key是否重复
+	*param arr 判断的数组
+	*param key 判断的key
+	*return 重复返回false 不重复返回一个对象 对象格式{ arr[i][key]:arr[i] ...}
+	*/
+	function isRepeatArr1(arr,key){
+		var obj = {};
+		for(var i=0;i<arr.length;i++){
+			// 当取值不为空时，说明已存在
+			if(obj[arr[i][key]]){
+				return true;
+			}else{
+				obj[arr[i][key]] = arr[i]; //将对象赋值给obj[arr[i][key]]，如 obj[2]={id:1,name:5,age:6}
+			}
+		}
+		//return obj;
+		return false;
+	}
+	
+		
+	function isRepeatArr2(arr,key){ 
+		const keys = arr.map(value=>value[key]);
+		const keysSet = new Set(keys);
+		if(keysSet.size == keys.length) {
+			return false;
+		}else{
+			return true;
+		}
+	}
+	
+		function isRepeatArr3(arr){ 
+		var arr21 = arr.sort();
+		for(var i=0;i<arr.length;i++){
+			if (arr21[i]==arr21[i+1]) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+
+	function isRepeatArr4(arr){ 
+		let hash = {};
+		for (let i in arr) {
+			if (hash[arr[i]]){
+				return true;
+			}
+			hash[arr[i]] = true;
+		}
+		return false;
+	}
+	
+
+	let arr1 = [
+		{id:1,name:2,age:3},
+		{id:2,name:5,age:24},
+		{id:1,name:5,age:6}
+	]
+	
+	var arr2 = new Array("111","22","33","111"); 
+	
+    console.log(isRepeatArr1(arr1,"name") ? 'repeat' : 'no');
+    console.log(isRepeatArr2(arr1,"name") ? 'repeat' : 'no');
+	console.log(isRepeatArr3(arr2) ? 'repeat' : 'no');
+    console.log(isRepeatArr4(arr2) ? 'repeat' : 'no');
+
+
+</script>

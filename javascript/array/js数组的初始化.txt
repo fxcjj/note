@@ -1,0 +1,20 @@
+js数组的初始化
+
+方法一：
+var myarray = new Array(66,80,90,77,59);
+
+方法二：
+var myarray = [66,80,90,77,59];
+
+方法三：
+var myarray=new Array(5); 
+myarray[0]=66; 
+myarray[1]=80; 
+myarray[2]=90; 
+myarray[3]=77; 
+myarray[4]=59; 
+
+数组的属性：
+myarray.length; //获得数组长度
+
+ 
