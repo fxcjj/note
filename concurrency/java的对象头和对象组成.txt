@@ -28,7 +28,7 @@ Mark Word¼ÇÂ¼ÁË¶ÔÏóºÍËøÓÐ¹ØµÄÐÅÏ¢£¬µ±Õâ¸ö¶ÔÏó±»synchronized¹Ø¼ü×Öµ±³ÉÍ¬²½ËøÊ±£¬Î
 Java¶ÔÏóµÄÀàÊý¾Ý±£´æÔÚ·½·¨Çø¡£
 
 1.3 Êý×é³¤¶È
-Ö»ÓÐÊý×é¶ÔÏó±£´æÁËÕâ²¿·ÖÊý¾Ý¡£
+Ö»ÓÐµ±Êý×é¶ÔÏóÊ±£¬Õâ²¿·Ö²Å»áÓÐÊý¾Ý¡£
 ¸ÃÊý¾ÝÔÚ32Î»ºÍ64Î»JVMÖÐ³¤¶È¶¼ÊÇ32bit¡£
 	
 2. ÊµÀýÊý¾Ý
