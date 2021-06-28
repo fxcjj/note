@@ -1,5 +1,8 @@
 
 
+wmic Windows管理规范命令行
+Windows Management Instrumentation Command-line
+
 CLI 命令行接口
 Command Line Interface
 
